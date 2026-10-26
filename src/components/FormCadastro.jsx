@@ -233,18 +233,6 @@ export default function FormCadastro() {
                                 </svg>
                                 Cadastrar com o Google (em breve)
                             </button>
-
-                            <p className="text-center text-xs leading-relaxed text-slate-500">
-                                Ao se cadastrar, confirmo que li e concordo com a{' '}
-                                <Link to="/privacidade" className="font-semibold text-[#3349D6] hover:underline">
-                                    Política de Privacidade
-                                </Link>{' '}
-                                e os{' '}
-                                <Link to="/termos" className="font-semibold text-[#3349D6] hover:underline">
-                                    Termos de Serviço
-                                </Link>{' '}
-                                do class.me.
-                            </p>
                         </form>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import SetupUsuario from './pages/SetupUsuario';
 import Login from './pages/PaginaLogin';
 import Cadastro from './pages/PaginaCadastro';
+import Disciplina from './pages/Disciplina';
 import EmBreve from './pages/EmBreve';
 
 export default function App() {
@@ -16,7 +17,7 @@ export default function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<PaginaInicial />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/disciplinas" element={<EmBreve titulo="Disciplinas" />} />
+            <Route path="/disciplinas" element={<Disciplina />} />
             <Route path="/simulados" element={<EmBreve titulo="Simulados" />} />
             <Route path="/configuracoes" element={<EmBreve titulo="Configurações" />} />
             <Route path="/sobre" element={<EmBreve titulo="Sobre" />} />
