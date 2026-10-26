@@ -1,31 +1,44 @@
-import { useCallback, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Header from './Header';
 import useAuth from '../hooks/useAuth';
 
+const DESKTOP = '(min-width: 1024px)';
+
 export default function AppLayout() {
   const { user, sair } = useAuth();
+  const navigate = useNavigate();
 
-  const [menuAberto, setMenuAberto] = useState(false);
-  const fecharMenu = useCallback(() => setMenuAberto(false), []);
+  // um único estado para o menu: no desktop é a barra lateral, no celular é a gaveta
+  const [navAberto, setNavAberto] = useState(() => window.matchMedia(DESKTOP).matches);
+  const fecharNav = useCallback(() => setNavAberto(false), []);
+  const alternarNav = useCallback(() => setNavAberto((aberto) => !aberto), []);
+
+  // ao cruzar o breakpoint: aberto no desktop, fechado no celular
+  useEffect(() => {
+    const mq = window.matchMedia(DESKTOP);
+    const aoMudar = (e) => setNavAberto(e.matches);
+    mq.addEventListener('change', aoMudar);
+    return () => mq.removeEventListener('change', aoMudar);
+  }, []);
+
+  const handleSair = () => {
+    sair();
+    navigate('/login', { replace: true });
+  };
 
   return (
     <div className="flex min-h-screen bg-white font-['Nunito',sans-serif]">
-      <Navbar aberto={menuAberto} onFechar={fecharMenu} />
-      {menuAberto && (
-        <button
-          type="button"
-          onClick={fecharMenu}
-          aria-label="Fechar menu"
-          className="fixed left-[calc(min(18rem,85vw)-3rem)] top-4 z-50 rounded-lg p-2 text-white hover:bg-white/10 lg:hidden"
-        >
-          <span aria-hidden="true">✕</span>
-        </button>
-      )}
+      <Navbar aberto={navAberto} onFechar={fecharNav} />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Header user={user} onAbrirMenu={() => setMenuAberto(true)} onSair={sair} />
+        <Header
+          user={user}
+          navAberto={navAberto}
+          onAlternarMenu={alternarNav}
+          onSair={handleSair}
+        />
         <div className="flex-1 bg-[#F4F6FA]">
           <Outlet />
         </div>

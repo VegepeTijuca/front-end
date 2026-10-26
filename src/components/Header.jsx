@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function Header({ user, onAbrirMenu, onSair }) {
+export default function Header({ user, navAberto, onAlternarMenu, onSair }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
     const role = user?.role;
     const avatar = user?.avatar;
@@ -26,12 +26,14 @@ export default function Header({ user, onAbrirMenu, onSair }) {
     }, [menuAberto]);
 
     return (
-        <header className="flex h-17.5 items-center justify-between bg-white px-6 md:px-12 lg:justify-end">
+        <header className="flex h-17.5 items-center justify-between bg-white px-6 md:px-12">
             <button
                 type="button"
-                onClick={onAbrirMenu}
-                aria-label="Abrir menu de navegação"
-                className="grid h-10 w-10 place-items-center rounded-lg text-[#0A1F4D] hover:bg-slate-100 lg:hidden"
+                onClick={onAlternarMenu}
+                aria-label={navAberto ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
+                aria-expanded={navAberto}
+                aria-controls="navegacao-lateral"
+                className="grid h-10 w-10 place-items-center rounded-lg text-[#0A1F4D] hover:bg-slate-100"
             >
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />

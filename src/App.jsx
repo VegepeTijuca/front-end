@@ -20,8 +20,6 @@ export default function App() {
             <Route path="/simulados" element={<EmBreve titulo="Simulados" />} />
             <Route path="/configuracoes" element={<EmBreve titulo="Configurações" />} />
             <Route path="/sobre" element={<EmBreve titulo="Sobre" />} />
-            <Route path="/login" element={<Login titulo="Login" />} />
-            <Route path="/cadastro" element={<Cadastro titulo="Cadastro" />} />
           </Route>
 
           <Route path="/setup-usuario" element={<SetupUsuario />} />

@@ -40,7 +40,7 @@ export default function FormCadastro() {
 
             if (data?.token) {
                 entrar(data.token, data.user);
-                navigate('/setup-usuario');
+                navigate('/setup-usuario', { replace: true });
             } else {
                 navigate('/login');
             }

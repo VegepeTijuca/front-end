@@ -1,4 +1,5 @@
 import api from './api';
+import { USE_MOCK, atraso, novoId } from './mock';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -35,21 +36,50 @@ function paraApi({ title, start, allDay }) {
   };
 }
 
+// --- dados em memória (só enquanto não há backend) ---
+// guarda já no formato do calendário (horário local)
+let eventos = [];
+
 export async function listar() {
+  if (USE_MOCK) {
+    await atraso();
+    return eventos.map((ev) => ({ ...ev }));
+  }
+
   const { data } = await api.get('/eventos');
   return data.map(deApi);
 }
 
 export async function criar(evento) {
+  if (USE_MOCK) {
+    await atraso(100);
+    const novo = { id: novoId(), title: evento.title, start: evento.start, allDay: Boolean(evento.allDay) };
+    eventos = [...eventos, novo];
+    return { ...novo };
+  }
+
   const { data } = await api.post('/eventos', paraApi(evento));
   return deApi(data);
 }
 
 export async function atualizar(id, evento) {
+  if (USE_MOCK) {
+    await atraso(100);
+    const atualizado = { id, title: evento.title, start: evento.start, allDay: Boolean(evento.allDay) };
+    eventos = eventos.map((ev) => (ev.id === id ? atualizado : ev));
+    return { ...atualizado };
+  }
+
   const { data } = await api.put(`/eventos/${id}`, paraApi(evento));
   return deApi(data);
 }
 
 export async function remover(id) {
+  if (USE_MOCK) {
+    await atraso(100);
+    eventos = eventos.filter((ev) => ev.id !== id);
+    return;
+  }
+
   await api.delete(`/eventos/${id}`);
 }
