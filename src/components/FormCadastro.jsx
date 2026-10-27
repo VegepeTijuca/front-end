@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { registrar } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 
+
 export default function FormCadastro() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
         name: '',

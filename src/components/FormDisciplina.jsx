@@ -1,6 +1,5 @@
 import { useId, useState } from 'react';
 import { criarDisciplinas } from '../services/disciplinaService'
-import '../pages/Disciplina';
 
 export default function FormDisciplina() {
   const idBase = useId();

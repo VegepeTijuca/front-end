@@ -9,7 +9,6 @@ export default function FormConteudo() {
     const [dadosConteudo, setDadosConteudo] = useState({
         name: '',
         descricao: '',
-        dataConclusao: '',
     });
     const [enviando, setEnviando] = useState(false);
     const [status, setStatus] = useState(null); // null | { tipo: 'sucesso' | 'erro', texto }
@@ -25,7 +24,7 @@ export default function FormConteudo() {
         setStatus(null);
 
         try {
-            await criar(dadosConteudo);
+            await criarConteudos(dadosConteudo);
             setDadosConteudo({ name: '', descricao: '', dataConclusao: '' });
             setStatus({ tipo: 'sucesso', texto: 'Conteúdo criado com sucesso!' });
         } catch (err) {
@@ -69,20 +68,6 @@ export default function FormConteudo() {
                     type="text"
                     name="descricao"
                     value={dadosConteudo.descricao}
-                    onChange={handleChange}
-                    className={campoClasses}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <label htmlFor={`${idBase}-data`} className="block text-sm font-medium text-gray-700">
-                    Insira até que dia você deve estudar esse conteúdo
-                </label>
-                <input
-                    id={`${idBase}-data`}
-                    type="date"
-                    name="dataConclusao"
-                    value={dadosConteudo.dataConclusao}
                     onChange={handleChange}
                     className={campoClasses}
                 />
