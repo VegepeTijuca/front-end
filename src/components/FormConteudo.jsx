@@ -1,5 +1,5 @@
 import { useId, useState } from 'react';
-import { criar } from '../services/conteudoService';
+import { criarConteudos } from '../services/conteudoService';
 
 const campoClasses =
     'block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200';

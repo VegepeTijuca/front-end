@@ -1,12 +1,12 @@
 import { useId, useState } from 'react';
-import { criar } from '../services/disciplinaService';
+import { criarDisciplinas } from '../services/disciplinaService'
 import '../pages/Disciplina';
 
 export default function FormDisciplina() {
   const idBase = useId();
   const [disciplina, setDisciplina] = useState({ name: '', descricao: '' });
   const [enviando, setEnviando] = useState(false);
-  const [status, setStatus] = useState(null); // null | { tipo: 'sucesso' | 'erro', texto }
+  const [status, setStatus] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -14,7 +14,7 @@ export default function FormDisciplina() {
     setStatus(null);
 
     try {
-      await criar(disciplina);
+      await criarDisciplinas(disciplina);
       setDisciplina({ name: '', descricao: '' });
       setStatus({ tipo: 'sucesso', texto: 'Disciplina cadastrada com sucesso!' });
     } catch (err) {

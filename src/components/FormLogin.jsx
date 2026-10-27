@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth';
 
 export default function FormLogin() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
-        usuario: '',
+        email: '',
         password: '',
     });
     const [erro, setErro] = useState('');
@@ -100,14 +100,14 @@ export default function FormLogin() {
                         {erro && <p role="alert" className="text-sm text-red-600">{erro}</p>}
 
                         <div>
-                            <label className={labelClasses} htmlFor="usuario">
+                            <label className={labelClasses} htmlFor="email">
                                 E-mail ou nome de usuário
                             </label>
                             <input
                                 className={inputClasses}
-                                id="usuario"
-                                name="usuario"
-                                value={credenciaisUsuario.usuario}
+                                id="email"
+                                name="email"
+                                value={credenciaisUsuario.email}
                                 type="text"
                                 autoComplete="username"
                                 onChange={handleChange}

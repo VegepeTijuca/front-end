@@ -5,7 +5,7 @@ import useAuth from '../hooks/useAuth';
 
 export default function FormCadastro() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
-        username: '',
+        name: '',
         email: '',
         password: '',
     });
@@ -125,16 +125,16 @@ export default function FormCadastro() {
                             </header>
 
                             <div>
-                                <label className={labelClasses} htmlFor="username">
+                                <label className={labelClasses} htmlFor="name">
                                     Nome de usuário
                                 </label>
                                 <input
                                     className={inputClasses}
-                                    id="username"
-                                    name="username"
-                                    value={credenciaisUsuario.username}
+                                    id="name"
+                                    name="name"
+                                    value={credenciaisUsuario.name}
                                     type="text"
-                                    autoComplete="username"
+                                    autoComplete="name"
                                     onChange={handleChange}
                                     required
                                 />

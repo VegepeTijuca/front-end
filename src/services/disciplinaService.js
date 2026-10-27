@@ -1,17 +1,19 @@
 import api from './api';
-import { USE_MOCK, atraso, novoId } from './mock';
 
-// AJUSTE AQUI a rota e os campos conforme o seu backend.
 const disciplinas = [];
 
-export async function criar({ name, descricao }) {
-  if (USE_MOCK) {
-    await atraso();
-    const nova = { id: novoId(), name, descricao };
-    disciplinas.push(nova);
-    return { ...nova };
-  }
+export async function criarDisciplinas(dados) {
 
-  const { data } = await api.post('/disciplinas', { name, descricao });
-  return data;
+  console.log(dados)
+
+  const { data } = await api.post('disciplinas', dados);
+
+  console.log(data)
+
+  
+}
+
+export async function getListaConteudos() {
+    const { data } = await api.get('conteudos');
+    return data;
 }
