@@ -15,6 +15,7 @@ export default function AuthProvider({ children }) {
   }, []);
 
   const sair = useCallback(() => {
+    localStorage.removeItem('token');
     definirToken(null);
     setToken(null);
     setUser(null);

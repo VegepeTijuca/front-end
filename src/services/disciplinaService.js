@@ -10,10 +10,12 @@ export async function criarDisciplinas(dados) {
 
   console.log(data)
 
+  return data
+
   
 }
 
-export async function getListaConteudos() {
-    const { data } = await api.get('conteudos');
+export async function getListaDisciplinas() {
+    const { data } = await api.get('disciplinas');
     return data;
 }

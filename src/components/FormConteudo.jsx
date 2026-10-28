@@ -29,9 +29,13 @@ export default function FormConteudo(disciplina) {
             setDadosConteudo({ name: '', descricao: '', dataConclusao: '' });
             setStatus({ tipo: 'sucesso', texto: 'Conteúdo criado com sucesso!' });
         } catch (err) {
+            const erro = err.response?.data?.error;
+
             setStatus({
                 tipo: 'erro',
-                texto: err.response?.data?.message ?? 'Não foi possível criar o conteúdo.',
+                texto:
+                    (typeof erro === 'string' ? erro : erro?.message) ??
+                    'Não foi possível criar o conteúdo.',
             });
         } finally {
             setEnviando(false);
