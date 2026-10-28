@@ -1,7 +1,5 @@
 import api from './api';
 
-const conteudos = [];
-
 export async function criarConteudos({ dados }) {
 
   console.log(dados)
@@ -9,4 +7,9 @@ export async function criarConteudos({ dados }) {
   const { data } = await api.post('conteudos', dados);
 
   console.log(data)
+}
+
+export async function getListaConteudos() {
+    const { data } = await api.get('conteudos');
+    return data;
 }

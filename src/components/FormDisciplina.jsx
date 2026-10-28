@@ -19,7 +19,10 @@ export default function FormDisciplina() {
     } catch (err) {
       setStatus({
         tipo: 'erro',
-        texto: err.response?.data?.message ?? 'Não foi possível cadastrar a disciplina.',
+        texto:
+          err.response?.data?.error?.message ??
+          err.response?.data?.error ??
+          'Não foi possível cadastrar a disciplina.',
       });
     } finally {
       setEnviando(false);
