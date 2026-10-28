@@ -8,6 +8,7 @@ import Login from './pages/PaginaLogin';
 import Cadastro from './pages/PaginaCadastro';
 import Disciplina from './pages/Disciplina';
 import EmBreve from './pages/EmBreve';
+import TesteComponents from './pages/TesteComponents';
 
 export default function App() {
   return (
@@ -18,7 +19,7 @@ export default function App() {
             <Route path="/" element={<PaginaInicial />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/disciplinas" element={<Disciplina />} />
-            <Route path="/simulados" element={<EmBreve titulo="Simulados" />} />
+            <Route path="/testeComponents" element={<TesteComponents titulo="TesteComponents" />} />
             <Route path="/configuracoes" element={<EmBreve titulo="Configurações" />} />
             <Route path="/sobre" element={<EmBreve titulo="Sobre" />} />
           </Route>
@@ -28,8 +29,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/recuperar-senha" element={<EmBreve titulo="Recuperar senha" tela />} />
-          <Route path="/privacidade" element={<EmBreve titulo="Política de Privacidade" tela />} />
-          <Route path="/termos" element={<EmBreve titulo="Termos de Serviço" tela />} />
 
           <Route path="*" element={<EmBreve titulo="Página não encontrada" tela />} />
         </Routes>
