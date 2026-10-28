@@ -4,21 +4,12 @@ import { USE_MOCK, erroApi} from './mock';
 
 
 export async function login(credenciais) {
-
-  
-  // console.log("aqui",api.post);
   const { data } = await api.post('login', credenciais);
-
-  // console.log(data.token)
-  localStorage.setItem('token',data.token)
-
-  const responsedata = await listaUsuarios()
-  console.log('aqui',responsedata)
-
-responsedata.map((item)=>{
-  console.log(item.name)
-})
-
+  localStorage.setItem('token', data.token);
+  if (data.user) {
+    localStorage.setItem('user', JSON.stringify(data.user));
+  }
+  return data;
 }
 
 export async function registrar(dados) {
@@ -54,6 +45,11 @@ export async function registrar(dados) {
 }
 
 export async function perfil() {
+  const usuarioSalvo = localStorage.getItem('user');
+  if (usuarioSalvo) {
+    return JSON.parse(usuarioSalvo);
+  }
+
   if (USE_MOCK) {
     // em memória o usuário já chega junto com o login; nada a buscar
     throw erroApi('Sem backend: perfil indisponível.', 404);

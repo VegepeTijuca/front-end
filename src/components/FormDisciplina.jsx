@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { criarDisciplinas } from '../services/disciplinaService'
 
-export default function FormDisciplina() {
+export default function FormDisciplina({ onCriada }) {
   const idBase = useId();
   const [disciplina, setDisciplina] = useState({ name: '', descricao: '' });
   const [enviando, setEnviando] = useState(false);
@@ -16,6 +16,7 @@ export default function FormDisciplina() {
       await criarDisciplinas(disciplina);
       setDisciplina({ name: '', descricao: '' });
       setStatus({ tipo: 'sucesso', texto: 'Disciplina cadastrada com sucesso!' });
+  onCriada?.();
     } catch (err) {
       setStatus({
         tipo: 'erro',

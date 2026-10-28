@@ -1,8 +1,5 @@
-import CardDisciplina from "../components/CardDisciplina"
+import ListaDisciplinas from "../components/ListaDisciplinas";
 
 export default function TesteComponents() {
-
-    return (
-        <CardDisciplina />
-    )
+    return <ListaDisciplinas />;
 }

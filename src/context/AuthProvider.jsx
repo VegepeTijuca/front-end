@@ -26,7 +26,7 @@ export default function AuthProvider({ children }) {
       (resposta) => resposta,
       (err) => {
         const url = err.config?.url ?? '';
-        const ehAuth = url.startsWith('/login') || url.startsWith('/users');
+        const ehAuth = url.startsWith('login') || url.startsWith('users');
         if (err.response?.status === 401 && !ehAuth) sair();
         return Promise.reject(err);
       }
