@@ -3,13 +3,12 @@ import api, { definirToken } from '../services/api';
 import { perfil } from '../services/authService';
 import { AuthContext } from './AuthContext';
 
-// Sessão só em memória: recarregar a página desloga. O backend resolve isso depois.
 export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
   const entrar = useCallback((novoToken, usuario = null) => {
-    definirToken(novoToken); // já vale para a próxima requisição, antes do re-render
+    definirToken(novoToken);
     setToken(novoToken);
     setUser(usuario);
   }, []);
@@ -27,7 +26,7 @@ export default function AuthProvider({ children }) {
       (resposta) => resposta,
       (err) => {
         const url = err.config?.url ?? '';
-        const ehAuth = url.startsWith('/auth/login') || url.startsWith('/auth/register');
+        const ehAuth = url.startsWith('/login') || url.startsWith('/users');
         if (err.response?.status === 401 && !ehAuth) sair();
         return Promise.reject(err);
       }

@@ -1,7 +1,5 @@
 import api from './api';
 
-const disciplinas = [];
-
 export async function criarDisciplinas(dados) {
 
   console.log(dados)
@@ -11,7 +9,6 @@ export async function criarDisciplinas(dados) {
   console.log(data)
 
   return data
-
   
 }
 
