@@ -13,7 +13,7 @@ export default function ListaConteudos() {
         <div>
             {conteudos.map((conteudo, index) => (
                 <div key={conteudo.id ?? index}>
-                    {conteudo.titulo ?? conteudo.nome ?? String(conteudo)}
+                    {conteudo.name ?? conteudo.nome ?? String(conteudo)}
                 </div>
             ))}
         </div>

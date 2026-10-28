@@ -6,7 +6,6 @@ const mainItems = [
   { label: 'Início', to: '/', end: true },
   { label: 'Visão Geral', to: '/dashboard' },
   { label: 'Disciplinas', to: '/disciplinas' },
-  { label: 'Simulados', to: '/simulados' },
 ];
 
 const siteItems = [
@@ -20,6 +19,7 @@ const devItems = import.meta.env.DEV
       { label: 'Login', to: '/login' },
       { label: 'Cadastro', to: '/cadastro' },
       { label: 'Setup do usuário', to: '/setup-usuario' },
+      { label: 'TesteComponents', to: '/testeComponents' },
     ]
   : [];
 
