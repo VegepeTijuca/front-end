@@ -1,8 +1,6 @@
 import api from './api';
 
-const conteudos = [];
-
-export async function criarConteudos({ dados }) {
+export async function criarConteudos(dados) {
 
   console.log(dados)
 

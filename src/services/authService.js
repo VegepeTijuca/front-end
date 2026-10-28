@@ -1,6 +1,6 @@
 import api from './api';
 
-import { USE_MOCK, atraso, erroApi, novoId } from './mock';
+import { USE_MOCK, erroApi} from './mock';
 
 
 export async function login(credenciais) {
