@@ -16,6 +16,7 @@ export default function FormCadastro() {
     const navigate = useNavigate();
     const { entrar } = useAuth();
 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
