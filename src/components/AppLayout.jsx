@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Header from './Header';
 import useAuth from '../hooks/useAuth';
@@ -7,7 +7,7 @@ import useAuth from '../hooks/useAuth';
 const DESKTOP = '(min-width: 1024px)';
 
 export default function AppLayout() {
-  const { user, sair } = useAuth();
+  const { user, visitante, sair } = useAuth();
   const navigate = useNavigate();
 
   // um único estado para o menu: no desktop é a barra lateral, no celular é a gaveta
@@ -35,10 +35,19 @@ export default function AppLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header
           user={user}
+          visitante={visitante}
           navAberto={navAberto}
           onAlternarMenu={alternarNav}
           onSair={handleSair}
         />
+        {visitante && (
+          <div role="status" className="bg-amber-100 px-6 py-2 text-center text-sm text-amber-900 md:px-12">
+            Você está no <strong>modo visitante</strong>: os dados ficam só neste navegador.{' '}
+            <Link to="/cadastro" className="font-semibold underline">
+              Criar conta
+            </Link>
+          </div>
+        )}
         <div className="flex-1 bg-[#F4F6FA]">
           <Outlet />
         </div>

@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import classmeLogo from '../assets/classme.svg';
 
 const mainItems = [
-  { label: 'Início', to: '/', end: true },
   { label: 'Visão Geral', to: '/dashboard' },
   { label: 'Disciplinas', to: '/disciplinas' },
 ];
@@ -16,6 +15,7 @@ const siteItems = [
 // links só para desenvolvimento: somem no build de produção
 const devItems = import.meta.env.DEV
   ? [
+      { label: 'Landing page', to: '/' },
       { label: 'Login', to: '/login' },
       { label: 'Cadastro', to: '/cadastro' },
       { label: 'Setup do usuário', to: '/setup-usuario' },
@@ -44,9 +44,9 @@ function Conteudo({ onNavegar }) {
   return (
     <>
       <NavLink
-        to="/"
+        to="/dashboard"
         onClick={onNavegar}
-        aria-label="Classme, ir para o início"
+        aria-label="Classme, ir para o painel"
         className="mb-6 flex w-full items-center justify-center gap-3"
       >
         <img src={classmeLogo} alt="Classme" className="h-20 w-auto" />

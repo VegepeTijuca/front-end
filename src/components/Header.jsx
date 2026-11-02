@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function Header({ user, navAberto, onAlternarMenu, onSair }) {
+export default function Header({ user, visitante = false, navAberto, onAlternarMenu, onSair }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
     const role = user?.role;
     const avatar = user?.avatar;
@@ -74,7 +74,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair }) {
                     {menuAberto && (
                         <div
                             role="menu"
-                            className="absolute right-0 top-full z-30 mt-2 w-40 rounded-xl bg-white p-1 shadow-lg ring-1 ring-slate-200"
+                            className="absolute right-0 top-full z-30 mt-2 w-56 rounded-xl bg-white p-1 shadow-lg ring-1 ring-slate-200"
                         >
                             <button
                                 type="button"
@@ -82,7 +82,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair }) {
                                 onClick={onSair}
                                 className="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50"
                             >
-                                Sair
+                                {visitante ? 'Sair do modo visitante' : 'Sair'}
                             </button>
                         </div>
                     )}

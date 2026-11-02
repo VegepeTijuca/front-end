@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { registrar } from '../services/authService';
+import { login, registrar } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 
 
@@ -37,16 +37,23 @@ export default function FormCadastro() {
 
         setCarregando(true);
         try {
-            const data = await registrar(credenciaisUsuario);
+            let sessao = await registrar(credenciaisUsuario);
 
-            if (data?.token) {
-                entrar(data.token, data.user);
-                navigate('/setup-usuario', { replace: true });
-            } else {
-                navigate('/login');
+            // se a API não devolveu o token no cadastro, entra com o e-mail e a senha recém-criados
+            if (!sessao?.token) {
+                sessao = await login({
+                    email: credenciaisUsuario.email,
+                    password: credenciaisUsuario.password,
+                });
             }
+
+            entrar(sessao.token, sessao.user);
+            navigate('/setup-usuario', { replace: true });
         } catch (err) {
-            setErro(err.response?.data?.message ?? 'Não foi possível criar a conta.');
+            const erroApi = err.response?.data?.message ?? err.response?.data?.error;
+            setErro(
+                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível criar a conta.'
+            );
         } finally {
             setCarregando(false);
         }

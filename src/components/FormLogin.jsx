@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
 import useAuth from '../hooks/useAuth';
+import BotaoVisitante from './BotaoVisitante';
 
 export default function FormLogin() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
@@ -29,7 +30,10 @@ export default function FormLogin() {
             entrar(data.token, data.user);
             navigate(location.state?.de ?? '/dashboard', { replace: true });
         } catch (err) {
-            setErro(err.response?.data?.error ?? 'Não foi possível entrar.');
+            const erroApi = err.response?.data?.error ?? err.response?.data?.message;
+            setErro(
+                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível entrar.'
+            );
         } finally {
             setCarregando(false);
         }
@@ -154,6 +158,10 @@ export default function FormLogin() {
                             </svg>
                             Entrar com o Google
                         </button>
+
+                        <BotaoVisitante className="w-full rounded-2xl border border-dashed border-slate-300 px-5 py-3.5 text-sm font-semibold text-slate-600 transition hover:border-[#3349D6] hover:text-[#3349D6]">
+                            Entrar sem conta (modo visitante)
+                        </BotaoVisitante>
 
                         <p className="text-center text-sm text-slate-500">
                             Esqueceu a senha?{' '}
