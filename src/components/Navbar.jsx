@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import classmeLogo from '../assets/classme.svg';
-import Icone from './Icone';
-import { MENU } from '../data/ajuda';
+import { IconeCalendario, IconeInfo, IconeLivro, IconePainel } from './icones';
 
 const mainItems = [
-  { label: 'Visão Geral', to: '/dashboard' },
-  { label: 'Calendário', to: '/calendario' },
-  { label: 'Disciplinas', to: '/disciplinas' },
+  { label: 'Visão Geral', Icone: IconePainel, to: '/dashboard', dica: 'Resumo do dia, calendário, timer e tarefas' },
+  { label: 'Calendário', Icone: IconeCalendario, to: '/calendario', dica: 'Calendário em tela cheia' },
+  { label: 'Disciplinas', Icone: IconeLivro, to: '/disciplinas', dica: 'Matérias e conteúdos' },
 ];
 
-const siteItems = [{ label: 'Sobre', to: '/sobre' }];
+const siteItems = [{ label: 'Sobre', Icone: IconeInfo, to: '/sobre', dica: 'Sobre o clʌss.me' }];
 
 // links só para desenvolvimento: somem no build de produção
 const devItems = import.meta.env.DEV
@@ -23,28 +22,21 @@ const devItems = import.meta.env.DEV
     ]
   : [];
 
-function NavItem({ label, to, end, onClick }) {
-  const info = MENU[to];
+function NavItem({ label, Icone, to, dica, end, onClick }) {
   return (
     <NavLink
       to={to}
       end={end}
       onClick={onClick}
-      title={info?.dica}
+      title={dica}
       className={({ isActive }) =>
         `flex w-full items-center rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:translate-x-1 border-l-4 ${
           isActive ? 'border-tj-yellow bg-white/10 text-white' : 'border-transparent text-slate-300 hover:bg-white/5 hover:text-white'
         }`
       }
     >
-      {info && (
-        <span className="mr-3 shrink-0 opacity-80">
-          <Icone d={info.icone} />
-        </span>
-      )}
-      <span className="min-w-0">
-        <span className="block">{label}</span>
-      </span>
+      {Icone && <Icone className="mr-3 h-5 w-5 shrink-0" />}
+      {label}
     </NavLink>
   );
 }

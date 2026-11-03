@@ -2,8 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Header from './Header';
-import TourInicial from './TourInicial';
-import { CHAVE_TOUR, EVENTO_TOUR } from '../data/ajuda';
+import TourInicial, { CHAVE_TOUR, EVENTO_TOUR } from './TourInicial';
 import useAuth from '../hooks/useAuth';
 
 const DESKTOP = '(min-width: 1024px)';

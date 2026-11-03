@@ -12,7 +12,7 @@ import {
 } from '../services/presetService';
 import { perguntas } from '../data/perguntas';
 import { PACOTES_MATERIAS, TIMERS_SUGERIDOS } from '../data/presets';
-import { EVENTO_TOUR } from '../data/ajuda';
+import { EVENTO_TOUR } from '../components/TourInicial';
 
 // ---------- preferências: o que vai para a API e o que fica só no navegador ----------
 const CHAVE_LOCAL = 'classme:preferencias-locais';
