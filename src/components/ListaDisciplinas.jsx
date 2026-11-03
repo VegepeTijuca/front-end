@@ -20,7 +20,7 @@ export default function ListaDisciplinas({ versao = 0 }) {
     }, [versao]);
 
     if (carregando) return <p className="text-sm text-gray-500">Carregando disciplinas...</p>;
-    if (erro) return <p role="alert" className="text-sm text-red-600">{erro}</p>;
+    if (erro) return <p role="alert" className="text-sm text-[#A85A00]">{erro}</p>;
     if (disciplinas.length === 0) return <p className="text-sm text-gray-500">Nenhuma disciplina cadastrada.</p>;
 
     return (

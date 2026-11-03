@@ -63,10 +63,10 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
             onClick={(e) => {
                 if (e.target === e.currentTarget && comecouNoFundo.current) onClose();
             }}
-            className="m-auto w-full max-w-md rounded-3xl bg-transparent p-0 backdrop:bg-slate-900/40"
+            className="m-auto w-full max-w-md rounded-3xl bg-transparent p-0 open:animate-pop backdrop:bg-slate-900/40 backdrop:backdrop-blur-[2px]"
         >
             <form onSubmit={handleSubmit} noValidate className="rounded-3xl bg-white p-6 shadow-2xl">
-                <h3 id="event-modal-title" className="mb-5 text-xl font-bold text-[#0A1F4D]">
+                <h3 id="event-modal-title" className="mb-5 text-xl font-bold text-[#00264D]">
                     {isEditing ? 'Editar evento' : 'Novo evento'}
                 </h3>
 
@@ -77,7 +77,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Ex.: prova de matemática"
                         required
-                        className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none focus:border-[#3349D6] focus:ring-2 focus:ring-[#3349D6]/20"
+                        className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
                     />
                 </label>
 
@@ -89,7 +89,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             required
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#3349D6] focus:ring-2 focus:ring-[#3349D6]/20"
+                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
                         />
                     </label>
                     <label className="block">
@@ -100,13 +100,13 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             type="time"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#3349D6] focus:ring-2 focus:ring-[#3349D6]/20"
+                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
                         />
                     </label>
                 </div>
 
                 {mensagem && (
-                    <p role="alert" className="mb-4 text-sm text-red-600">
+                    <p role="alert" className="mb-4 text-sm text-[#A85A00]">
                         {mensagem}
                     </p>
                 )}
@@ -117,7 +117,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             type="button"
                             disabled={salvando}
                             onClick={() => onDelete(initial.id)}
-                            className="h-11 rounded-xl px-4 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60"
+                            className="h-11 rounded-xl px-4 text-sm font-semibold text-[#A85A00] hover:bg-tj-orange/10 disabled:opacity-60"
                         >
                             Excluir
                         </button>
@@ -133,7 +133,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                         <button
                             type="submit"
                             disabled={salvando}
-                            className="h-11 rounded-xl bg-[#0A1F4D] px-6 text-sm font-semibold text-white hover:bg-[#12306e] disabled:opacity-60"
+                            className="h-11 rounded-xl bg-[#00264D] px-6 text-sm font-semibold text-white hover:bg-[#003B73] disabled:opacity-60"
                         >
                             {salvando ? 'Salvando...' : 'Salvar'}
                         </button>

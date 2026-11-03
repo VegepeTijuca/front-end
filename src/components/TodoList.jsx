@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { atualizar, criar, listar, remover } from '../services/todoService';
 
-export default function TodoList() {
+export default function TodoList({ onMudou }) {
     const [todos, setTodos] = useState([]);
     const [text, setText] = useState('');
     const [carregando, setCarregando] = useState(true);
@@ -37,6 +37,7 @@ export default function TodoList() {
         try {
             const nova = await criar(value);
             setTodos((list) => [...list, nova]);
+            onMudou?.();
         } catch {
             setText(value);
             setErro('Não foi possível adicionar a tarefa.');
@@ -50,6 +51,7 @@ export default function TodoList() {
         setTodos((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t)));
         try {
             await atualizar(id, patch);
+            onMudou?.();
         } catch {
             setTodos(anterior);
             setErro('Não foi possível atualizar a tarefa.');
@@ -62,6 +64,7 @@ export default function TodoList() {
         setTodos((list) => list.filter((t) => t.id !== id));
         try {
             await remover(id);
+            onMudou?.();
         } catch {
             setTodos(anterior);
             setErro('Não foi possível excluir a tarefa.');
@@ -70,10 +73,13 @@ export default function TodoList() {
 
     return (
         <section className="rounded-[28px] bg-white px-6 py-8 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:px-10">
-            <h2 className="mb-5 text-3xl font-bold text-[#0A1F4D]">To-Do List</h2>
+            <h2 className="text-3xl font-bold text-[#00264D]">To-Do List</h2>
+            <p className="mb-5 mt-1 text-sm text-slate-500">
+                Marque o quadrado ao concluir. Use a estrela <span className="font-semibold text-tj-orange">★</span> para destacar o que é importante.
+            </p>
 
             {erro && (
-                <p role="alert" className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                <p role="alert" className="mb-4 rounded-xl bg-tj-orange/10 px-4 py-3 text-sm text-[#A85A00]">
                     {erro}
                 </p>
             )}
@@ -83,19 +89,23 @@ export default function TodoList() {
             )}
 
             {!carregando && todos.length === 0 && (
-                <p className="rounded-xl border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500">
-                    Nenhuma tarefa ainda. Adicione a primeira abaixo.
-                </p>
+                <div className="rounded-xl border border-dashed border-slate-200 px-6 py-8 text-center">
+                    <p className="font-semibold text-slate-700">Nenhuma tarefa ainda</p>
+                    <p className="mt-1 text-sm text-slate-500">Escreva o que precisa fazer no campo abaixo e clique em Adicionar.</p>
+                </div>
             )}
 
             <ul className="flex flex-col gap-5">
-                {todos.map((todo) => (
+                {todos.map((todo, i) => (
                     <li
                         key={todo.id}
-                        className={`flex h-19 items-center gap-5 rounded-xl border px-7 transition-colors ${
+                        style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}
+                        className={`flex h-19 animate-fade-up items-center gap-5 rounded-xl border px-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
                             todo.done
-                                ? 'border-[#3349D6] bg-[#3349D6] text-white'
-                                : 'border-slate-200 bg-slate-50/60 text-slate-800'
+                                ? 'border-tj-green bg-tj-green text-white'
+                                : todo.starred
+                                  ? 'border-tj-yellow bg-tj-yellow/20 text-slate-800'
+                                  : 'border-slate-200 bg-slate-50/60 text-slate-800'
                         }`}
                     >
                         <button
@@ -143,7 +153,7 @@ export default function TodoList() {
                                             : `Favoritar "${todo.text}"`
                                     }
                                     aria-pressed={todo.starred}
-                                    className={todo.starred ? 'text-amber-400' : 'text-slate-400 hover:text-amber-400'}
+                                    className={`transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-tj-orange' : 'text-slate-400 hover:text-tj-orange'}`}
                                 >
                                     <svg
                                         viewBox="0 0 24 24"
@@ -160,7 +170,7 @@ export default function TodoList() {
                                     type="button"
                                     onClick={() => removeTodo(todo.id)}
                                     aria-label={`Excluir "${todo.text}"`}
-                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-300 text-slate-400 hover:border-red-300 hover:text-red-400"
+                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-300 text-slate-400 hover:border-tj-orange hover:bg-tj-orange/10 hover:text-tj-orange"
                                 >
                                     <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
                                         <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
@@ -176,13 +186,13 @@ export default function TodoList() {
                 <input
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="Adicionar tarefa"
+                    placeholder="Ex.: Resolver a lista de exercícios"
                     aria-label="Nova tarefa"
-                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#3349D6] focus:ring-2 focus:ring-[#3349D6]/20"
+                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
                 />
                 <button
                     type="submit"
-                    className="h-12 rounded-xl bg-[#3349D6] px-6 text-sm font-semibold text-white hover:bg-[#2a3dbb]"
+                    className="h-12 rounded-xl bg-[#004A8F] px-6 text-sm font-semibold text-white transition active:scale-[0.97] hover:bg-[#003B73]"
                 >
                     Adicionar
                 </button>

@@ -1,5 +1,6 @@
 import api from './api';
-import { USE_MOCK, atraso, novoId } from './mock';
+import { USE_MOCK, atraso } from './mock';
+import { dataRelativa, ehVisitante, gravarLocal, lerLocal, novoIdLocal } from './visitante';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -36,14 +37,25 @@ function paraApi({ title, start, allDay }) {
   };
 }
 
-// --- dados em memória (só enquanto não há backend) ---
-// guarda já no formato do calendário (horário local)
-let eventos = [];
+// --- dados locais (sem backend, ou no modo visitante) ---
+// guardados já no formato do calendário (horário local) no localStorage
+const usaLocal = () => USE_MOCK || ehVisitante();
+
+const eventosIniciais = () =>
+  ehVisitante()
+    ? [
+        { id: novoIdLocal(), title: 'Prova de Matemática', start: dataRelativa(3, '08:00'), allDay: false },
+        { id: novoIdLocal(), title: 'Entregar trabalho de História', start: dataRelativa(5), allDay: true },
+        { id: novoIdLocal(), title: 'Revisão de Português', start: dataRelativa(1, '19:30'), allDay: false },
+      ]
+    : [];
+
+const lerEventos = () => lerLocal('eventos', eventosIniciais);
 
 export async function listar() {
-  if (USE_MOCK) {
-    await atraso();
-    return eventos.map((ev) => ({ ...ev }));
+  if (usaLocal()) {
+    await atraso(100);
+    return lerEventos();
   }
 
   const { data } = await api.get('/eventos');
@@ -51,10 +63,10 @@ export async function listar() {
 }
 
 export async function criar(evento) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    const novo = { id: novoId(), title: evento.title, start: evento.start, allDay: Boolean(evento.allDay) };
-    eventos = [...eventos, novo];
+    const novo = { id: novoIdLocal(), title: evento.title, start: evento.start, allDay: Boolean(evento.allDay) };
+    gravarLocal('eventos', [...lerEventos(), novo]);
     return { ...novo };
   }
 
@@ -63,10 +75,10 @@ export async function criar(evento) {
 }
 
 export async function atualizar(id, evento) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
     const atualizado = { id, title: evento.title, start: evento.start, allDay: Boolean(evento.allDay) };
-    eventos = eventos.map((ev) => (ev.id === id ? atualizado : ev));
+    gravarLocal('eventos', lerEventos().map((ev) => (ev.id === id ? atualizado : ev)));
     return { ...atualizado };
   }
 
@@ -75,9 +87,9 @@ export async function atualizar(id, evento) {
 }
 
 export async function remover(id) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    eventos = eventos.filter((ev) => ev.id !== id);
+    gravarLocal('eventos', lerEventos().filter((ev) => ev.id !== id));
     return;
   }
 

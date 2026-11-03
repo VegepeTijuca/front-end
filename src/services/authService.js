@@ -1,5 +1,9 @@
 import api from './api';
 
+import { USE_MOCK, erroApi } from './mock';
+import { USUARIO_VISITANTE, ehVisitante } from './visitante';
+
+
 export async function login(credenciais) {
   const { data } = await api.post('login', credenciais);
   localStorage.setItem('token', data.token);
@@ -13,26 +17,12 @@ export async function login(credenciais) {
 
 export async function registrar(dados) {
   const { data } = await api.post('users', dados);
-
-  // if (  ) {
-  //   return data.messages
-  // }
-
-  return data; 
-}
-
-// o token JWT do backend carrega { id } no meio (payload)
-function idDoToken() {
-  try {
-    const token = localStorage.getItem('token');
-    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.parse(atob(payload)).id ?? null;
-  } catch {
-    return null;
-  }
+  return data;
 }
 
 export async function perfil() {
+  if (ehVisitante()) return USUARIO_VISITANTE;
+
   const usuarioSalvo = localStorage.getItem('user');
   if (usuarioSalvo) {
     return JSON.parse(usuarioSalvo);

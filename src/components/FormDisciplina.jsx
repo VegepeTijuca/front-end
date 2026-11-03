@@ -16,7 +16,7 @@ export default function FormDisciplina({ onCriada }) {
       await criarDisciplinas(disciplina);
       setDisciplina({ name: '', descricao: '' });
       setStatus({ tipo: 'sucesso', texto: 'Disciplina cadastrada com sucesso!' });
-  onCriada?.();
+          onCriada?.();
     } catch (err) {
       setStatus({
         tipo: 'erro',
@@ -36,15 +36,15 @@ export default function FormDisciplina({ onCriada }) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-xl rounded-xl bg-white p-6 shadow-md sm:p-8">
-      <header className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Gerenciamento de Disciplinas</h2>
-        <p className="mt-1 text-sm text-gray-600">Cadastre uma disciplina e, se desejar, adicione uma descrição.</p>
+    <section className="mx-auto w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 sm:p-10">
+      <header className="mb-8 text-center">
+        <h2 className="text-3xl font-extrabold tracking-tight text-[#00264D]">Gerenciamento de Disciplinas</h2>
+        <p className="mt-2 text-sm leading-relaxed text-slate-500">Cadastre uma disciplina e, se desejar, adicione uma descrição.</p>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <label htmlFor={`${idBase}-name`} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={`${idBase}-name`} className="block text-sm font-semibold text-slate-900">
             Insira a disciplina
           </label>
           <input
@@ -55,13 +55,13 @@ export default function FormDisciplina({ onCriada }) {
             value={disciplina.name}
             onChange={handleChange}
             required
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
           />
         </div>
 
         <div className="space-y-2">
-          <label htmlFor={`${idBase}-descricao`} className="block text-sm font-medium text-gray-700">
-            Descrição <span className="font-normal text-gray-500">(opcional)</span>
+          <label htmlFor={`${idBase}-descricao`} className="block text-sm font-semibold text-slate-900">
+            Descrição <span className="font-normal text-slate-400">(opcional)</span>
           </label>
           <input
             type="text"
@@ -70,14 +70,18 @@ export default function FormDisciplina({ onCriada }) {
             placeholder="Descrição da disciplina"
             value={disciplina.descricao}
             onChange={handleChange}
-            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
           />
         </div>
 
         {status && (
           <p
             role={status.tipo === 'erro' ? 'alert' : 'status'}
-            className={`text-sm ${status.tipo === 'erro' ? 'text-red-600' : 'text-green-700'}`}
+            className={`rounded-2xl px-4 py-3 text-sm font-medium ring-1 ${
+              status.tipo === 'erro'
+                ? 'bg-tj-orange/10 text-[#A85A00] ring-tj-orange/25'
+                : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+            }`}
           >
             {status.texto}
           </p>
@@ -86,7 +90,7 @@ export default function FormDisciplina({ onCriada }) {
         <button
           type="submit"
           disabled={enviando}
-          className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          className="w-full mx-auto block rounded-2xl bg-[#004A8F] px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-[#004A8F]/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#004A8F] disabled:active:scale-100 sm:w-auto"
         >
           {enviando ? 'Cadastrando...' : 'Cadastrar Disciplina'}
         </button>

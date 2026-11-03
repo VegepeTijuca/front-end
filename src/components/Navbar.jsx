@@ -1,21 +1,21 @@
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import classmeLogo from '../assets/classme.svg';
+import Icone from './Icone';
+import { MENU } from '../data/ajuda';
 
 const mainItems = [
-  { label: 'Início', to: '/', end: true },
   { label: 'Visão Geral', to: '/dashboard' },
+  { label: 'Calendário', to: '/calendario' },
   { label: 'Disciplinas', to: '/disciplinas' },
 ];
 
-const siteItems = [
-  { label: 'Configurações', to: '/configuracoes' },
-  { label: 'Sobre', to: '/sobre' },
-];
+const siteItems = [{ label: 'Sobre', to: '/sobre' }];
 
 // links só para desenvolvimento: somem no build de produção
 const devItems = import.meta.env.DEV
   ? [
+      { label: 'Landing page', to: '/' },
       { label: 'Login', to: '/login' },
       { label: 'Cadastro', to: '/cadastro' },
       { label: 'Setup do usuário', to: '/setup-usuario' },
@@ -24,18 +24,27 @@ const devItems = import.meta.env.DEV
   : [];
 
 function NavItem({ label, to, end, onClick }) {
+  const info = MENU[to];
   return (
     <NavLink
       to={to}
       end={end}
       onClick={onClick}
+      title={info?.dica}
       className={({ isActive }) =>
-        `flex w-full items-center rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
-          isActive ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white'
+        `flex w-full items-center rounded-xl px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 hover:translate-x-1 border-l-4 ${
+          isActive ? 'border-tj-yellow bg-white/10 text-white' : 'border-transparent text-slate-300 hover:bg-white/5 hover:text-white'
         }`
       }
     >
-      {label}
+      {info && (
+        <span className="mr-3 shrink-0 opacity-80">
+          <Icone d={info.icone} />
+        </span>
+      )}
+      <span className="min-w-0">
+        <span className="block">{label}</span>
+      </span>
     </NavLink>
   );
 }
@@ -44,9 +53,9 @@ function Conteudo({ onNavegar }) {
   return (
     <>
       <NavLink
-        to="/"
+        to="/dashboard"
         onClick={onNavegar}
-        aria-label="Classme, ir para o início"
+        aria-label="Classme, ir para o painel"
         className="mb-6 flex w-full items-center justify-center gap-3"
       >
         <img src={classmeLogo} alt="Classme" className="h-20 w-auto" />
@@ -104,12 +113,12 @@ export default function Navbar({ aberto, onFechar }) {
 
       {/* celular: gaveta */}
       <div className="fixed inset-0 z-40 lg:hidden">
-        <div className="absolute inset-0 bg-slate-900/50" onClick={onFechar} aria-hidden="true" />
+        <div className="absolute inset-0 animate-fade-in bg-slate-900/50" onClick={onFechar} aria-hidden="true" />
         <aside
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] flex-col overflow-y-auto bg-navy p-6 text-white shadow-2xl"
+          className="absolute inset-y-0 left-0 flex animate-slide-in w-72 max-w-[85vw] flex-col overflow-y-auto bg-navy p-6 text-white shadow-2xl"
         >
           <button
             type="button"

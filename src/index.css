@@ -5,8 +5,57 @@
   --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
 
   /* cores da marca (use bg-brand, text-navy etc. nos próximos componentes) */
-  --color-brand: #3349D6;
-  --color-brand-dark: #2a3dbb;
-  --color-navy: #0A1F4D;
+  --color-brand: #004A8F;
+  --color-brand-dark: #003B73;
+  --color-navy: #00264D;
   --color-page: #F4F6FA;
+
+  /* paleta da Tijuca Alimentos (cores tiradas do logotipo; use bg-tj-green, text-tj-orange etc.)
+     significado no app: azul = ação principal, verde = concluído, laranja = hoje/atenção/erro,
+     amarelo = favorito/destaque */
+  --color-tj-blue: #004A8F;
+  --color-tj-yellow: #FFE800;
+  --color-tj-green: #00A651;
+  --color-tj-orange: #F49624;
+
+  /* animações: use como classe, ex.: className="animate-fade-up" */
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-pop: pop 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-slide-in: slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-float: float 10s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes slide-in {
+    from { transform: translateX(-100%); }
+    to { transform: none; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+}
+
+/* rolagem suave ao navegar por âncoras */
+html { scroll-behavior: smooth; }
+
+/* quem prefere menos movimento (configuração do sistema) não vê as animações */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

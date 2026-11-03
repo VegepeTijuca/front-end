@@ -1,5 +1,6 @@
 import api from './api';
-import { USE_MOCK, atraso, novoId } from './mock';
+import { USE_MOCK, atraso } from './mock';
+import { ehVisitante, gravarLocal, lerLocal, novoIdLocal } from './visitante';
 
 // AJUSTE AQUI: de/para entre o backend e o formato usado na tela.
 function deApi(t) {
@@ -11,13 +12,24 @@ function deApi(t) {
   };
 }
 
-// --- dados em memória (só enquanto não há backend) ---
-let tarefas = [];
+// --- dados locais (sem backend, ou no modo visitante) ---
+const usaLocal = () => USE_MOCK || ehVisitante();
+
+const tarefasIniciais = () =>
+  ehVisitante()
+    ? [
+        { id: novoIdLocal(), text: 'Resolver lista de exercícios de Matemática', done: false, starred: true },
+        { id: novoIdLocal(), text: 'Ler o capítulo 3 de História', done: false, starred: false },
+        { id: novoIdLocal(), text: 'Fazer resumo de Português', done: true, starred: false },
+      ]
+    : [];
+
+const lerTarefas = () => lerLocal('tarefas', tarefasIniciais);
 
 export async function listar() {
-  if (USE_MOCK) {
-    await atraso();
-    return tarefas.map((t) => ({ ...t }));
+  if (usaLocal()) {
+    await atraso(100);
+    return lerTarefas();
   }
 
   const { data } = await api.get('/tarefas');
@@ -25,10 +37,10 @@ export async function listar() {
 }
 
 export async function criar(text) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    const nova = { id: novoId(), text, done: false, starred: false };
-    tarefas = [...tarefas, nova];
+    const nova = { id: novoIdLocal(), text, done: false, starred: false };
+    gravarLocal('tarefas', [...lerTarefas(), nova]);
     return { ...nova };
   }
 
@@ -37,10 +49,11 @@ export async function criar(text) {
 }
 
 export async function atualizar(id, patch) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    tarefas = tarefas.map((t) => (t.id === id ? { ...t, ...patch } : t));
-    return { ...tarefas.find((t) => t.id === id) };
+    const lista = lerTarefas().map((t) => (t.id === id ? { ...t, ...patch } : t));
+    gravarLocal('tarefas', lista);
+    return { ...lista.find((t) => t.id === id) };
   }
 
   const { data } = await api.patch(`/tarefas/${id}`, patch);
@@ -48,9 +61,9 @@ export async function atualizar(id, patch) {
 }
 
 export async function remover(id) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    tarefas = tarefas.filter((t) => t.id !== id);
+    gravarLocal('tarefas', lerTarefas().filter((t) => t.id !== id));
     return;
   }
 
