@@ -75,7 +75,7 @@ export default function TodoList({ onMudou }) {
         <section className="rounded-[28px] bg-white px-6 py-8 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:px-10">
             <h2 className="text-3xl font-bold text-[#00264D]">To-Do List</h2>
             <p className="mb-5 mt-1 text-sm text-slate-500">
-                Marque o quadrado ao concluir. Use a estrela <span className="font-semibold text-tj-orange">★</span> para destacar o que é importante.
+                Marque o quadrado ao concluir. Use a estrela ★ para destacar o que é importante.
             </p>
 
             {erro && (
@@ -102,10 +102,8 @@ export default function TodoList({ onMudou }) {
                         style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}
                         className={`flex h-19 animate-fade-up items-center gap-5 rounded-xl border px-7 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md ${
                             todo.done
-                                ? 'border-tj-green bg-tj-green text-white'
-                                : todo.starred
-                                  ? 'border-tj-yellow bg-tj-yellow/20 text-slate-800'
-                                  : 'border-slate-200 bg-slate-50/60 text-slate-800'
+                                ? 'border-slate-300 bg-slate-100 text-slate-600'
+                                : 'border-slate-200 bg-slate-50/60 text-slate-800'
                         }`}
                     >
                         <button
@@ -119,7 +117,7 @@ export default function TodoList({ onMudou }) {
                             }
                             onClick={() => update(todo.id, { done: !todo.done })}
                             className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
-                                todo.done ? 'border-white/80 bg-transparent' : 'border-slate-200 bg-white'
+                                todo.done ? 'border-[#004A8F] bg-[#004A8F] text-white' : 'border-slate-400 bg-white'
                             }`}
                         >
                             {todo.done && (
@@ -129,14 +127,14 @@ export default function TodoList({ onMudou }) {
                             )}
                         </button>
 
-                        <span className="flex-1 truncate text-base font-semibold">{todo.text}</span>
+                        <span className={`flex-1 truncate text-base font-semibold ${todo.done ? 'line-through' : ''}`}>{todo.text}</span>
 
                         {todo.done ? (
                             <button
                                 type="button"
                                 onClick={() => removeTodo(todo.id)}
                                 aria-label={`Excluir "${todo.text}"`}
-                                className="grid h-8 w-14 place-items-center rounded-lg bg-white/25 text-white hover:bg-white/35"
+                                className="grid h-8 w-14 place-items-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50"
                             >
                                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
                                     <path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10M9 9v4M11 9v4" strokeLinecap="round" strokeLinejoin="round" />
@@ -153,7 +151,7 @@ export default function TodoList({ onMudou }) {
                                             : `Favoritar "${todo.text}"`
                                     }
                                     aria-pressed={todo.starred}
-                                    className={`transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-tj-orange' : 'text-slate-400 hover:text-tj-orange'}`}
+                                    className={`transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-[#00264D]' : 'text-slate-500 hover:text-[#00264D]'}`}
                                 >
                                     <svg
                                         viewBox="0 0 24 24"
@@ -170,7 +168,7 @@ export default function TodoList({ onMudou }) {
                                     type="button"
                                     onClick={() => removeTodo(todo.id)}
                                     aria-label={`Excluir "${todo.text}"`}
-                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-300 text-slate-400 hover:border-tj-orange hover:bg-tj-orange/10 hover:text-tj-orange"
+                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-400 text-slate-600 hover:bg-slate-100 hover:text-[#00264D]"
                                 >
                                     <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
                                         <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />

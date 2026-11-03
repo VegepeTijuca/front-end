@@ -14,6 +14,7 @@ import '@fullcalendar/react/themes/monarch/theme.css';
 import '@fullcalendar/react/themes/monarch/palettes/purple.css';
 
 import EventModal from '../components/EventModal';
+import { IconeCalendario, IconeCheck, IconeRelogio, IconeSino } from '../components/icones';
 import { atualizar, criar, listar, remover } from '../services/eventService';
 
 const PLUGINS = [themePlugin, dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin];
@@ -28,20 +29,14 @@ const VIEWS = [
 // horas no formato 24h (14:30) em todo o calendário
 const FORMATO_HORA = { hour: '2-digit', minute: '2-digit', hour12: false };
 
-// Cor do evento pela proximidade (paleta Tijuca):
-// cinza = já passou · laranja = hoje · azul = próximos 7 dias · verde = mais adiante
-const CORES = {
-    passado: '#94A3B8',
-    hoje: '#F49624',
-    proximo: '#004A8F',
-    adiante: '#00A651',
+// Todos os eventos têm a mesma cor. O que muda é o ícone (e o texto) de cada faixa de data.
+const COR_EVENTO = '#004A8F';
+const FAIXAS = {
+    hoje: { texto: 'Hoje', Icone: IconeSino },
+    proximo: { texto: 'Próximos 7 dias', Icone: IconeRelogio },
+    adiante: { texto: 'Mais adiante', Icone: IconeCalendario },
+    passado: { texto: 'Já passou', Icone: IconeCheck },
 };
-const LEGENDA = [
-    ['hoje', 'Hoje'],
-    ['proximo', 'Próximos 7 dias'],
-    ['adiante', 'Mais adiante'],
-    ['passado', 'Já passou'],
-];
 
 // O texto do evento quebra em várias linhas (em vez de ser cortado com "...").
 // O "!" no fim força a regra por cima do CSS do tema do calendário.
@@ -53,7 +48,6 @@ function classeDoEvento(info) {
     return [
         'cursor-pointer rounded-md transition duration-150 hover:brightness-95',
         'focus-visible:ring-2 focus-visible:ring-[#00264D] focus-visible:ring-offset-1',
-        info.isPast ? 'opacity-60 hover:opacity-100' : '',
     ].join(' ');
 }
 
@@ -61,8 +55,12 @@ function classeDoEvento(info) {
 function renderEvento({ event, timeText }) {
     const dica = timeText ? `${timeText} - ${event.title}` : `${event.title} (dia todo)`;
 
+    const { texto, Icone } = FAIXAS[faixaDaData(event.start)];
+
     return (
         <span title={dica} className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0 ${QUEBRA_TEXTO}`}>
+            <Icone className="h-3.5 w-3.5 shrink-0 self-center" />
+            <span className="sr-only">{texto}: </span>
             {timeText && <span className="shrink-0 text-[0.85em] font-bold tabular-nums opacity-90">{timeText}</span>}
             <span className="min-w-0 font-semibold">{event.title}</span>
         </span>
@@ -103,7 +101,7 @@ function rotuloDoDia(data) {
     return data.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-// qual faixa de cor (chave de CORES) uma data ocupa
+// qual faixa (chave de FAIXAS) uma data ocupa
 function faixaDaData(data) {
     const dias = Math.round((inicioDoDia(data) - inicioDoDia(new Date())) / 86400000);
     if (dias < 0) return 'passado';
@@ -132,10 +130,11 @@ function IconButton({ label, onClick, className = '', children }) {
 
 /* ------------------- painel lateral (página expandida) ------------------- */
 
-function Resumo({ rotulo, valor, cor }) {
+function Resumo({ rotulo, valor, Icone }) {
     return (
-        <div className="rounded-2xl bg-slate-50 px-4 py-3 text-center">
-            <p className="text-2xl font-bold tabular-nums" style={{ color: cor }}>{valor}</p>
+        <div className="flex flex-col items-center rounded-2xl bg-slate-50 px-4 py-3 text-center text-[#00264D]">
+            <Icone className="mb-1 h-5 w-5" />
+            <p className="text-2xl font-bold tabular-nums text-[#00264D]">{valor}</p>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{rotulo}</p>
         </div>
     );
@@ -162,9 +161,9 @@ function PainelEventos({ events, onAbrir, onNovo }) {
     return (
         <aside className="space-y-5 rounded-[28px] bg-white p-5 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:p-6">
             <div className="grid grid-cols-3 gap-3">
-                <Resumo rotulo="Hoje" valor={hoje} cor={CORES.hoje} />
-                <Resumo rotulo="7 dias" valor={semana} cor={CORES.proximo} />
-                <Resumo rotulo="Total" valor={events.length} cor={CORES.adiante} />
+                <Resumo rotulo="Hoje" valor={hoje} Icone={IconeSino} />
+                <Resumo rotulo="7 dias" valor={semana} Icone={IconeRelogio} />
+                <Resumo rotulo="Total" valor={events.length} Icone={IconeCalendario} />
             </div>
 
             <div>
@@ -191,8 +190,8 @@ function PainelEventos({ events, onAbrir, onNovo }) {
                                     className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 px-3 py-2.5 text-left transition hover:-translate-y-0.5 hover:border-[#004A8F]/40 hover:bg-[#004A8F]/5 hover:shadow-sm"
                                 >
                                     <span
-                                        style={{ background: CORES[faixaDaData(data)] }}
-                                        className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-center leading-none text-white"
+                                        aria-hidden="true"
+                                        className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#00264D] text-center leading-none text-white"
                                     >
                                         <span>
                                             <span className="block text-base font-bold">{data.getDate()}</span>
@@ -203,7 +202,7 @@ function PainelEventos({ events, onAbrir, onNovo }) {
                                     </span>
                                     <span className="min-w-0">
                                         <span className="block break-words text-sm font-semibold leading-snug text-slate-800">{ev.title}</span>
-                                        <span className="block text-xs text-slate-500">
+                                        <span className="block text-xs text-slate-600">
                                             {rotuloDoDia(data)} · {ev.allDay ? 'Dia todo' : `${pad(data.getHours())}:${pad(data.getMinutes())}`}
                                         </span>
                                     </span>
@@ -214,15 +213,15 @@ function PainelEventos({ events, onAbrir, onNovo }) {
                 )}
             </div>
 
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                {LEGENDA.map(([chave, rotulo]) => (
-                    <span key={chave} className="inline-flex items-center gap-1.5">
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: CORES[chave] }} /> {rotulo}
-                    </span>
+            <ul className="space-y-1 text-xs text-slate-600">
+                {Object.values(FAIXAS).map(({ texto, Icone }) => (
+                    <li key={texto} className="flex items-center gap-2">
+                        <Icone className="h-3.5 w-3.5" /> {texto}
+                    </li>
                 ))}
-            </div>
+            </ul>
 
-            <p className="text-xs leading-relaxed text-slate-400">
+            <p className="text-xs leading-relaxed text-slate-600">
                 Dica: clique em um dia para criar um evento e arraste um evento para mudar a data.
             </p>
         </aside>
@@ -378,7 +377,7 @@ export default function Calendario({ expandido = false, onMudou }) {
 
     // acrescenta a cor de cada evento sem mexer nos dados salvos
     const eventosColoridos = useMemo(
-        () => events.map((ev) => ({ ...ev, color: CORES[faixaDaData(paraData(ev.start))] })),
+        () => events.map((ev) => ({ ...ev, color: COR_EVENTO })),
         [events]
     );
 

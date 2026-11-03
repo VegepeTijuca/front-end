@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Icone from './Icone';
-import { ICONES } from '../data/ajuda';
+import { IconeAjuda, IconeSair, IconeUsuario } from './icones';
 
 export default function Header({ user, visitante = false, navAberto, onAlternarMenu, onSair, onAbrirTour }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
@@ -85,7 +84,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             onClick={() => setMenuAberto(false)}
                             className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <Icone d={ICONES.engrenagem} className="h-4 w-4 text-[#004A8F]" />
+                            <IconeUsuario className="h-4 w-4 shrink-0" />
                             Perfil e configurações
                         </Link>
                         <button
@@ -97,7 +96,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             }}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <Icone d={ICONES.ajuda} className="h-4 w-4 text-[#004A8F]" />
+                            <IconeAjuda className="h-4 w-4 shrink-0" />
                             Como usar o clʌss.me
                         </button>
                         <button
@@ -106,7 +105,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             onClick={onSair}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <Icone d={ICONES.sair} className="h-4 w-4 text-slate-500" />
+                            <IconeSair className="h-4 w-4 shrink-0" />
                             {visitante ? 'Sair do modo visitante' : 'Sair'}
                         </button>
                     </div>

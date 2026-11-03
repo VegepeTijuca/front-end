@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listarTimers } from '../services/presetService';
 import { TIMERS_SUGERIDOS } from '../data/presets';
+import { IconeCheck, IconePausa, IconePlay } from './icones';
 import {
   atualizarSessao,
   buscarSessaoAtiva,
@@ -26,7 +27,7 @@ function emMinutos(min) {
   return d.toISOString().slice(0, 16);
 }
 
-function Contador({ ms, cor }) {
+function Contador({ ms }) {
   const unidades = [
     { label: 'dias', valor: Math.floor(ms / 86400000) },
     { label: 'horas', valor: Math.floor((ms / 3600000) % 24) },
@@ -41,7 +42,7 @@ function Contador({ ms, cor }) {
           key={label}
           className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="text-3xl font-bold tabular-nums transition-colors duration-500 sm:text-4xl" style={{ color: cor }}>
+          <div className="text-3xl font-bold tabular-nums text-[#00264D] sm:text-4xl">
             {String(valor).padStart(2, '0')}
           </div>
           <div className="mt-1 text-xs font-medium uppercase tracking-wider text-slate-500">
@@ -233,7 +234,6 @@ export default function Timer() {
     setPausaDepois(0);
   }
 
-  const corDoTimer = finalizado ? '#00A651' : pausado ? '#F49624' : '#004A8F';
 
   const dataFinal = iniciado
     ? new Date(fim).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })
@@ -345,21 +345,21 @@ export default function Timer() {
         </form>
       ) : (
         <div className="space-y-7">
-          {/* cor do estado: azul = em andamento, laranja = pausado, verde = concluído */}
+          {/* o estado aparece escrito; a cor não muda com ele */}
           <div className="flex justify-center">
             <span
-              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-500"
-              style={{ background: corDoTimer }}
+              role="status"
+              className="inline-flex items-center gap-2 rounded-full bg-[#00264D] px-4 py-1.5 text-sm font-semibold text-white"
             >
-              <span className={`h-2 w-2 rounded-full bg-white ${!pausado && !finalizado ? 'animate-pulse' : ''}`} />
+              {finalizado ? <IconeCheck className="h-4 w-4" /> : pausado ? <IconePausa className="h-4 w-4" /> : <IconePlay className="h-4 w-4" />}
               {finalizado ? 'Concluído' : pausado ? 'Pausado' : 'Em andamento'}
             </span>
           </div>
 
-          <Contador ms={restante} cor={corDoTimer} />
+          <Contador ms={restante} />
 
           {finalizado && (
-            <p role="status" className="animate-pop text-center font-semibold text-tj-green">
+            <p role="status" className="animate-pop text-center font-semibold text-slate-800">
               Sessão concluída! Bom trabalho.
             </p>
           )}
@@ -369,7 +369,7 @@ export default function Timer() {
               <button
                 type="button"
                 onClick={iniciarPausa}
-                className="rounded-xl border border-tj-green px-5 py-2.5 text-sm font-semibold text-[#007a3d] hover:bg-tj-green/10 active:scale-[0.98]"
+                className="rounded-xl border border-[#004A8F] px-5 py-2.5 text-sm font-semibold text-[#004A8F] hover:bg-[#004A8F]/5 active:scale-[0.98]"
               >
                 Começar a pausa de {pausaDepois} min
               </button>
@@ -384,7 +384,7 @@ export default function Timer() {
                 className={`rounded-xl px-5 py-3 font-semibold transition active:scale-[0.98] focus:outline-none focus:ring-4 ${
                   pausado
                     ? 'bg-[#004A8F] text-white hover:bg-[#003B73] focus:ring-[#004A8F]/20'
-                    : 'border border-tj-orange bg-white text-[#b86a05] hover:bg-tj-orange/10 focus:ring-tj-orange/25'
+                    : 'border border-[#004A8F] bg-white text-[#004A8F] hover:bg-[#004A8F]/5 focus:ring-[#004A8F]/20'
                 }`}
               >
                 {pausado ? 'Retomar' : 'Pausar'}
