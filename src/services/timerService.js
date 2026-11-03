@@ -1,5 +1,6 @@
 import api from './api';
-import { USE_MOCK, atraso, novoId } from './mock';
+import { USE_MOCK, atraso } from './mock';
+import { ehVisitante, gravarLocal, lerLocal, novoIdLocal } from './visitante';
 
 // AJUSTE AQUI: de/para entre o backend e o formato usado na tela.
 // fim: ISO no backend, milissegundos na tela. restante: milissegundos.
@@ -13,15 +14,17 @@ function deApi(s) {
   };
 }
 
-// --- dados em memória (só enquanto não há backend) ---
-// guarda já no formato da tela (fim em milissegundos)
-let sessaoMock = null;
+// --- dados locais (sem backend, ou no modo visitante) ---
+// guardados já no formato da tela (fim em milissegundos)
+const usaLocal = () => USE_MOCK || ehVisitante();
+const lerSessao = () => lerLocal('sessao', () => null);
 
 // devolve a sessão em andamento ou null se não houver
 export async function buscarSessaoAtiva() {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    return sessaoMock ? { ...sessaoMock } : null;
+    const sessao = lerSessao();
+    return sessao ? { ...sessao } : null;
   }
 
   try {
@@ -34,10 +37,11 @@ export async function buscarSessaoAtiva() {
 }
 
 export async function criarSessao({ nome, fim }) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    sessaoMock = { id: novoId(), nome, fim, pausado: false, restante: 0 };
-    return { ...sessaoMock };
+    const sessao = { id: novoIdLocal(), nome, fim, pausado: false, restante: 0 };
+    gravarLocal('sessao', sessao);
+    return { ...sessao };
   }
 
   const { data } = await api.post('/sessoes', { nome, fim: new Date(fim).toISOString() });
@@ -45,10 +49,14 @@ export async function criarSessao({ nome, fim }) {
 }
 
 export async function atualizarSessao(id, patch) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    if (sessaoMock?.id === id) sessaoMock = { ...sessaoMock, ...patch };
-    return sessaoMock ? { ...sessaoMock } : null;
+    let sessao = lerSessao();
+    if (sessao?.id === id) {
+      sessao = { ...sessao, ...patch };
+      gravarLocal('sessao', sessao);
+    }
+    return sessao ? { ...sessao } : null;
   }
 
   const corpo = { ...patch };
@@ -58,9 +66,9 @@ export async function atualizarSessao(id, patch) {
 }
 
 export async function removerSessao(id) {
-  if (USE_MOCK) {
+  if (usaLocal()) {
     await atraso(100);
-    if (sessaoMock?.id === id) sessaoMock = null;
+    if (lerSessao()?.id === id) gravarLocal('sessao', null);
     return;
   }
 

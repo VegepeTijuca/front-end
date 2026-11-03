@@ -1,13 +1,18 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AuthProvider from './context/AuthProvider';
 import AppLayout from './components/AppLayout';
+import RotaPrivada from './components/RotaPrivada';
 import PaginaInicial from './pages/PaginaInicial';
 import Dashboard from './pages/Dashboard';
+import CalendarioPagina from './pages/CalendarioPagina';
 import SetupUsuario from './pages/SetupUsuario';
 import Login from './pages/PaginaLogin';
 import Cadastro from './pages/PaginaCadastro';
 import Disciplina from './pages/Disciplina';
 import EmBreve from './pages/EmBreve';
+import Configuracoes from './pages/Configuracoes';
+import Sobre from './pages/Sobre';
+import RecuperarSenha from './pages/RecuperarSenha';
 import TesteComponents from './pages/TesteComponents';
 
 export default function App() {
@@ -15,20 +20,29 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<PaginaInicial />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/disciplinas" element={<Disciplina />} />
-            <Route path="/testeComponents" element={<TesteComponents titulo="TesteComponents" />} />
-            <Route path="/configuracoes" element={<EmBreve titulo="Configurações" />} />
-            <Route path="/sobre" element={<EmBreve titulo="Sobre" />} />
-          </Route>
-
-          <Route path="/setup-usuario" element={<SetupUsuario />} />
-
+          {/* públicas: landing page, login e cadastro */}
+          <Route path="/" element={<PaginaInicial />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
-          <Route path="/recuperar-senha" element={<EmBreve titulo="Recuperar senha" tela />} />
+          <Route path="/recuperar-senha" element={<RecuperarSenha />} />
+
+          {/* só para quem está logado */}
+          <Route element={<RotaPrivada />}>
+            <Route path="/setup-usuario" element={<SetupUsuario />} />
+
+            <Route element={<AppLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/calendario" element={<CalendarioPagina />} />
+              <Route path="/disciplinas" element={<Disciplina />} />
+              <Route path="/configuracoes" element={<Configuracoes />} />
+              <Route path="/sobre" element={<Sobre />} />
+
+              {/* página de testes: só existe em desenvolvimento */}
+              {import.meta.env.DEV && (
+                <Route path="/testeComponents" element={<TesteComponents />} />
+              )}
+            </Route>
+          </Route>
 
           <Route path="*" element={<EmBreve titulo="Página não encontrada" tela />} />
         </Routes>

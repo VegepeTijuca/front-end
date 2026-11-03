@@ -2,16 +2,13 @@ import { useId, useState } from 'react';
 import { criarConteudos } from '../services/conteudoService';
 
 const campoClasses =
-    'block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
+    'block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm outline-none transition focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20';
 
-export default function FormConteudo() {
+export default function FormConteudo({ disciplinaId, onCriado }) {
     const idBase = useId();
-    const [dadosConteudo, setDadosConteudo] = useState({
-        name: '',
-        descricao: '',
-    });
+    const [dadosConteudo, setDadosConteudo] = useState({ name: '', descricao: '' });
     const [enviando, setEnviando] = useState(false);
-    const [status, setStatus] = useState(null); // null | { tipo: 'sucesso' | 'erro', texto }
+    const [status, setStatus] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,13 +21,15 @@ export default function FormConteudo() {
         setStatus(null);
 
         try {
-            await criarConteudos(dadosConteudo);
-            setDadosConteudo({ name: '', descricao: '', dataConclusao: '' });
+            await criarConteudos({ ...dadosConteudo, disciplinaId });
+            setDadosConteudo({ name: '', descricao: '' });   // mesmas chaves do state inicial
             setStatus({ tipo: 'sucesso', texto: 'Conteúdo criado com sucesso!' });
+            onCriado?.();   // avisa o card para recarregar a lista
         } catch (err) {
+            const erro = err.response?.data?.error;
             setStatus({
                 tipo: 'erro',
-                texto: err.response?.data?.message ?? 'Não foi possível criar o conteúdo.',
+                texto: (typeof erro === 'string' ? erro : erro?.message) ?? 'Não foi possível criar o conteúdo.',
             });
         } finally {
             setEnviando(false);
@@ -76,7 +75,7 @@ export default function FormConteudo() {
             {status && (
                 <p
                     role={status.tipo === 'erro' ? 'alert' : 'status'}
-                    className={`text-sm ${status.tipo === 'erro' ? 'text-red-600' : 'text-green-700'}`}
+                    className={`text-sm ${status.tipo === 'erro' ? 'text-[#A85A00]' : 'text-green-700'}`}
                 >
                     {status.texto}
                 </p>
@@ -85,7 +84,7 @@ export default function FormConteudo() {
             <button
                 type="submit"
                 disabled={enviando}
-                className="w-full rounded-lg bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-lg bg-[#004A8F] px-4 py-2.5 font-medium text-white transition hover:bg-[#003B73] focus:outline-none focus:ring-2 focus:ring-[#004A8F] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {enviando ? 'Criando...' : 'Criar conteúdo'}
             </button>
