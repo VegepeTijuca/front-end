@@ -14,7 +14,7 @@ import '@fullcalendar/react/themes/monarch/theme.css';
 import '@fullcalendar/react/themes/monarch/palettes/purple.css';
 
 import EventModal from '../components/EventModal';
-import { IconeCalendario, IconeCheck, IconeRelogio, IconeSino } from '../components/icones';
+import { Calendar, CircleCheck, Clock, Bell } from 'lucide-react';
 import { atualizar, criar, listar, remover } from '../services/eventService';
 
 const PLUGINS = [themePlugin, dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin];
@@ -32,10 +32,10 @@ const FORMATO_HORA = { hour: '2-digit', minute: '2-digit', hour12: false };
 // Todos os eventos têm a mesma cor. O que muda é o ícone (e o texto) de cada faixa de data.
 const COR_EVENTO = '#004A8F';
 const FAIXAS = {
-    hoje: { texto: 'Hoje', Icone: IconeSino },
-    proximo: { texto: 'Próximos 7 dias', Icone: IconeRelogio },
-    adiante: { texto: 'Mais adiante', Icone: IconeCalendario },
-    passado: { texto: 'Já passou', Icone: IconeCheck },
+    hoje: { texto: 'Hoje', Icone: Bell },
+    proximo: { texto: 'Próximos 7 dias', Icone: Clock },
+    adiante: { texto: 'Mais adiante', Icone: Calendar },
+    passado: { texto: 'Já passou', Icone: CircleCheck },
 };
 
 // O texto do evento quebra em várias linhas (em vez de ser cortado com "...").
@@ -161,9 +161,9 @@ function PainelEventos({ events, onAbrir, onNovo }) {
     return (
         <aside className="space-y-5 rounded-[28px] bg-white p-5 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:p-6">
             <div className="grid grid-cols-3 gap-3">
-                <Resumo rotulo="Hoje" valor={hoje} Icone={IconeSino} />
-                <Resumo rotulo="7 dias" valor={semana} Icone={IconeRelogio} />
-                <Resumo rotulo="Total" valor={events.length} Icone={IconeCalendario} />
+                <Resumo rotulo="Hoje" valor={hoje} Icone={Bell} />
+                <Resumo rotulo="7 dias" valor={semana} Icone={Clock} />
+                <Resumo rotulo="Total" valor={events.length} Icone={Calendar} />
             </div>
 
             <div>

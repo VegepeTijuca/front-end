@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import FormDisciplina from "../components/FormDisciplina";
 import CardDisciplina from "../components/CardDisciplina";
 import CabecalhoPagina from "../components/CabecalhoPagina";
-import { IconeLivro } from "../components/icones";
+import { BookOpen } from 'lucide-react';
 import { getListaDisciplinas } from "../services/disciplinaService";
 
 // cores que se repetem entre as disciplinas (paleta Tijuca)
@@ -50,7 +50,7 @@ export default function Disciplina() {
       {!carregando && !erro && disciplinas.length === 0 && (
         <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
           <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-[#004A8F]/10 text-[#004A8F]">
-            <IconeLivro className="h-6 w-6" />
+            <BookOpen className="h-6 w-6" />
           </span>
           <p className="mt-3 font-semibold text-slate-800">Nenhuma disciplina ainda</p>
           <p className="mx-auto mt-1 max-w-sm text-sm text-slate-500">

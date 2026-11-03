@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { listarTimers } from '../services/presetService';
 import { TIMERS_SUGERIDOS } from '../data/presets';
-import { IconeCheck, IconePausa, IconePlay } from './icones';
+import { CircleCheck, Pause, Play } from 'lucide-react';
 import {
   atualizarSessao,
   buscarSessaoAtiva,
@@ -351,7 +351,7 @@ export default function Timer() {
               role="status"
               className="inline-flex items-center gap-2 rounded-full bg-[#00264D] px-4 py-1.5 text-sm font-semibold text-white"
             >
-              {finalizado ? <IconeCheck className="h-4 w-4" /> : pausado ? <IconePausa className="h-4 w-4" /> : <IconePlay className="h-4 w-4" />}
+              {finalizado ? <CircleCheck className="h-4 w-4" /> : pausado ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
               {finalizado ? 'Concluído' : pausado ? 'Pausado' : 'Em andamento'}
             </span>
           </div>
