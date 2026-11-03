@@ -48,13 +48,13 @@ export default function Inicio() {
   return (
     <div className="min-h-screen bg-[#F4F6FA] font-['Nunito',sans-serif] text-slate-800">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <p className="text-3xl font-extrabold tracking-tight text-[#3349D6]">clʌss.me</p>
+        <p className="text-3xl font-extrabold tracking-tight text-[#004A8F]">clʌss.me</p>
 
         <nav aria-label="Acesso" className="flex items-center gap-2">
           {autenticado ? (
             <Link
               to="/dashboard"
-              className="rounded-xl bg-[#3349D6] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2a3dbb]"
+              className="rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#003B73]"
             >
               Ir para o painel
             </Link>
@@ -62,13 +62,13 @@ export default function Inicio() {
             <>
               <Link
                 to="/login"
-                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#0A1F4D] hover:bg-white"
+                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-[#00264D] hover:bg-white"
               >
                 Entrar
               </Link>
               <Link
                 to="/cadastro"
-                className="rounded-xl bg-[#3349D6] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#2a3dbb]"
+                className="rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#003B73]"
               >
                 Criar conta
               </Link>
@@ -80,22 +80,26 @@ export default function Inicio() {
       <main>
         {/* hero */}
         <section className="mx-auto max-w-6xl px-3 sm:px-6">
-          <div className="rounded-4xl bg-[radial-gradient(circle_at_60%_18%,rgba(191,219,254,0.75),transparent_42%),radial-gradient(ellipse_at_55%_62%,#38bdf8,transparent_58%),linear-gradient(165deg,#3349D6,#1c2aa8_55%,#141d85)] px-6 py-16 text-center text-white sm:px-12 sm:py-24">
-            <span className="inline-block rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur">
+          <div className="relative overflow-hidden rounded-4xl bg-[linear-gradient(165deg,#004A8F,#00356B_55%,#00264D)] px-6 py-16 text-center text-white sm:px-12 sm:py-24">
+            {/* círculos decorativos que flutuam devagar */}
+            <div aria-hidden="true" className="pointer-events-none absolute -left-16 top-10 h-56 w-56 animate-float rounded-full bg-white/5" />
+            <div aria-hidden="true" className="pointer-events-none absolute -right-10 bottom-8 h-72 w-72 animate-float rounded-full bg-white/5 [animation-delay:-3s]" />
+
+            <span className="relative inline-block animate-fade-up rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur">
               Seus estudos, organizados
             </span>
-            <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">
+            <h1 style={{ animationDelay: '80ms' }} className="relative mx-auto mt-6 max-w-3xl animate-fade-up text-4xl font-semibold leading-tight tracking-tight sm:text-6xl">
               Organize seus estudos e mantenha o foco
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-lg text-white/85">
+            <p style={{ animationDelay: '160ms' }} className="relative mx-auto mt-5 max-w-2xl animate-fade-up text-lg text-white/85">
               Calendário, timer, tarefas e disciplinas em um só lugar, para você gastar menos tempo
               se organizando e mais tempo aprendendo.
             </p>
 
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div style={{ animationDelay: '240ms' }} className="relative mt-9 flex animate-fade-up flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 to={autenticado ? '/dashboard' : '/cadastro'}
-                className="rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#3349D6] shadow-lg hover:bg-slate-100"
+                className="rounded-xl bg-white px-7 py-3.5 text-sm font-bold text-[#004A8F] shadow-md transition hover:bg-slate-100 active:scale-[0.98]"
               >
                 {autenticado ? 'Ir para o painel' : 'Começar agora, é grátis'}
               </Link>
@@ -118,20 +122,21 @@ export default function Inicio() {
 
         {/* recursos */}
         <section className="mx-auto max-w-6xl px-6 py-20" aria-labelledby="titulo-recursos">
-          <h2 id="titulo-recursos" className="text-center text-3xl font-bold text-[#0A1F4D]">
+          <h2 id="titulo-recursos" className="text-center text-3xl font-bold text-[#00264D]">
             Tudo o que você precisa para estudar melhor
           </h2>
 
           <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {recursos.map((r) => (
+            {recursos.map((r, i) => (
               <li
                 key={r.titulo}
-                className="rounded-[28px] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.08)]"
+                style={{ animationDelay: `${i * 90}ms` }}
+                className="animate-fade-up rounded-[28px] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(15,23,42,0.10)]"
               >
-                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#3349D6]/10 text-[#3349D6]">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-[#004A8F]/10 text-[#004A8F]">
                   <Icone d={r.icone} />
                 </span>
-                <h3 className="mt-5 text-lg font-bold text-[#0A1F4D]">{r.titulo}</h3>
+                <h3 className="mt-5 text-lg font-bold text-[#00264D]">{r.titulo}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">{r.texto}</p>
               </li>
             ))}
@@ -140,18 +145,22 @@ export default function Inicio() {
 
         {/* como funciona */}
         <section className="mx-auto max-w-6xl px-6 pb-20" aria-labelledby="titulo-passos">
-          <h2 id="titulo-passos" className="text-center text-3xl font-bold text-[#0A1F4D]">
+          <h2 id="titulo-passos" className="text-center text-3xl font-bold text-[#00264D]">
             Como funciona
           </h2>
 
           <ol className="mt-10 grid gap-5 md:grid-cols-3">
             {passos.map((p, i) => (
-              <li key={p.titulo} className="flex gap-4 rounded-[28px] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.08)]">
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#3349D6] font-bold text-white">
+              <li
+                key={p.titulo}
+                style={{ animationDelay: `${i * 90}ms` }}
+                className="flex animate-fade-up gap-4 rounded-[28px] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(15,23,42,0.10)]"
+              >
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#004A8F] font-bold text-white">
                   {i + 1}
                 </span>
                 <div>
-                  <h3 className="font-bold text-[#0A1F4D]">{p.titulo}</h3>
+                  <h3 className="font-bold text-[#00264D]">{p.titulo}</h3>
                   <p className="mt-1 text-sm text-slate-600">{p.texto}</p>
                 </div>
               </li>

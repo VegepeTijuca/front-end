@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import FullCalendar, { useCalendarController } from '@fullcalendar/react';
 import themePlugin from '@fullcalendar/react/themes/monarch';
 import dayGridPlugin from '@fullcalendar/react/daygrid';
@@ -24,7 +25,53 @@ const VIEWS = [
     { type: 'listWeek', label: 'Lista' },
 ];
 
+// horas no formato 24h (14:30) em todo o calendário
+const FORMATO_HORA = { hour: '2-digit', minute: '2-digit', hour12: false };
+
+// Cor do evento pela proximidade (paleta Tijuca):
+// cinza = já passou · laranja = hoje · azul = próximos 7 dias · verde = mais adiante
+const CORES = {
+    passado: '#94A3B8',
+    hoje: '#F49624',
+    proximo: '#004A8F',
+    adiante: '#00A651',
+};
+const LEGENDA = [
+    ['hoje', 'Hoje'],
+    ['proximo', 'Próximos 7 dias'],
+    ['adiante', 'Mais adiante'],
+    ['passado', 'Já passou'],
+];
+
+// O texto do evento quebra em várias linhas (em vez de ser cortado com "...").
+// O "!" no fim força a regra por cima do CSS do tema do calendário.
+const QUEBRA_TEXTO = 'whitespace-normal! break-words! text-left leading-snug';
+
+// Visual de cada evento: hover/foco bem marcados e eventos passados mais apagados.
+// (função fora do componente para a referência ficar estável)
+function classeDoEvento(info) {
+    return [
+        'cursor-pointer rounded-md transition duration-150 hover:brightness-95',
+        'focus-visible:ring-2 focus-visible:ring-[#00264D] focus-visible:ring-offset-1',
+        info.isPast ? 'opacity-60 hover:opacity-100' : '',
+    ].join(' ');
+}
+
+// Conteúdo do evento: horário + título completo, e o texto inteiro no tooltip (passar o mouse).
+function renderEvento({ event, timeText }) {
+    const dica = timeText ? `${timeText} - ${event.title}` : `${event.title} (dia todo)`;
+
+    return (
+        <span title={dica} className={`flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0 ${QUEBRA_TEXTO}`}>
+            {timeText && <span className="shrink-0 text-[0.85em] font-bold tabular-nums opacity-90">{timeText}</span>}
+            <span className="min-w-0 font-semibold">{event.title}</span>
+        </span>
+    );
+}
+
 /* ---------------------------- helpers ---------------------------- */
+
+const pad = (n) => String(n).padStart(2, '0');
 
 // 'YYYY-MM-DD' (ou 'YYYY-MM-DDTHH:mm') -> { date, time }
 function splitDateStr(str) {
@@ -33,9 +80,37 @@ function splitDateStr(str) {
 
 const todayStr = () => {
     const d = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
+
+// 'YYYY-MM-DD' ou 'YYYY-MM-DDTHH:mm' -> Date no horário local
+function paraData(str) {
+    const [ano, mes, dia] = str.slice(0, 10).split('-').map(Number);
+    const [hora, minuto] = str.length > 10 ? str.slice(11, 16).split(':').map(Number) : [0, 0];
+    return new Date(ano, mes - 1, dia, hora, minuto);
+}
+
+const inicioDoDia = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+// altura do calendário na página expandida: ocupa a tela, com um mínimo confortável
+const alturaExpandida = () => Math.max(560, window.innerHeight - 230);
+
+// "Hoje", "Amanhã" ou "sex., 14 de nov."
+function rotuloDoDia(data) {
+    const dias = Math.round((inicioDoDia(data) - inicioDoDia(new Date())) / 86400000);
+    if (dias === 0) return 'Hoje';
+    if (dias === 1) return 'Amanhã';
+    return data.toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+// qual faixa de cor (chave de CORES) uma data ocupa
+function faixaDaData(data) {
+    const dias = Math.round((inicioDoDia(data) - inicioDoDia(new Date())) / 86400000);
+    if (dias < 0) return 'passado';
+    if (dias === 0) return 'hoje';
+    if (dias <= 7) return 'proximo';
+    return 'adiante';
+}
 
 /* ----------------------------- botões ---------------------------- */
 
@@ -46,7 +121,7 @@ function IconButton({ label, onClick, className = '', children }) {
             onClick={onClick}
             aria-label={label}
             title={label}
-            className={`h-9 w-9 place-items-center rounded-lg bg-slate-100 text-lg font-bold leading-none text-[#0A1F4D] transition-colors hover:bg-slate-200 ${
+            className={`h-9 w-9 place-items-center rounded-lg bg-slate-100 text-lg font-bold leading-none text-[#00264D] transition hover:bg-slate-200 active:scale-90 ${
                 className || 'grid'
             }`}
         >
@@ -55,7 +130,109 @@ function IconButton({ label, onClick, className = '', children }) {
     );
 }
 
-export default function Calendario() {
+/* ------------------- painel lateral (página expandida) ------------------- */
+
+function Resumo({ rotulo, valor, cor }) {
+    return (
+        <div className="rounded-2xl bg-slate-50 px-4 py-3 text-center">
+            <p className="text-2xl font-bold tabular-nums" style={{ color: cor }}>{valor}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{rotulo}</p>
+        </div>
+    );
+}
+
+function PainelEventos({ events, onAbrir, onNovo }) {
+    const { hoje, semana, proximos } = useMemo(() => {
+        const comeco = inicioDoDia(new Date());
+        const fimDaSemana = new Date(comeco);
+        fimDaSemana.setDate(fimDaSemana.getDate() + 7);
+
+        const futuros = events
+            .map((ev) => ({ ev, data: paraData(ev.start) }))
+            .filter(({ data }) => data >= comeco)
+            .sort((a, b) => a.data - b.data);
+
+        return {
+            hoje: futuros.filter(({ data }) => inicioDoDia(data) - comeco === 0).length,
+            semana: futuros.filter(({ data }) => data < fimDaSemana).length,
+            proximos: futuros.slice(0, 8),
+        };
+    }, [events]);
+
+    return (
+        <aside className="space-y-5 rounded-[28px] bg-white p-5 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:p-6">
+            <div className="grid grid-cols-3 gap-3">
+                <Resumo rotulo="Hoje" valor={hoje} cor={CORES.hoje} />
+                <Resumo rotulo="7 dias" valor={semana} cor={CORES.proximo} />
+                <Resumo rotulo="Total" valor={events.length} cor={CORES.adiante} />
+            </div>
+
+            <div>
+                <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-slate-500">Próximos eventos</h3>
+
+                {proximos.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 px-4 py-8 text-center">
+                        <p className="text-sm text-slate-500">Nenhum evento por vir.</p>
+                        <button
+                            type="button"
+                            onClick={onNovo}
+                            className="mt-3 text-sm font-semibold text-[#004A8F] hover:underline"
+                        >
+                            Criar um evento
+                        </button>
+                    </div>
+                ) : (
+                    <ul className="space-y-2">
+                        {proximos.map(({ ev, data }, i) => (
+                            <li key={ev.id} className="animate-fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+                                <button
+                                    type="button"
+                                    onClick={() => onAbrir(ev.id)}
+                                    className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 px-3 py-2.5 text-left transition hover:-translate-y-0.5 hover:border-[#004A8F]/40 hover:bg-[#004A8F]/5 hover:shadow-sm"
+                                >
+                                    <span
+                                        style={{ background: CORES[faixaDaData(data)] }}
+                                        className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-center leading-none text-white"
+                                    >
+                                        <span>
+                                            <span className="block text-base font-bold">{data.getDate()}</span>
+                                            <span className="block text-[10px] font-semibold uppercase">
+                                                {data.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')}
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span className="min-w-0">
+                                        <span className="block break-words text-sm font-semibold leading-snug text-slate-800">{ev.title}</span>
+                                        <span className="block text-xs text-slate-500">
+                                            {rotuloDoDia(data)} · {ev.allDay ? 'Dia todo' : `${pad(data.getHours())}:${pad(data.getMinutes())}`}
+                                        </span>
+                                    </span>
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                {LEGENDA.map(([chave, rotulo]) => (
+                    <span key={chave} className="inline-flex items-center gap-1.5">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ background: CORES[chave] }} /> {rotulo}
+                    </span>
+                ))}
+            </div>
+
+            <p className="text-xs leading-relaxed text-slate-400">
+                Dica: clique em um dia para criar um evento e arraste um evento para mudar a data.
+            </p>
+        </aside>
+    );
+}
+
+/* ---------------------------- calendário ---------------------------- */
+
+// expandido = true: versão da página /calendario (maior, com painel de próximos eventos)
+export default function Calendario({ expandido = false, onMudou }) {
     const controller = useCalendarController();
 
     // no celular, começa na lista da semana (mais legível que a grade do mês)
@@ -64,10 +241,12 @@ export default function Calendario() {
     );
 
     const [events, setEvents] = useState([]);
+    const [carregando, setCarregando] = useState(true);
     const [modal, setModal] = useState(null); // null | { id?, title, date, time }
     const [erroLista, setErroLista] = useState('');
     const [erroModal, setErroModal] = useState('');
     const [salvando, setSalvando] = useState(false);
+    const [altura, setAltura] = useState(alturaExpandida);
 
     // carrega os eventos do backend
     useEffect(() => {
@@ -79,6 +258,9 @@ export default function Calendario() {
             })
             .catch(() => {
                 if (!cancelado) setErroLista('Não foi possível carregar os eventos.');
+            })
+            .finally(() => {
+                if (!cancelado) setCarregando(false);
             });
 
         return () => {
@@ -86,17 +268,24 @@ export default function Calendario() {
         };
     }, []);
 
-    /* ---- interações do calendário ---- */
+    // na página expandida, a altura acompanha o tamanho da janela
+    useEffect(() => {
+        if (!expandido) return;
+        const aoRedimensionar = () => setAltura(alturaExpandida());
+        window.addEventListener('resize', aoRedimensionar);
+        return () => window.removeEventListener('resize', aoRedimensionar);
+    }, [expandido]);
 
-    const handleDateClick = useCallback((info) => {
-        const { date, time } = splitDateStr(info.dateStr);
+    /* ---- abrir o modal ---- */
+
+    const novoEvento = useCallback((date = todayStr(), time = '') => {
         setErroModal('');
         setModal({ title: '', date, time });
     }, []);
 
-    const handleEventClick = useCallback(
-        (info) => {
-            const found = events.find((ev) => ev.id === info.event.id);
+    const abrirEvento = useCallback(
+        (id) => {
+            const found = events.find((ev) => ev.id === id);
             if (!found) return;
             const { date, time } = splitDateStr(found.start);
             setErroModal('');
@@ -104,6 +293,44 @@ export default function Calendario() {
         },
         [events]
     );
+
+    /* ---- interações do calendário ---- */
+
+    const handleDateClick = useCallback(
+        (info) => {
+            const { date, time } = splitDateStr(info.dateStr);
+            novoEvento(date, time);
+        },
+        [novoEvento]
+    );
+
+    const handleEventClick = useCallback((info) => abrirEvento(info.event.id), [abrirEvento]);
+
+    // arrastar um evento para outro dia/horário: salva no servidor e desfaz se der erro
+    async function handleEventDrop(info) {
+        const original = events.find((ev) => ev.id === info.event.id);
+        if (!original) {
+            info.revert();
+            return;
+        }
+
+        const allDay = info.event.allDay;
+        const start = allDay ? info.event.startStr.slice(0, 10) : info.event.startStr.slice(0, 16);
+        const anteriores = events;
+
+        setErroLista('');
+        setEvents((list) => list.map((ev) => (ev.id === original.id ? { ...ev, start, allDay } : ev)));
+
+        try {
+            const atualizado = await atualizar(original.id, { title: original.title, start, allDay });
+            setEvents((list) => list.map((ev) => (ev.id === original.id ? atualizado : ev)));
+            onMudou?.();
+        } catch {
+            info.revert();
+            setEvents(anteriores);
+            setErroLista('Não foi possível mover o evento.');
+        }
+    }
 
     /* ---- salvar / excluir ---- */
 
@@ -122,6 +349,7 @@ export default function Calendario() {
                 setEvents((list) => [...list, novo]);
             }
             setModal(null);
+            onMudou?.();
         } catch {
             setErroModal('Não foi possível salvar o evento. Tente novamente.');
         } finally {
@@ -136,6 +364,7 @@ export default function Calendario() {
             await remover(id);
             setEvents((list) => list.filter((ev) => ev.id !== id));
             setModal(null);
+            onMudou?.();
         } catch {
             setErroModal('Não foi possível excluir o evento. Tente novamente.');
         } finally {
@@ -147,95 +376,131 @@ export default function Calendario() {
 
     const activeView = controller.view?.type;
 
+    // acrescenta a cor de cada evento sem mexer nos dados salvos
+    const eventosColoridos = useMemo(
+        () => events.map((ev) => ({ ...ev, color: CORES[faixaDaData(paraData(ev.start))] })),
+        [events]
+    );
+
     return (
-        <section className="min-w-0 overflow-hidden rounded-[28px] bg-white p-4 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:p-6">
-            {/* linha 1: título + navegação */}
-            <div className="mb-3 flex items-center justify-between gap-3">
-                <h2 className="min-w-0 truncate text-lg font-bold capitalize text-[#0A1F4D]">
-                    {controller.view?.title}
-                </h2>
+        <div className={expandido ? 'grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_340px]' : 'min-w-0'}>
+            <section className="min-w-0 overflow-hidden rounded-[28px] bg-white p-4 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:p-6">
+                {/* linha 1: título + navegação */}
+                <div className="mb-3 flex items-center justify-between gap-3">
+                    <h2 className="min-w-0 truncate text-lg font-bold capitalize text-[#00264D]">
+                        {controller.view?.title}
+                    </h2>
 
-                <div className="flex shrink-0 items-center gap-1.5">
-                    <IconButton label="Ano anterior" onClick={() => controller.prevYear()} className="hidden sm:grid">
-                        «
-                    </IconButton>
-                    <IconButton label="Anterior" onClick={() => controller.prev()}>
-                        ‹
-                    </IconButton>
-                    <button
-                        type="button"
-                        onClick={() => controller.today()}
-                        className="h-9 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#0A1F4D] transition-colors hover:bg-slate-200"
-                    >
-                        Hoje
-                    </button>
-                    <IconButton label="Próximo" onClick={() => controller.next()}>
-                        ›
-                    </IconButton>
-                    <IconButton label="Próximo ano" onClick={() => controller.nextYear()} className="hidden sm:grid">
-                        »
-                    </IconButton>
-                </div>
-            </div>
-
-            {/* linha 2: ir para data + visualização + novo evento */}
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-                <input
-                    type="date"
-                    aria-label="Ir para a data"
-                    onChange={(e) => e.target.value && controller.gotoDate(e.target.value)}
-                    className="h-9 rounded-lg border border-slate-200 px-2 text-sm text-slate-700 outline-none focus:border-[#3349D6]"
-                />
-
-                <div className="flex rounded-lg bg-slate-100 p-0.5">
-                    {VIEWS.map((v) => (
+                    <div className="flex shrink-0 items-center gap-1.5">
+                        <IconButton label="Ano anterior" onClick={() => controller.prevYear()} className="hidden sm:grid">
+                            «
+                        </IconButton>
+                        <IconButton label="Anterior" onClick={() => controller.prev()}>
+                            ‹
+                        </IconButton>
                         <button
-                            key={v.type}
                             type="button"
-                            onClick={() => controller.changeView(v.type)}
-                            aria-pressed={activeView === v.type}
-                            className={`h-8 rounded-md px-3 text-sm font-semibold transition-colors ${
-                                v.desktopOnly ? 'hidden sm:block' : ''
-                            } ${
-                                activeView === v.type
-                                    ? 'bg-[#0A1F4D] text-white'
-                                    : 'text-slate-600 hover:text-[#0A1F4D]'
-                            }`}
+                            onClick={() => controller.today()}
+                            className="h-9 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95"
                         >
-                            {v.label}
+                            Hoje
                         </button>
-                    ))}
+                        <IconButton label="Próximo" onClick={() => controller.next()}>
+                            ›
+                        </IconButton>
+                        <IconButton label="Próximo ano" onClick={() => controller.nextYear()} className="hidden sm:grid">
+                            »
+                        </IconButton>
+                    </div>
                 </div>
 
-                <button
-                    type="button"
-                    onClick={() => setModal({ title: '', date: todayStr(), time: '' })}
-                    className="ml-auto h-9 rounded-lg bg-[#3349D6] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#2a3dbb]"
-                >
-                    + Novo evento
-                </button>
-            </div>
+                {/* linha 2: ir para data + visualização + expandir + novo evento */}
+                <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <input
+                        type="date"
+                        aria-label="Ir para a data"
+                        onChange={(e) => e.target.value && controller.gotoDate(e.target.value)}
+                        className="h-9 rounded-lg border border-slate-200 px-2 text-sm text-slate-700 outline-none transition focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                    />
 
-            {erroLista && (
-                <p role="alert" className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
-                    {erroLista}
-                </p>
-            )}
+                    <div className="flex rounded-lg bg-slate-100 p-0.5">
+                        {VIEWS.map((v) => (
+                            <button
+                                key={v.type}
+                                type="button"
+                                onClick={() => controller.changeView(v.type)}
+                                aria-pressed={activeView === v.type}
+                                className={`h-8 rounded-md px-3 text-sm font-semibold transition-all duration-200 ${
+                                    v.desktopOnly ? 'hidden sm:block' : ''
+                                } ${
+                                    activeView === v.type
+                                        ? 'bg-[#00264D] text-white shadow-sm'
+                                        : 'text-slate-600 hover:text-[#00264D]'
+                                }`}
+                            >
+                                {v.label}
+                            </button>
+                        ))}
+                    </div>
 
-            <FullCalendar
-                controller={controller}
-                plugins={PLUGINS}
-                locale={ptBrLocale}
-                initialView={initialView}
-                headerToolbar={false}
-                navLinks
-                nowIndicator
-                dayMaxEvents={3}
-                height="auto"
-                events={events}
-                dateClick={handleDateClick}
-                eventClick={handleEventClick}
-            />
+                    <div className="ml-auto flex items-center gap-2">
+                        {!expandido && (
+                            <Link
+                                to="/calendario"
+                                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95"
+                            >
+                                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                                    <path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                Expandir
+                            </Link>
+                        )}
+                        <button
+                            type="button"
+                            onClick={() => novoEvento()}
+                            className="h-9 rounded-lg bg-[#004A8F] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#003B73] active:scale-95"
+                        >
+                            + Novo evento
+                        </button>
+                    </div>
+                </div>
+
+                {erroLista && (
+                    <p role="alert" className="mb-4 animate-pop rounded-xl bg-tj-orange/10 px-4 py-3 text-sm text-[#A85A00]">
+                        {erroLista}
+                    </p>
+                )}
+
+                <div className={`transition-opacity duration-300 ${carregando ? 'opacity-60' : 'opacity-100'}`}>
+                    <FullCalendar
+                        controller={controller}
+                        plugins={PLUGINS}
+                        locale={ptBrLocale}
+                        initialView={initialView}
+                        headerToolbar={false}
+                        navLinks
+                        nowIndicator
+                        editable
+                        eventDurationEditable={false}
+                        fixedWeekCount={false}
+                        // expandido: mostra quantos eventos couberem na caixa do dia e o resto vira "+ mais"
+                        dayMaxEvents={expandido ? true : 3}
+                        height={expandido ? altura : 'auto'}
+                        scrollTime="07:00:00"
+                        eventTimeFormat={FORMATO_HORA}
+                        slotLabelFormat={FORMATO_HORA}
+                        events={eventosColoridos}
+                        eventClass={classeDoEvento}
+                        eventInnerClass={QUEBRA_TEXTO}
+                        eventContent={renderEvento}
+                        dateClick={handleDateClick}
+                        eventClick={handleEventClick}
+                        eventDrop={handleEventDrop}
+                    />
+                </div>
+            </section>
+
+            {expandido && <PainelEventos events={events} onAbrir={abrirEvento} onNovo={() => novoEvento()} />}
 
             {modal && (
                 // key remonta o formulário quando troca o evento aberto
@@ -249,6 +514,6 @@ export default function Calendario() {
                     salvando={salvando}
                 />
             )}
-        </section>
+        </div>
     );
 }

@@ -7,7 +7,7 @@ const botaoPequeno =
     "rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60";
 
 // onAlterada: avisa a página para recarregar a lista depois de editar ou excluir
-export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onAlterada }) {
+export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor = "#004A8F", onAlterada }) {
     const [formConteudoAberto, setFormConteudoAberto] = useState(false);
     const [versao, setVersao] = useState(0);
 
@@ -59,7 +59,10 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onA
     }
 
     return (
-        <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div
+            style={{ borderLeftColor: cor }}
+            className="rounded-lg border border-l-4 border-gray-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
+        >
             {editando ? (
                 <form onSubmit={salvarEdicao} className="space-y-3">
                     <input
@@ -67,20 +70,20 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onA
                         onChange={(e) => setNome(e.target.value)}
                         aria-label="Nome da disciplina"
                         required
-                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-indigo-500"
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-[#004A8F]"
                     />
                     <input
                         value={desc}
                         onChange={(e) => setDesc(e.target.value)}
                         aria-label="Descrição da disciplina"
                         placeholder="Descrição (opcional)"
-                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-indigo-500"
+                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-[#004A8F]"
                     />
                     <div className="flex gap-2">
                         <button
                             type="submit"
                             disabled={salvando}
-                            className={`${botaoPequeno} bg-indigo-600 text-white hover:bg-indigo-700`}
+                            className={`${botaoPequeno} bg-[#004A8F] text-white hover:bg-[#003B73]`}
                         >
                             {salvando ? "Salvando..." : "Salvar"}
                         </button>
@@ -96,19 +99,22 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onA
             ) : (
                 <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                        <h2 className="text-lg font-semibold">{nomeDisciplina}</h2>
+                        <h2 className="flex items-center gap-2 text-lg font-semibold text-[#00264D]">
+                            <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: cor }} aria-hidden="true" />
+                            {nomeDisciplina}
+                        </h2>
                         {descricao && <p className="text-sm text-gray-500">{descricao}</p>}
                     </div>
 
                     <div className="flex shrink-0 items-center gap-1">
                         {confirmandoExclusao ? (
                             <>
-                                <span className="text-sm text-gray-600">Excluir?</span>
+                                <span className="text-sm text-gray-600">Excluir com os conteúdos?</span>
                                 <button
                                     type="button"
                                     onClick={excluir}
                                     disabled={salvando}
-                                    className={`${botaoPequeno} bg-red-600 text-white hover:bg-red-700`}
+                                    className={`${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
                                 >
                                     Sim
                                 </button>
@@ -125,14 +131,16 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onA
                                 <button
                                     type="button"
                                     onClick={abrirEdicao}
-                                    className={`${botaoPequeno} text-indigo-600 hover:bg-indigo-50`}
+                                    title="Mudar nome e descrição"
+                                    className={`${botaoPequeno} text-[#004A8F] hover:bg-[#004A8F]/5`}
                                 >
                                     Editar
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setConfirmandoExclusao(true)}
-                                    className={`${botaoPequeno} text-red-600 hover:bg-red-50`}
+                                    title="Apaga a disciplina e os conteúdos dela"
+                                    className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                                 >
                                     Excluir
                                 </button>
@@ -143,15 +151,15 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", onA
             )}
 
             {erro && (
-                <p role="alert" className="mt-2 text-sm text-red-600">
+                <p role="alert" className="mt-2 text-sm text-[#A85A00]">
                     {erro}
                 </p>
             )}
 
-            <ListaConteudos disciplinaId={id} versao={versao} />
+            <ListaConteudos disciplinaId={id} versao={versao} cor={cor} />
 
             <button
-                className="mt-3 rounded bg-amber-500 px-3 py-2 text-white hover:bg-amber-600"
+                className="mt-3 rounded-lg bg-[#004A8F] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98]"
                 onClick={() => setFormConteudoAberto(!formConteudoAberto)}
             >
                 Adicionar conteúdo

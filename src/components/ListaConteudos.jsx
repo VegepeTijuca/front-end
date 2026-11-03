@@ -4,7 +4,7 @@ import { atualizarConteudo, getListaConteudos, removerConteudo } from '../servic
 const botaoPequeno = 'rounded px-2 py-1 text-xs font-semibold transition-colors disabled:opacity-60';
 
 // "versao" muda quando um conteúdo novo é criado, e isso refaz a busca
-export default function ListaConteudos({ disciplinaId, versao = 0 }) {
+export default function ListaConteudos({ disciplinaId, versao = 0, cor = '#004A8F' }) {
     const [conteudos, setConteudos] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState(null);
@@ -65,12 +65,12 @@ export default function ListaConteudos({ disciplinaId, versao = 0 }) {
     }
 
     if (carregando) return <p className="mt-3 text-sm text-gray-500">Carregando...</p>;
-    if (erro) return <p role="alert" className="mt-3 text-sm text-red-600">{erro}</p>;
+    if (erro) return <p role="alert" className="mt-3 text-sm text-[#A85A00]">{erro}</p>;
     if (conteudos.length === 0) return <p className="mt-3 text-sm text-gray-500">Nenhum conteúdo ainda.</p>;
 
     return (
         <>
-            <ul className="listaConteudos mt-3 space-y-1 rounded bg-amber-100 p-3">
+            <ul className="listaConteudos mt-3 space-y-1 rounded-lg bg-slate-50 p-3">
                 {conteudos.map((c) => (
                     <li key={c.id} className="flex items-center justify-between gap-2">
                         {editandoId === c.id ? (
@@ -80,23 +80,26 @@ export default function ListaConteudos({ disciplinaId, versao = 0 }) {
                                     value={nomeEditado}
                                     onChange={(e) => setNomeEditado(e.target.value)}
                                     aria-label="Título do conteúdo"
-                                    className="min-w-0 flex-1 rounded border border-amber-300 bg-white px-2 py-1 text-sm outline-none focus:border-amber-500"
+                                    className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm outline-none focus:border-[#004A8F]"
                                 />
-                                <button type="submit" disabled={salvando} className={`${botaoPequeno} bg-amber-500 text-white hover:bg-amber-600`}>
+                                <button type="submit" disabled={salvando} className={`${botaoPequeno} bg-[#004A8F] text-white hover:bg-[#003B73]`}>
                                     Salvar
                                 </button>
-                                <button type="button" onClick={() => setEditandoId(null)} className={`${botaoPequeno} text-gray-600 hover:bg-amber-200`}>
+                                <button type="button" onClick={() => setEditandoId(null)} className={`${botaoPequeno} text-gray-600 hover:bg-slate-200`}>
                                     Cancelar
                                 </button>
                             </form>
                         ) : (
                             <>
-                                <span className="min-w-0 flex-1 truncate">{c.name}</span>
+                                <span className="flex min-w-0 flex-1 items-start gap-2 break-words">
+                                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: cor }} aria-hidden="true" />
+                                    {c.name}
+                                </span>
                                 <span className="flex shrink-0 gap-1">
-                                    <button type="button" onClick={() => comecarEdicao(c)} className={`${botaoPequeno} text-indigo-700 hover:bg-amber-200`}>
+                                    <button type="button" onClick={() => comecarEdicao(c)} className={`${botaoPequeno} text-[#004A8F] hover:bg-slate-200`}>
                                         Editar
                                     </button>
-                                    <button type="button" onClick={() => excluir(c)} disabled={salvando} className={`${botaoPequeno} text-red-700 hover:bg-amber-200`}>
+                                    <button type="button" onClick={() => excluir(c)} disabled={salvando} className={`${botaoPequeno} text-slate-600 hover:bg-slate-200`}>
                                         Excluir
                                     </button>
                                 </span>
@@ -105,7 +108,7 @@ export default function ListaConteudos({ disciplinaId, versao = 0 }) {
                     </li>
                 ))}
             </ul>
-            {erroAcao && <p role="alert" className="mt-2 text-sm text-red-600">{erroAcao}</p>}
+            {erroAcao && <p role="alert" className="mt-2 text-sm text-[#A85A00]">{erroAcao}</p>}
         </>
     );
 }

@@ -4,6 +4,7 @@ import AppLayout from './components/AppLayout';
 import RotaPrivada from './components/RotaPrivada';
 import PaginaInicial from './pages/PaginaInicial';
 import Dashboard from './pages/Dashboard';
+import CalendarioPagina from './pages/CalendarioPagina';
 import SetupUsuario from './pages/SetupUsuario';
 import Login from './pages/PaginaLogin';
 import Cadastro from './pages/PaginaCadastro';
@@ -31,6 +32,7 @@ export default function App() {
 
             <Route element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/calendario" element={<CalendarioPagina />} />
               <Route path="/disciplinas" element={<Disciplina />} />
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/sobre" element={<Sobre />} />

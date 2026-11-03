@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { listarTimers } from '../services/presetService';
+import { TIMERS_SUGERIDOS } from '../data/presets';
 import {
   atualizarSessao,
   buscarSessaoAtiva,
@@ -16,7 +19,14 @@ function agoraParaInput() {
   return d.toISOString().slice(0, 16);
 }
 
-function Contador({ ms }) {
+// 'YYYY-MM-DDTHH:mm' de "agora + N minutos", no horário local
+function emMinutos(min) {
+  const d = new Date(Date.now() + min * 60000);
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().slice(0, 16);
+}
+
+function Contador({ ms, cor }) {
   const unidades = [
     { label: 'dias', valor: Math.floor(ms / 86400000) },
     { label: 'horas', valor: Math.floor((ms / 3600000) % 24) },
@@ -29,9 +39,9 @@ function Contador({ ms }) {
       {unidades.map(({ label, valor }) => (
         <div
           key={label}
-          className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm"
+          className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="text-3xl font-bold tabular-nums text-indigo-600 sm:text-4xl">
+          <div className="text-3xl font-bold tabular-nums transition-colors duration-500 sm:text-4xl" style={{ color: cor }}>
             {String(valor).padStart(2, '0')}
           </div>
           <div className="mt-1 text-xs font-medium uppercase tracking-wider text-slate-500">
@@ -53,6 +63,10 @@ export default function Timer() {
   const [finalizado, setFinalizado] = useState(false);
   const [erro, setErro] = useState('');
   const [aviso, setAviso] = useState('');
+  const [timers, setTimers] = useState([]); // timers salvos em Preferências
+  const [escolhido, setEscolhido] = useState(null); // id ou chave do timer usado
+  const [pausaDepois, setPausaDepois] = useState(0); // minutos de pausa depois do foco
+  const padraoAplicado = useRef(false);
 
   // promessa com o id da sessão no servidor (null se não existe ou se falhou)
   const sessaoRef = useRef(Promise.resolve(null));
@@ -85,6 +99,33 @@ export default function Timer() {
       cancelado = true;
     };
   }, []);
+
+  // timers salvos: se houver um padrão, já deixa o formulário preenchido com ele
+  useEffect(() => {
+    let cancelado = false;
+    listarTimers()
+      .then((lista) => !cancelado && setTimers(lista))
+      .catch(() => {});
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (padraoAplicado.current || carregando || iniciado) return;
+    const padrao = timers.find((t) => t.padrao);
+    if (!padrao) return;
+    padraoAplicado.current = true;
+    usarTimer(padrao);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timers, carregando, iniciado]);
+
+  // preenche o formulário com um timer (salvo ou sugerido)
+  function usarTimer(t) {
+    setEscolhido(t.id ?? t.chave);
+    setData(emMinutos(t.foco));
+    setPausaDepois(t.pausa ?? 0);
+  }
 
   // contagem regressiva
   useEffect(() => {
@@ -135,8 +176,10 @@ export default function Timer() {
       setErro('Escolha uma data e hora no futuro.');
       return;
     }
+    comecar(nome.trim(), alvo);
+  }
 
-    const nomeLimpo = nome.trim();
+  function comecar(nomeLimpo, alvo) {
     setErro('');
     setNome(nomeLimpo);
     setFim(alvo);
@@ -153,6 +196,15 @@ export default function Timer() {
         setAviso(AVISO_SYNC);
         return null;
       });
+  }
+
+  // depois do foco: troca a sessão pela pausa do timer escolhido
+  function iniciarPausa() {
+    const min = pausaDepois;
+    sincronizar((id) => removerSessao(id));
+    sessaoRef.current = sessaoRef.current.then(() => null);
+    setPausaDepois(0);
+    comecar('Pausa', Date.now() + min * 60000);
   }
 
   function pausar() {
@@ -177,22 +229,32 @@ export default function Timer() {
     setRestante(0);
     setNome('');
     setData('');
+    setEscolhido(null);
+    setPausaDepois(0);
   }
+
+  const corDoTimer = finalizado ? '#00A651' : pausado ? '#F49624' : '#004A8F';
 
   const dataFinal = iniciado
     ? new Date(fim).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })
     : '';
 
   return (
-    <section className="mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-lg shadow-slate-200/60 sm:p-8">
+    <section className="mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-8">
       <header className="mb-8 text-center">
-        <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">
+        <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#004A8F]">
           Sessão de estudo
         </p>
         <h2 className="text-3xl font-bold tracking-tight text-slate-900">
           {iniciado ? nome : 'Timer de estudo'}
         </h2>
-        {iniciado && <p className="mt-2 text-sm text-slate-500">Até {dataFinal}</p>}
+        {iniciado ? (
+          <p className="mt-2 text-sm text-slate-500">Até {dataFinal}</p>
+        ) : (
+          <p className="mt-2 text-sm text-slate-500">
+            Diga o que vai estudar e até quando quer focar. A contagem regressiva começa ao iniciar.
+          </p>
+        )}
       </header>
 
       {aviso && (
@@ -206,6 +268,35 @@ export default function Timer() {
       ) : !iniciado ? (
         <form className="space-y-5" onSubmit={iniciar}>
           <div>
+            <p className="mb-2 flex items-baseline justify-between gap-2 text-sm font-medium text-slate-700">
+              {timers.length > 0 ? 'Seus timers' : 'Duração rápida'}
+              <Link to="/configuracoes#timers" className="text-xs font-semibold text-[#004A8F] hover:underline">
+                {timers.length > 0 ? 'Editar' : 'Salvar os seus'}
+              </Link>
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {(timers.length > 0 ? timers : TIMERS_SUGERIDOS).map((t) => {
+                const ativo = escolhido === (t.id ?? t.chave);
+                return (
+                  <button
+                    key={t.id ?? t.chave}
+                    type="button"
+                    onClick={() => usarTimer(t)}
+                    aria-pressed={ativo}
+                    className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition active:scale-95 ${
+                      ativo
+                        ? 'border-[#004A8F] bg-[#004A8F] text-white'
+                        : 'border-slate-300 bg-white text-slate-700 hover:border-[#004A8F]/50'
+                    }`}
+                  >
+                    {t.nome} <span className={ativo ? 'text-white/70' : 'text-slate-400'}>{t.foco} min</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
             <label htmlFor="timer-titulo" className="mb-2 block text-sm font-medium text-slate-700">
               Objetivo de estudo
             </label>
@@ -216,7 +307,7 @@ export default function Timer() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               required
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-4 focus:ring-[#004A8F]/10"
             />
           </div>
 
@@ -229,33 +320,60 @@ export default function Timer() {
               type="datetime-local"
               min={agoraParaInput()}
               value={data}
-              onChange={(e) => setData(e.target.value)}
+              onChange={(e) => {
+                setData(e.target.value);
+                setEscolhido(null);
+                setPausaDepois(0);
+              }}
               required
-              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#004A8F] focus:ring-4 focus:ring-[#004A8F]/10"
             />
           </div>
 
           {erro && (
-            <p role="alert" className="text-sm text-red-600">
+            <p role="alert" className="text-sm text-[#A85A00]">
               {erro}
             </p>
           )}
 
           <button
             type="submit"
-            className="w-full rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-md shadow-indigo-200 transition hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+            className="w-full rounded-xl bg-[#004A8F] px-5 py-3 font-semibold text-white shadow-sm transition active:scale-[0.98] hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-[#004A8F]/20"
           >
             Iniciar estudos
           </button>
         </form>
       ) : (
         <div className="space-y-7">
-          <Contador ms={restante} />
+          {/* cor do estado: azul = em andamento, laranja = pausado, verde = concluído */}
+          <div className="flex justify-center">
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold text-white transition-colors duration-500"
+              style={{ background: corDoTimer }}
+            >
+              <span className={`h-2 w-2 rounded-full bg-white ${!pausado && !finalizado ? 'animate-pulse' : ''}`} />
+              {finalizado ? 'Concluído' : pausado ? 'Pausado' : 'Em andamento'}
+            </span>
+          </div>
+
+          <Contador ms={restante} cor={corDoTimer} />
 
           {finalizado && (
-            <p role="status" className="text-center font-semibold text-indigo-600">
+            <p role="status" className="animate-pop text-center font-semibold text-tj-green">
               Sessão concluída! Bom trabalho.
             </p>
+          )}
+
+          {finalizado && pausaDepois > 0 && (
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={iniciarPausa}
+                className="rounded-xl border border-tj-green px-5 py-2.5 text-sm font-semibold text-[#007a3d] hover:bg-tj-green/10 active:scale-[0.98]"
+              >
+                Começar a pausa de {pausaDepois} min
+              </button>
+            </div>
           )}
 
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
@@ -263,7 +381,11 @@ export default function Timer() {
               <button
                 type="button"
                 onClick={pausado ? retomar : pausar}
-                className="rounded-xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                className={`rounded-xl px-5 py-3 font-semibold transition active:scale-[0.98] focus:outline-none focus:ring-4 ${
+                  pausado
+                    ? 'bg-[#004A8F] text-white hover:bg-[#003B73] focus:ring-[#004A8F]/20'
+                    : 'border border-tj-orange bg-white text-[#b86a05] hover:bg-tj-orange/10 focus:ring-tj-orange/25'
+                }`}
               >
                 {pausado ? 'Retomar' : 'Pausar'}
               </button>
@@ -271,7 +393,7 @@ export default function Timer() {
             <button
               type="button"
               onClick={encerrar}
-              className="rounded-xl bg-slate-900 px-5 py-3 font-semibold text-white transition hover:bg-slate-700 focus:outline-none focus:ring-4 focus:ring-slate-300"
+              className="rounded-xl bg-[#00264D] px-5 py-3 font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-[#00264D]/25"
             >
               Encerrar sessão
             </button>

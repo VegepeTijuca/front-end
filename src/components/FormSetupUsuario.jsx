@@ -2,77 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { salvarPreferencias } from '../services/usuarioService';
 
-/*
- * Perguntas do setup. Para adicionar/editar uma pergunta, mexa só neste array.
- *
- * - "api: true"  -> a resposta é enviada para a API (salvarPreferencias).
- *                   Mantenha o "valor" igual ao que o backend espera.
- * - "api: false" -> a resposta ainda NÃO tem rota na API: fica salva só neste navegador
- *                   (localStorage). Quando o backend tiver o campo, troque para "api: true".
- */
-const perguntas = [
-    {
-        id: 'area',
-        api: true,
-        titulo: 'O que você gostaria de estudar?',
-        ajuda: 'Escolha a área principal. Você pode estudar outras coisas depois.',
-        opcoes: [
-            { valor: 'Tecnologia', emoji: '💻', descricao: 'Programação, dados, redes e mais' },
-            { valor: 'Idiomas', emoji: '🌎', descricao: 'Inglês, espanhol, japonês...' },
-            { valor: 'Negócios', emoji: '📈', descricao: 'Gestão, finanças e empreendedorismo' },
-            { valor: 'Desenvolvimento pessoal', emoji: '🌱', descricao: 'Hábitos, foco e carreira' },
-            { valor: 'Outro', emoji: '✨', descricao: 'Conte para a gente o que é' },
-        ],
-    },
-    {
-        id: 'objetivo',
-        api: false,
-        titulo: 'Qual é o seu objetivo agora?',
-        ajuda: 'Isso ajuda a entender o que você quer alcançar.',
-        opcoes: [
-            { valor: 'Passar em uma prova', emoji: '🎯', descricao: 'Vestibular, concurso, certificação' },
-            { valor: 'Ir bem na escola ou faculdade', emoji: '🎓', descricao: 'Acompanhar as matérias do dia a dia' },
-            { valor: 'Mudar ou crescer na carreira', emoji: '🚀', descricao: 'Aprender algo novo para o trabalho' },
-            { valor: 'Aprender por curiosidade', emoji: '🔍', descricao: 'Sem pressão, no meu ritmo' },
-        ],
-    },
-    {
-        id: 'estilo',
-        api: true,
-        titulo: 'Como você prefere aprender?',
-        ajuda: 'Pense no jeito em que você aprende mais rápido.',
-        opcoes: [
-            { valor: 'Vídeos', emoji: '🎬', descricao: 'Aulas e tutoriais em vídeo' },
-            { valor: 'Textos', emoji: '📖', descricao: 'Livros, artigos e resumos' },
-            { valor: 'Exercícios práticos', emoji: '🛠️', descricao: 'Aprender fazendo' },
-            { valor: 'Um pouco de cada', emoji: '🔀', descricao: 'Misturar formatos' },
-        ],
-    },
-    {
-        id: 'tempo',
-        api: true,
-        titulo: 'Quanto tempo você pode estudar por dia?',
-        ajuda: 'Seja realista: é melhor pouco todo dia do que muito de vez em quando.',
-        opcoes: [
-            { valor: 'Até 15 minutos', emoji: '⚡', descricao: 'Sessões rápidas' },
-            { valor: 'De 15 a 30 minutos', emoji: '☕', descricao: 'O tempo de um café' },
-            { valor: 'De 30 a 60 minutos', emoji: '⏱️', descricao: 'Uma sessão de foco' },
-            { valor: 'Mais de 1 hora', emoji: '🔥', descricao: 'Estudo profundo' },
-        ],
-    },
-    {
-        id: 'periodo',
-        api: false,
-        titulo: 'Em que período do dia você rende mais?',
-        ajuda: 'Vamos usar isso para sugerir bons horários de estudo.',
-        opcoes: [
-            { valor: 'Manhã', emoji: '🌅', descricao: 'Antes do meio-dia' },
-            { valor: 'Tarde', emoji: '☀️', descricao: 'Do almoço até o fim da tarde' },
-            { valor: 'Noite', emoji: '🌙', descricao: 'Depois do jantar' },
-            { valor: 'Madrugada', emoji: '🦉', descricao: 'Quando tudo está silencioso' },
-        ],
-    },
-];
+import { perguntas } from '../data/perguntas';
 
 const CHAVE_LOCAL = 'classme:preferencias-locais';
 
@@ -96,7 +26,7 @@ function Moldura({ children }) {
     return (
         <div className="min-h-screen bg-[#F4F6FA] p-3 font-['Nunito',sans-serif] sm:p-5">
             <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-7xl overflow-hidden rounded-4xl bg-white shadow-xl shadow-slate-900/10 sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-2 lg:p-3">
-                <div className="relative hidden flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[radial-gradient(circle_at_60%_18%,rgba(191,219,254,0.75),transparent_42%),radial-gradient(ellipse_at_55%_62%,#38bdf8,transparent_58%),linear-gradient(165deg,#3349D6,#1c2aa8_55%,#141d85)] p-10 text-white lg:flex">
+                <div className="relative hidden flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[linear-gradient(165deg,#004A8F,#00356B_55%,#00264D)] p-10 text-white lg:flex">
                     <p className="text-3xl font-extrabold tracking-tight">clʌss.me</p>
 
                     <div>
@@ -114,16 +44,16 @@ function Moldura({ children }) {
                             {passosConta.map((passo) => (
                                 <li
                                     key={passo.numero}
-                                    className={`flex min-h-40 flex-col justify-between rounded-3xl p-4 text-sm font-medium backdrop-blur ${
+                                    className={`flex min-h-40 flex-col justify-between rounded-3xl p-4 text-sm font-medium ${
                                         passo.ativo ? 'bg-white text-slate-900' : 'bg-white/15 text-white/70'
                                     }`}
                                 >
                                     <span
                                         className={`grid h-8 w-8 place-items-center rounded-full text-sm ${
                                             passo.ativo
-                                                ? 'bg-[#3349D6] text-white'
+                                                ? 'bg-[#004A8F] text-white'
                                                 : passo.feito
-                                                  ? 'bg-white/90 text-[#3349D6]'
+                                                  ? 'bg-white/90 text-[#004A8F]'
                                                   : 'border border-white/50 text-white/80'
                                         }`}
                                     >
@@ -137,9 +67,9 @@ function Moldura({ children }) {
                 </div>
 
                 <div className="flex flex-col px-6 py-10 sm:px-12 lg:px-14">
-                    <p className="text-3xl font-semibold tracking-tight text-[#3349D6] lg:hidden">clʌss.me</p>
+                    <p className="text-3xl font-semibold tracking-tight text-[#004A8F] lg:hidden">clʌss.me</p>
                     <div className="flex flex-1 items-center py-8">
-                        <div className="mx-auto w-full max-w-lg">{children}</div>
+                        <div className="mx-auto w-full max-w-lg animate-fade-up">{children}</div>
                     </div>
                 </div>
             </div>
@@ -219,7 +149,7 @@ export default function FormSetupUsuario() {
         return (
             <Moldura>
                 <div className="text-center">
-                    <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#3349D6]/10 text-3xl">
+                    <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#004A8F]/10 text-3xl">
                         🎉
                     </span>
                     <h2 className="mt-6 text-4xl font-semibold tracking-tight text-slate-900">Tudo pronto!</h2>
@@ -228,7 +158,7 @@ export default function FormSetupUsuario() {
                     </p>
                     <Link
                         to="/dashboard"
-                        className="mt-8 inline-block rounded-2xl bg-[#3349D6] px-8 py-3.5 text-sm font-semibold text-white shadow-md shadow-[#3349D6]/25 hover:bg-[#2a3dbb]"
+                        className="mt-8 inline-block rounded-2xl bg-[#004A8F] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#003B73]"
                     >
                         Ir para o painel
                     </Link>
@@ -240,10 +170,10 @@ export default function FormSetupUsuario() {
     return (
         <Moldura>
             <div className="flex items-center justify-between text-sm">
-                <p className="font-semibold text-[#3349D6]">
+                <p className="font-semibold text-[#004A8F]">
                     Pergunta {perguntaAtual + 1} de {perguntas.length}
                 </p>
-                <Link to="/dashboard" className="text-slate-500 hover:text-[#0A1F4D]">
+                <Link to="/dashboard" className="text-slate-500 hover:text-[#00264D]">
                     Pular por agora
                 </Link>
             </div>
@@ -260,28 +190,31 @@ export default function FormSetupUsuario() {
                     <div
                         key={p.id}
                         className={`h-1.5 flex-1 rounded-full transition-colors ${
-                            i <= perguntaAtual ? 'bg-[#3349D6]' : 'bg-slate-200'
+                            i <= perguntaAtual ? 'bg-[#004A8F]' : 'bg-slate-200'
                         }`}
                     />
                 ))}
             </div>
 
-            <h1 className="mt-8 text-3xl font-semibold tracking-tight text-slate-900">{pergunta.titulo}</h1>
+            <h1 key={pergunta.id} className="mt-8 animate-fade-up text-3xl font-semibold tracking-tight text-slate-900">
+                {pergunta.titulo}
+            </h1>
             <p className="mt-2 text-sm text-slate-500">{pergunta.ajuda}</p>
 
             <div className="mt-6 space-y-3">
-                {pergunta.opcoes.map((opcao) => {
+                {pergunta.opcoes.map((opcao, i) => {
                     const selecionada =
                         respostas[pergunta.id] === opcao.valor || (opcao.valor === 'Outro' && escolhendoOutro);
                     return (
                         <button
-                            key={opcao.valor}
+                            key={`${pergunta.id}-${opcao.valor}`}
+                            style={{ animationDelay: `${i * 60}ms` }}
                             type="button"
                             disabled={enviando}
                             onClick={() => escolher(opcao.valor)}
                             aria-pressed={selecionada}
-                            className={`flex w-full items-center gap-4 rounded-2xl border px-4 py-3.5 text-left transition hover:border-[#3349D6] hover:bg-[#3349D6]/5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#3349D6]/20 disabled:opacity-60 ${
-                                selecionada ? 'border-[#3349D6] bg-[#3349D6]/5' : 'border-slate-200 bg-white'
+                            className={`flex w-full animate-fade-up items-center gap-4 rounded-2xl border px-4 py-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99] hover:border-[#004A8F] hover:bg-[#004A8F]/5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#004A8F]/20 disabled:opacity-60 ${
+                                selecionada ? 'border-[#004A8F] bg-[#004A8F]/5' : 'border-slate-200 bg-white'
                             }`}
                         >
                             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-slate-100 text-xl">
@@ -304,11 +237,11 @@ export default function FormSetupUsuario() {
                         onChange={(e) => setOutro(e.target.value)}
                         placeholder="O que você quer estudar?"
                         aria-label="Outra área de estudo"
-                        className="h-12 flex-1 rounded-2xl border border-transparent bg-slate-50 px-5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#3349D6] focus:bg-white focus:ring-4 focus:ring-[#3349D6]/15"
+                        className="h-12 flex-1 rounded-2xl border border-transparent bg-slate-50 px-5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
                     />
                     <button
                         type="submit"
-                        className="h-12 rounded-2xl bg-[#3349D6] px-6 text-sm font-semibold text-white hover:bg-[#2a3dbb]"
+                        className="h-12 rounded-2xl bg-[#004A8F] px-6 text-sm font-semibold text-white hover:bg-[#003B73]"
                     >
                         Continuar
                     </button>
@@ -322,7 +255,7 @@ export default function FormSetupUsuario() {
             )}
 
             {erro && (
-                <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">
+                <p role="alert" className="mt-4 rounded-xl bg-tj-orange/10 px-4 py-3 text-sm text-[#A85A00]">
                     {erro}{' '}
                     <button type="button" onClick={() => enviar(respostas)} className="font-semibold underline">
                         Tentar de novo
@@ -335,7 +268,7 @@ export default function FormSetupUsuario() {
                     type="button"
                     onClick={voltar}
                     disabled={enviando}
-                    className="mt-6 text-sm font-semibold text-slate-600 hover:text-[#0A1F4D] disabled:opacity-60"
+                    className="mt-6 text-sm font-semibold text-slate-600 hover:text-[#00264D] disabled:opacity-60"
                 >
                     ← Voltar
                 </button>

@@ -60,7 +60,7 @@ export default function FormCadastro() {
     };
 
     const labelClasses = 'block text-sm font-semibold text-slate-900';
-    const inputClasses = 'mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#3349D6] focus:bg-white focus:ring-4 focus:ring-[#3349D6]/15';
+    const inputClasses = 'mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15';
 
     const steps = [
         { numero: 1, titulo: 'Crie sua conta', ativo: true },
@@ -72,7 +72,7 @@ export default function FormCadastro() {
         <div className="min-h-screen bg-[#F4F6FA] p-3 sm:p-5">
             <div className="mx-auto grid min-h-[calc(100vh-1.5rem)] max-w-7xl overflow-hidden rounded-4xl bg-white shadow-xl shadow-slate-900/10 sm:min-h-[calc(100vh-2.5rem)] lg:grid-cols-2 lg:p-3">
                 {/* painel de começar a jornada */}
-                <div className="relative hidden flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[radial-gradient(circle_at_60%_18%,rgba(191,219,254,0.75),transparent_42%),radial-gradient(ellipse_at_55%_62%,#38bdf8,transparent_58%),linear-gradient(165deg,#3349D6,#1c2aa8_55%,#141d85)] p-10 text-white lg:flex">
+                <div className="relative hidden flex-col justify-between overflow-hidden rounded-[1.75rem] bg-[linear-gradient(165deg,#004A8F,#00356B_55%,#00264D)] p-10 text-white lg:flex">
                     <p className="text-3xl font-extrabold tracking-tight">clʌss.me</p>
 
                     <div>
@@ -92,14 +92,14 @@ export default function FormCadastro() {
                             {steps.map((step) => (
                                 <li
                                     key={step.numero}
-                                    className={`flex min-h-40 flex-col justify-between rounded-3xl p-4 text-sm font-medium backdrop-blur ${
+                                    className={`flex min-h-40 flex-col justify-between rounded-3xl p-4 text-sm font-medium ${
                                         step.ativo ? 'bg-white text-slate-900' : 'bg-white/15 text-white/70'
                                     }`}
                                 >
                                     <span
                                         className={`grid h-8 w-8 place-items-center rounded-full text-sm ${
                                             step.ativo
-                                                ? 'bg-[#3349D6] text-white'
+                                                ? 'bg-[#004A8F] text-white'
                                                 : 'border border-white/50 text-white/80'
                                         }`}
                                     >
@@ -114,7 +114,7 @@ export default function FormCadastro() {
 
                 {/* lado do formulário */}
                 <div className="flex flex-col px-6 py-10 sm:px-12 lg:px-14">
-                    <p className="text-3xl font-semibold tracking-tight text-[#3349D6] lg:hidden">
+                    <p className="text-3xl font-semibold tracking-tight text-[#004A8F] lg:hidden">
                         clʌss.me
                     </p>
 
@@ -200,13 +200,13 @@ export default function FormCadastro() {
                             </div>
 
                             {erro && (
-                                <p role="alert" className="text-sm text-red-600">
+                                <p role="alert" className="text-sm text-[#A85A00]">
                                     {erro}
                                 </p>
                             )}
 
                             <button
-                                className="w-full rounded-2xl bg-[#3349D6] px-4 py-4 text-base font-semibold text-white shadow-md shadow-[#3349D6]/25 transition hover:bg-[#2a3dbb] focus:outline-none focus:ring-4 focus:ring-[#3349D6]/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+                                className="w-full rounded-2xl bg-[#004A8F] px-4 py-4 text-base font-semibold text-white transition hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-[#004A8F]/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
                                 name="criarConta"
                                 type="submit"
                                 disabled={carregando}
@@ -216,7 +216,7 @@ export default function FormCadastro() {
 
                             <p className="text-center text-sm text-slate-600">
                                 Já tem uma conta?{' '}
-                                <Link to="/login" className="font-semibold text-[#3349D6] hover:underline">
+                                <Link to="/login" className="font-semibold text-[#004A8F] hover:underline">
                                     Entrar
                                 </Link>
                             </p>

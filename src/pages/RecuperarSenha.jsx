@@ -20,7 +20,7 @@ export default function RecuperarSenha() {
   return (
     <div className="grid min-h-screen place-items-center bg-[#F4F6FA] p-6 font-['Nunito',sans-serif]">
       <div className="w-full max-w-md rounded-4xl bg-white p-8 shadow-xl shadow-slate-900/10 sm:p-10">
-        <p className="text-3xl font-semibold tracking-tight text-[#3349D6]">clʌss.me</p>
+        <p className="text-3xl font-semibold tracking-tight text-[#004A8F]">clʌss.me</p>
 
         {enviado ? (
           <div className="mt-8">
@@ -50,21 +50,21 @@ export default function RecuperarSenha() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#3349D6] focus:bg-white focus:ring-4 focus:ring-[#3349D6]/15"
+                className="mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
               />
             </div>
 
             <button
               type="submit"
               disabled={enviando}
-              className="w-full rounded-2xl bg-[#3349D6] px-5 py-3.5 font-semibold text-white shadow-md shadow-[#3349D6]/25 transition hover:bg-[#2a3dbb] disabled:opacity-60"
+              className="w-full rounded-2xl bg-[#004A8F] px-5 py-3.5 font-semibold text-white transition hover:bg-[#003B73] disabled:opacity-60"
             >
               {enviando ? 'Enviando...' : 'Enviar link'}
             </button>
           </form>
         )}
 
-        <Link to="/login" className="mt-6 inline-block text-sm font-semibold text-[#3349D6] hover:underline">
+        <Link to="/login" className="mt-6 inline-block text-sm font-semibold text-[#004A8F] hover:underline">
           ← Voltar para o login
         </Link>
       </div>
