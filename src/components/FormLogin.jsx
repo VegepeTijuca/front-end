@@ -65,7 +65,8 @@ export default function FormLogin() {
                 <div className="relative">
 
                     <h1 className="mt-10 max-w-md text-6xl font-extrabold leading-[1.1] tracking-tight">
-                        Bem-vindo de volta ao CLɅSS.ME!<span aria-hidden="true">👋</span>
+                         Bem-vindo de volta ao CL<span className="font-bold">Ʌ</span>SS.ME!<span aria-hidden="true">👋</span>
+
                     </h1>
 
                     <p className="mt-8 max-w-md text-lg leading-snug text-white/80">
@@ -75,14 +76,15 @@ export default function FormLogin() {
                 </div>
 
                 <p className="absolute bottom-10 left-20 text-sm text-white/50">
-                    © 2026 clʌss.me. Todos os direitos reservados.
+                  © 2026 cl<span className="font-normal">ʌ</span>ss.me.<span></span> Todos os direitos reservados.
+
                 </p>
             </div>
 
             {/* lado do formulário */}
             <div className="relative z-10 flex flex-col px-6 py-10 sm:px-12 lg:px-20 lg:shadow-[-24px_0_60px_-34px_rgba(15,23,42,0.25)]">
                 <p className="text-3xl font-extrabold tracking-tight text-brand">
-                    clʌss.me
+                cl<span className="font-bold">ʌ</span>ss.me
                 </p>
 
                 <div className="flex flex-1 items-center py-10">
