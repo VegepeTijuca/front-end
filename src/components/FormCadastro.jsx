@@ -4,6 +4,14 @@ import { registrar } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 
 
+function mensagemErro(err, padrao) {
+    if (!err.response) return 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
+    const d = err.response.data;
+    const e = d?.error;
+    if (typeof e === 'string') return e;   // { error: "texto" }
+    return e?.message ?? d?.message ?? padrao;   // { error: { code, message } }
+}
+
 export default function FormCadastro() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
         name: '',
@@ -46,7 +54,7 @@ export default function FormCadastro() {
                 navigate('/login');
             }
         } catch (err) {
-            setErro(err.response?.data?.message ?? 'Não foi possível criar a conta.');
+            setErro(mensagemErro(err, 'Não foi possível criar a conta.'));
         } finally {
             setCarregando(false);
         }

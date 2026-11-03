@@ -1,7 +1,12 @@
 import api from './api';
 
-export async function criarConteudos(dados) {
-  const { data } = await api.post('conteudos', dados);
+// O backend espera: { name, descricao, disciplina_id }
+export async function criarConteudos({ name, descricao, disciplinaId }) {
+  const { data } = await api.post('conteudos', {
+    name,
+    descricao,
+    disciplina_id: disciplinaId,
+  });
   return data;
 }
 

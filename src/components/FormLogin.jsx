@@ -3,6 +3,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 
+function mensagemErro(err, padrao) {
+    if (!err.response) return 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
+    const d = err.response.data;
+    const e = d?.error;
+    if (typeof e === 'string') return e;   // { error: "texto" }
+    return e?.message ?? d?.message ?? padrao;   // { error: { code, message } }
+}
+
 export default function FormLogin() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
         email: '',
@@ -29,7 +37,7 @@ export default function FormLogin() {
             entrar(data.token, data.user);
             navigate(location.state?.de ?? '/dashboard', { replace: true });
         } catch (err) {
-            setErro(err.response?.data?.error ?? 'Não foi possível entrar.');
+            setErro(mensagemErro(err, 'Não foi possível entrar.'));
         } finally {
             setCarregando(false);
         }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import api, { definirToken } from '../services/api';
+import api from '../services/api'; // Não precisa mais do definirToken
 import { perfil } from '../services/authService';
 import { AuthContext } from './AuthContext';
 
@@ -7,34 +7,36 @@ export default function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
+  // Define a função de entrar salvando o token no localStorage
   const entrar = useCallback((novoToken, usuario = null) => {
-    definirToken(novoToken);
+    localStorage.setItem('token', novoToken); // Fix: Agora persiste no F5
     setToken(novoToken);
     setUser(usuario);
   }, []);
 
   const sair = useCallback(() => {
-    localStorage.removeItem('token');
-    definirToken(null);
-    setToken(null);
-    setUser(null);
-  }, []);
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  setToken(null);
+  setUser(null);
+}, []);
 
-  // sessão expirada: qualquer 401 (fora do login e do cadastro) desloga
   useEffect(() => {
     const id = api.interceptors.response.use(
       (resposta) => resposta,
       (err) => {
         const url = err.config?.url ?? '';
         const ehAuth = url.startsWith('login') || url.startsWith('users');
-        if (err.response?.status === 401 && !ehAuth) sair();
+        if (err.response?.status === 401 && !ehAuth) {
+          sair();
+        }
         return Promise.reject(err);
       }
     );
     return () => api.interceptors.response.eject(id);
   }, [sair]);
 
-  // com token e sem dados do usuário, busca o perfil
+  // Busca o perfil do usuário caso exista token mas os dados ainda não foram carregados
   useEffect(() => {
     if (!token || user) return;
 
@@ -44,7 +46,7 @@ export default function AuthProvider({ children }) {
         if (!cancelado) setUser(dados);
       })
       .catch(() => {
-        /* o 401 já é tratado pelo interceptor; outros erros: segue sem o perfil */
+        // O interceptor de resposta já cuida do 401 deslogando o usuário
       });
 
     return () => {
