@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import {
-  IconeAjuda, IconeCalendario, IconeLivro, IconePainel, IconeRelogio, IconeSair, IconeTarefa, IconeUsuario,
-} from './icones';
+  CircleQuestionMark, Calendar, BookOpen, House, Clock, LogOut, SquareCheckBig, User,
+} from 'lucide-react';
 
 // um item da lista do tour: ícone + texto
 function Ponto({ icone: Icone, children }) {
@@ -27,10 +27,10 @@ const PASSOS = [
       <>
         <p className="text-slate-600">Um jeito rápido de ver o que o app tem. Leva menos de um minuto.</p>
         <ul className="mt-4 space-y-2">
-          <Ponto icone={IconeCalendario}>Calendário para provas, entregas e revisões</Ponto>
-          <Ponto icone={IconeRelogio}>Timer para focar até a hora que você escolher</Ponto>
-          <Ponto icone={IconeTarefa}>To-do list para o que precisa ser feito</Ponto>
-          <Ponto icone={IconeLivro}>Disciplinas com os conteúdos de cada matéria</Ponto>
+          <Ponto icone={Calendar}>Calendário para provas, entregas e revisões</Ponto>
+          <Ponto icone={Clock}>Timer para focar até a hora que você escolher</Ponto>
+          <Ponto icone={SquareCheckBig}>To-do list para o que precisa ser feito</Ponto>
+          <Ponto icone={BookOpen}>Disciplinas com os conteúdos de cada matéria</Ponto>
         </ul>
       </>
     ),
@@ -43,9 +43,9 @@ const PASSOS = [
           Para trocar de tela, use o menu à esquerda. No celular, abra pelo botão de três linhas no topo.
         </p>
         <ul className="mt-4 space-y-2">
-          <Ponto icone={IconePainel}>Visão Geral: seu dia em um só lugar</Ponto>
-          <Ponto icone={IconeCalendario}>Calendário: versão grande, com lista de próximos eventos</Ponto>
-          <Ponto icone={IconeLivro}>Disciplinas: matérias e conteúdos</Ponto>
+          <Ponto icone={House}>Visão Geral: seu dia em um só lugar</Ponto>
+          <Ponto icone={Calendar}>Calendário: versão grande, com lista de próximos eventos</Ponto>
+          <Ponto icone={BookOpen}>Disciplinas: matérias e conteúdos</Ponto>
         </ul>
       </>
     ),
@@ -64,9 +64,9 @@ const PASSOS = [
       <>
         <p className="text-slate-600">Clique no seu nome, no canto direito, para abrir o menu do perfil.</p>
         <ul className="mt-4 space-y-2">
-          <Ponto icone={IconeUsuario}>Perfil e configurações: suas respostas, timers salvos e matérias prontas</Ponto>
-          <Ponto icone={IconeAjuda}>Ver este tour de novo quando quiser</Ponto>
-          <Ponto icone={IconeSair}>Sair da conta</Ponto>
+          <Ponto icone={User}>Perfil e configurações: suas respostas, timers salvos e matérias prontas</Ponto>
+          <Ponto icone={CircleQuestionMark}>Ver este tour de novo quando quiser</Ponto>
+          <Ponto icone={LogOut}>Sair da conta</Ponto>
         </ul>
       </>
     ),

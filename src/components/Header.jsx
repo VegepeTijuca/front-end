@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { IconeAjuda, IconeSair, IconeUsuario } from './icones';
+import { CircleQuestionMark, LogOut, User } from 'lucide-react';
 
 export default function Header({ user, visitante = false, navAberto, onAlternarMenu, onSair, onAbrirTour }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
@@ -84,7 +84,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             onClick={() => setMenuAberto(false)}
                             className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <IconeUsuario className="h-4 w-4 shrink-0" />
+                            <User className="h-4 w-4 shrink-0" />
                             Perfil e configurações
                         </Link>
                         <button
@@ -96,7 +96,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             }}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <IconeAjuda className="h-4 w-4 shrink-0" />
+                            <CircleQuestionMark className="h-4 w-4 shrink-0" />
                             Como usar o clʌss.me
                         </button>
                         <button
@@ -105,7 +105,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             onClick={onSair}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
-                            <IconeSair className="h-4 w-4 shrink-0" />
+                            <LogOut className="h-4 w-4 shrink-0" />
                             {visitante ? 'Sair do modo visitante' : 'Sair'}
                         </button>
                     </div>

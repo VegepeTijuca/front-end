@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { listar as listarEventos } from '../services/eventService';
 import { listar as listarTarefas } from '../services/todoService';
-import { IconeCalendario, IconeCheck, IconeEstrela, IconeTarefa } from './icones';
+import { Calendar, CircleCheck, Star, SquareCheckBig } from 'lucide-react';
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -32,10 +32,10 @@ export default function ResumoRapido({ versao = 0 }) {
     const progresso = tarefas && tarefas.length > 0 ? Math.round((concluidas / tarefas.length) * 100) : 0;
 
     const cartoes = [
-        { Icone: IconeCalendario, rotulo: 'Eventos hoje', valor: hoje, detalhe: 'no calendário' },
-        { Icone: IconeTarefa, rotulo: 'Tarefas a fazer', valor: pendentes, detalhe: 'ainda pendentes' },
-        { Icone: IconeEstrela, rotulo: 'Favoritas', valor: favoritas, detalhe: 'marcadas com estrela' },
-        { Icone: IconeCheck, rotulo: 'Concluídas', valor: concluidas, detalhe: tarefas ? `${progresso}% do total` : '' },
+        { Icone: Calendar, rotulo: 'Eventos hoje', valor: hoje, detalhe: 'no calendário' },
+        { Icone: SquareCheckBig, rotulo: 'Tarefas a fazer', valor: pendentes, detalhe: 'ainda pendentes' },
+        { Icone: Star, rotulo: 'Favoritas', valor: favoritas, detalhe: 'marcadas com estrela' },
+        { Icone: CircleCheck, rotulo: 'Concluídas', valor: concluidas, detalhe: tarefas ? `${progresso}% do total` : '' },
     ];
 
     return (

@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import classmeLogo from '../assets/classme.svg';
-import { IconeCalendario, IconeInfo, IconeLivro, IconePainel } from './icones';
+import { Calendar, Info, BookOpen, House } from 'lucide-react';
 
 const mainItems = [
-  { label: 'Visão Geral', Icone: IconePainel, to: '/dashboard', dica: 'Resumo do dia, calendário, timer e tarefas' },
-  { label: 'Calendário', Icone: IconeCalendario, to: '/calendario', dica: 'Calendário em tela cheia' },
-  { label: 'Disciplinas', Icone: IconeLivro, to: '/disciplinas', dica: 'Matérias e conteúdos' },
+  { label: 'Visão Geral', Icone: House, to: '/dashboard', dica: 'Resumo do dia, calendário, timer e tarefas' },
+  { label: 'Calendário', Icone: Calendar, to: '/calendario', dica: 'Calendário em tela cheia' },
+  { label: 'Disciplinas', Icone: BookOpen, to: '/disciplinas', dica: 'Matérias e conteúdos' },
 ];
 
-const siteItems = [{ label: 'Sobre', Icone: IconeInfo, to: '/sobre', dica: 'Sobre o clʌss.me' }];
+const siteItems = [{ label: 'Sobre', Icone: Info, to: '/sobre', dica: 'Sobre o clʌss.me' }];
 
 // links só para desenvolvimento: somem no build de produção
 const devItems = import.meta.env.DEV
