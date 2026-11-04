@@ -3,6 +3,8 @@ import { NavLink } from 'react-router-dom';
 import classmeLogo from '../assets/classme.svg';
 import { Calendar, Info, BookOpen, House } from 'lucide-react';
 
+
+// comentario
 const mainItems = [
   { label: 'Visão Geral', Icone: House, to: '/dashboard', dica: 'Resumo do dia, calendário, timer e tarefas' },
   { label: 'Calendário', Icone: Calendar, to: '/calendario', dica: 'Calendário em tela cheia' },
