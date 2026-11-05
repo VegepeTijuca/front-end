@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import { apagarDadosLocais } from '../services/visitante';
 import { lerPreferencias, salvarPreferencias } from '../services/usuarioService';
 import {
   adicionarPacote,
@@ -13,17 +12,6 @@ import {
 import { perguntas } from '../data/perguntas';
 import { PACOTES_MATERIAS, TIMERS_SUGERIDOS } from '../data/presets';
 import { EVENTO_TOUR } from '../components/TourInicial';
-
-// ---------- preferências: o que vai para a API e o que fica só no navegador ----------
-const CHAVE_LOCAL = 'classme:preferencias-locais';
-
-function lerLocalPrefs() {
-  try {
-    return JSON.parse(localStorage.getItem(CHAVE_LOCAL)) ?? {};
-  } catch {
-    return {};
-  }
-}
 
 // ---------- peças da página ----------
 
@@ -416,21 +404,20 @@ const INDICE = [
 ];
 
 export default function Configuracoes() {
-  const { user, visitante, sair } = useAuth();
+  const { user, sair } = useAuth();
   const navigate = useNavigate();
   const { hash } = useLocation();
   const [prefs, setPrefs] = useState(null);
-  const [apagado, setApagado] = useState(false);
   const prefsRef = useRef({}); // sempre o valor mais recente, para dois cliques seguidos não se atropelarem
 
   const nome = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
 
-  // carrega as respostas: as da API (ou do modo visitante) + as que ficam só no navegador
+  // carrega as respostas salvas na API
   useEffect(() => {
     let cancelado = false;
     lerPreferencias().then((api) => {
       if (cancelado) return;
-      prefsRef.current = { ...api, ...lerLocalPrefs() };
+      prefsRef.current = { ...api };
       setPrefs(prefsRef.current);
     });
     return () => {
@@ -452,10 +439,9 @@ export default function Configuracoes() {
     prefsRef.current = proximas;
     setPrefs(proximas); // a tela já mostra a escolha; se falhar, volta abaixo
 
-    const local = {};
     const paraApi = {};
-    perguntas.forEach(({ id, api }) => {
-      if (proximas[id] !== undefined) (api ? paraApi : local)[id] = proximas[id];
+    perguntas.forEach(({ id }) => {
+      if (proximas[id] !== undefined) paraApi[id] = proximas[id];
     });
     if (proximas.areaOutro) paraApi.areaOutro = proximas.areaOutro;
 
@@ -466,18 +452,7 @@ export default function Configuracoes() {
       setPrefs(anterior);
       throw err;
     }
-    try {
-      localStorage.setItem(CHAVE_LOCAL, JSON.stringify(local));
-    } catch {
-      /* sem localStorage: segue sem salvar as respostas locais */
-    }
   }, []);
-
-  function apagarDados() {
-    apagarDadosLocais();
-    setApagado(true);
-    setTimeout(() => window.location.reload(), 600);
-  }
 
   function handleSair() {
     sair();
@@ -503,18 +478,9 @@ export default function Configuracoes() {
       <div className="mt-8">
         <Secao id="conta" numero="01" titulo="Conta" texto="Quem está usando o app agora." atraso={60}>
           <p className="text-lg font-bold text-slate-800">{nome}</p>
-          <p className="text-sm text-slate-500">{user?.email ?? (visitante ? 'Modo visitante' : '—')}</p>
-          {visitante && (
-            <p className="mt-4 max-w-md text-sm text-slate-600">
-              Você está sem conta, então nada disso vai para um servidor. Para guardar de verdade,{' '}
-              <Link to="/cadastro" className="font-semibold text-[#004A8F] underline">
-                crie uma conta
-              </Link>
-              .
-            </p>
-          )}
+          <p className="text-sm text-slate-500">{user?.email ?? '—'}</p>
           <button type="button" onClick={handleSair} className={`${botaoLinha} mt-5`}>
-            {visitante ? 'Sair do modo visitante' : 'Sair da conta'}
+            Sair da conta
           </button>
         </Secao>
 
@@ -554,27 +520,10 @@ export default function Configuracoes() {
           </>
         )}
 
-        <Secao id="dados" numero="05" titulo="Dados e ajuda" texto="Tour de boas-vindas e dados guardados neste navegador." atraso={300}>
+        <Secao id="dados" numero="05" titulo="Dados e ajuda" texto="Tour de boas-vindas." atraso={300}>
           <button type="button" onClick={() => window.dispatchEvent(new Event(EVENTO_TOUR))} className={botaoLinha}>
             Ver o tour de novo
           </button>
-
-          {visitante && (
-            <div className="mt-6 max-w-md">
-              <p className="text-sm text-slate-600">
-                No modo visitante, disciplinas, tarefas, eventos e timers ficam salvos só aqui. Apagar volta tudo aos
-                dados de exemplo.
-              </p>
-              <button
-                type="button"
-                onClick={apagarDados}
-                disabled={apagado}
-                className="mt-3 rounded-xl border border-tj-orange/40 px-4 py-2 text-sm font-semibold text-[#A85A00] hover:bg-tj-orange/10 disabled:opacity-60"
-              >
-                {apagado ? 'Apagando...' : 'Apagar dados do modo visitante'}
-              </button>
-            </div>
-          )}
         </Secao>
       </div>
     </main>

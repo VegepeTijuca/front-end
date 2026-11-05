@@ -1,16 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login, registrar } from '../services/authService';
+import { mensagemErro } from '../services/api';
 import useAuth from '../hooks/useAuth';
 
-
-function mensagemErro(err, padrao) {
-    if (!err.response) return 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
-    const d = err.response.data;
-    const e = d?.error;
-    if (typeof e === 'string') return e;   // { error: "texto" }
-    return e?.message ?? d?.message ?? padrao;   // { error: { code, message } }
-}
 
 export default function FormCadastro() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
@@ -59,10 +52,7 @@ export default function FormCadastro() {
             entrar(sessao.token, sessao.user);
             navigate('/setup-usuario', { replace: true });
         } catch (err) {
-            const erroApi = err.response?.data?.message ?? err.response?.data?.error;
-            setErro(
-                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível criar a conta.'
-            );
+            setErro(mensagemErro(err, 'Não foi possível criar a conta.'));
         } finally {
             setCarregando(false);
         }

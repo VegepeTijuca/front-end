@@ -1,6 +1,4 @@
 import api from './api';
-import { USE_MOCK, atraso } from './mock';
-import { ehVisitante, gravarLocal, lerLocal, novoIdLocal } from './visitante';
 import { criarDisciplinas, getListaDisciplinas } from './disciplinaService';
 import { criarConteudos } from './conteudoService';
 
@@ -17,46 +15,22 @@ function deApi(t) {
   };
 }
 
-const usaLocal = () => USE_MOCK || ehVisitante();
-const lerTimers = () => lerLocal('timers-salvos', () => []);
-
 export async function listarTimers() {
-  if (usaLocal()) {
-    await atraso(80);
-    return lerTimers();
-  }
   const { data } = await api.get('/presets-timer');
   return data.map(deApi);
 }
 
 export async function criarTimer({ nome, foco, pausa = 0 }) {
-  if (usaLocal()) {
-    await atraso(80);
-    const lista = lerTimers();
-    const novo = { id: novoIdLocal(), nome, foco, pausa, padrao: lista.length === 0 };
-    gravarLocal('timers-salvos', [...lista, novo]);
-    return { ...novo };
-  }
   const { data } = await api.post('/presets-timer', { nome, foco, pausa });
   return deApi(data);
 }
 
 export async function removerTimer(id) {
-  if (usaLocal()) {
-    await atraso(80);
-    gravarLocal('timers-salvos', lerTimers().filter((t) => t.id !== id));
-    return;
-  }
   await api.delete(`/presets-timer/${id}`);
 }
 
 // marca um timer como o padrão (o back deve desmarcar os outros do mesmo usuário)
 export async function definirTimerPadrao(id) {
-  if (usaLocal()) {
-    await atraso(80);
-    gravarLocal('timers-salvos', lerTimers().map((t) => ({ ...t, padrao: t.id === id })));
-    return;
-  }
   await api.patch(`/presets-timer/${id}`, { padrao: true });
 }
 
