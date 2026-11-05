@@ -15,8 +15,15 @@ export default function TodoList({ onMudou }) {
             .then((lista) => {
                 if (!cancelado) setTodos(lista);
             })
-            .catch(() => {
-                if (!cancelado) setErro('Não foi possível carregar as tarefas.');
+            .catch((falha) => {
+                if (!cancelado) {
+                    const detalhes = falha?.details ?? falha?.response?.data?.details;
+                    setErro(
+                        detalhes
+                            ? `Não foi possível carregar as tarefas: ${detalhes}`
+                            : 'Não foi possível carregar as tarefas.'
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelado) setCarregando(false);

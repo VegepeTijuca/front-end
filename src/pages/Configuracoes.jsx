@@ -2,13 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { lerPreferencias, salvarPreferencias } from '../services/usuarioService';
-import {
-  adicionarPacote,
-  criarTimer,
-  definirTimerPadrao,
-  listarTimers,
-  removerTimer,
-} from '../services/presetService';
+import { adicionarPacote } from '../services/presetService';
+import { criarTimer, definirTimerPadrao, listarTimers, removerTimer } from '../services/timerService';
 import { perguntas } from '../data/perguntas';
 import { PACOTES_MATERIAS, TIMERS_SUGERIDOS } from '../data/presets';
 import { EVENTO_TOUR } from '../components/TourInicial';

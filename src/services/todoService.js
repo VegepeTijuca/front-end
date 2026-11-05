@@ -4,8 +4,6 @@ function deApi(t) {
   return {
     id: t.id ?? t._id,
     name: t.name,
-    done: Boolean(t.done),
-    starred: Boolean(t.starred),
   };
 }
 
@@ -20,7 +18,7 @@ export async function criar(name) {
 }
 
 export async function atualizar(id, patch) {
-  const { data } = await api.patch(`/tarefas/${id}`, patch);
+  const { data } = await api.put(`/tarefas/${id}`, patch);
   return deApi(data);
 }
 
