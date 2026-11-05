@@ -97,9 +97,9 @@ function Conteudo({ onNavegar, compacto = false }) {
           // recolhida: só o "CM" da marca
           <span
             aria-hidden="true"
-            className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-4xl font-extrabold leading-none text-blue-500"
+            className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-3xl font-extrabold leading-none text-blue-500"
           >
-            CM
+            <span className="font-bold">Ʌ</span>
           </span>
         ) : (
           // expandida: a logo completa
@@ -163,6 +163,14 @@ export default function Navbar({ aberto, onFechar }) {
 
   return (
     <>
+      {expandida && (
+        <div
+          className="fixed -inset-4 z-20 hidden animate-fade-in bg-black/50 lg:block"
+          aria-hidden="true"
+          onClick={() => setExpandida(false)}
+        />
+      )}
+
       {/* Versão desktop da navbar lateral. */}
       {/* desktop: espaço reservado na página (w-24) para o conteúdo não ficar embaixo da barra */}
       <div className="hidden w-24 shrink-0 lg:block">
@@ -178,7 +186,7 @@ export default function Navbar({ aberto, onFechar }) {
             // só recolhe se o foco saiu de dentro da barra
             if (!e.currentTarget.contains(e.relatedTarget)) setExpandida(false);
           }}
-          className={`fixed inset-y-3 left-3 z-30 flex flex-col overflow-y-auto overflow-x-hidden rounded-3xl bg-navy p-3 text-white shadow-2xl shadow-slate-900/30 transition-[width] duration-300 ${
+          className={`fixed inset-y-3 left-3 z-30 flex flex-col overflow-y-auto overflow-x-hidden rounded-3xl bg-navy p-3 text-white shadow-2xl shadow-slate-900/30 transition-[width,background-color] duration-300 hover:bg-navy ${
             expandida ? 'w-72' : 'w-[4.5rem]'
           }`}
         >
