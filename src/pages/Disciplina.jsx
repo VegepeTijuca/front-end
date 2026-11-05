@@ -1,4 +1,4 @@
-gitimport { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import FormDisciplina from "../components/FormDisciplina";
 import CardDisciplina from "../components/CardDisciplina";
 import CabecalhoPagina from "../components/CabecalhoPagina";
