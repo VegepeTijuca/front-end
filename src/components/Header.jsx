@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CircleQuestionMark, LogOut, User } from 'lucide-react';
 
-export default function Header({ user, visitante = false, navAberto, onAlternarMenu, onSair, onAbrirTour }) {
+export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbrirTour }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
     const role = user?.role;
     const avatar = user?.avatar;
@@ -75,7 +75,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                     >
                         <div className="border-b border-slate-100 px-3 py-2.5">
                             <p className="truncate text-sm font-bold text-slate-800">{name}</p>
-                            <p className="truncate text-xs text-slate-500">{user?.email ?? (visitante ? 'Modo visitante' : '')}</p>
+                            <p className="truncate text-xs text-slate-500">{user?.email ?? ''}</p>
                         </div>
 
                         <Link
@@ -106,7 +106,7 @@ export default function Header({ user, visitante = false, navAberto, onAlternarM
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
                         >
                             <LogOut className="h-4 w-4 shrink-0" />
-                            {visitante ? 'Sair do modo visitante' : 'Sair'}
+                            Sair
                         </button>
                     </div>
                 )}

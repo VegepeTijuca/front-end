@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AuthProvider from './context/AuthProvider';
 import AppLayout from './components/AppLayout';
 import RotaPrivada from './components/RotaPrivada';
+import RotaPublica from './components/RotaPublica';
 import PaginaInicial from './pages/PaginaInicial';
 import Dashboard from './pages/Dashboard';
 import CalendarioPagina from './pages/CalendarioPagina';
@@ -22,8 +23,10 @@ export default function App() {
         <Routes>
           {/* públicas: landing page, login e cadastro */}
           <Route path="/" element={<PaginaInicial />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/cadastro" element={<Cadastro />} />
+          <Route element={<RotaPublica />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+          </Route>
           <Route path="/recuperar-senha" element={<RecuperarSenha />} />
 
           {/* só para quem está logado */}

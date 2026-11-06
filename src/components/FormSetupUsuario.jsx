@@ -4,17 +4,6 @@ import { salvarPreferencias } from '../services/usuarioService';
 
 import { perguntas } from '../data/perguntas';
 
-const CHAVE_LOCAL = 'classme:preferencias-locais';
-
-// guarda neste navegador as respostas que ainda não têm campo na API
-function salvarLocal(dados) {
-    try {
-        localStorage.setItem(CHAVE_LOCAL, JSON.stringify(dados));
-    } catch {
-        /* sem localStorage (modo privado, etc.): segue sem salvar */
-    }
-}
-
 const passosConta = [
     { numero: 1, titulo: 'Crie sua conta', feito: true },
     { numero: 2, titulo: 'Configure as informações do seu perfil', ativo: true },
@@ -93,16 +82,7 @@ export default function FormSetupUsuario() {
         setEnviando(true);
         setErro('');
         try {
-            // respostas sem campo na API ficam só neste navegador
-            const local = {};
-            const paraApi = {};
-            perguntas.forEach(({ id, api }) => {
-                if (dados[id] !== undefined) (api ? paraApi : local)[id] = dados[id];
-            });
-            if (dados.areaOutro) paraApi.areaOutro = dados.areaOutro;
-
-            salvarLocal(local);
-            await salvarPreferencias(paraApi);
+            await salvarPreferencias(dados);
             setConcluido(true);
         } catch {
             setErro('Não foi possível salvar suas preferências.');

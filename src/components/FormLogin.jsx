@@ -1,16 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import { mensagemErro } from '../services/api';
 import useAuth from '../hooks/useAuth';
-import BotaoVisitante from './BotaoVisitante';
-
-function mensagemErro(err, padrao) {
-    if (!err.response) return 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
-    const d = err.response.data;
-    const e = d?.error;
-    if (typeof e === 'string') return e;   // { error: "texto" }
-    return e?.message ?? d?.message ?? padrao;   // { error: { code, message } }
-}
 
 export default function FormLogin() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
@@ -38,10 +30,7 @@ export default function FormLogin() {
             entrar(data.token, data.user);
             navigate(location.state?.de ?? '/dashboard', { replace: true });
         } catch (err) {
-            const erroApi = err.response?.data?.error ?? err.response?.data?.message;
-            setErro(
-                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível entrar.'
-            );
+            setErro(mensagemErro(err, 'Não foi possível entrar.'));
         } finally {
             setCarregando(false);
         }
@@ -168,10 +157,6 @@ export default function FormLogin() {
                             </svg>
                             Entrar com o Google
                         </button>
-
-                        <BotaoVisitante className="w-full rounded-2xl border border-dashed border-slate-300 px-5 py-3.5 text-sm font-semibold text-slate-600 transition hover:border-[#004A8F] hover:text-[#004A8F]">
-                            Entrar sem conta (modo visitante)
-                        </BotaoVisitante>
 
                         <p className="text-center text-sm text-slate-500">
                             Esqueceu a senha?{' '}

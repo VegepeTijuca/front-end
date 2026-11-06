@@ -1,93 +1,58 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import api from '../services/api'; // Não precisa mais do definirToken
+import api from '../services/api';
 import { perfil } from '../services/authService';
-import {
-  USUARIO_VISITANTE,
-  ativarVisitante,
-  desativarVisitante,
-  ehVisitante,
-} from '../services/visitante';
+import { gravarToken, lerToken } from '../services/token';
 import { AuthContext } from './AuthContext';
 
 export default function AuthProvider({ children }) {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [visitante, setVisitante] = useState(ehVisitante);
-  const [user, setUser] = useState(() => (ehVisitante() ? USUARIO_VISITANTE : null));
+  const [token, setToken] = useState(lerToken);
+  const [user, setUser] = useState(null);
 
-  // Define a função de entrar salvando o token no localStorage
   const entrar = useCallback((novoToken, usuario = null) => {
-    desativarVisitante();
-    setVisitante(false);
-    definirToken(novoToken);
+    gravarToken(novoToken);
     setToken(novoToken);
     setUser(usuario);
   }, []);
 
-  // entra sem conta e sem API (ver services/visitante.js)
-  const entrarVisitante = useCallback(() => {
-    ativarVisitante();
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    definirToken(null);
-    setToken(null);
-    setVisitante(true);
-    setUser(USUARIO_VISITANTE);
-  }, []);
-
   const sair = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    desativarVisitante();
-    definirToken(null);
+    gravarToken(null);
     setToken(null);
-    setVisitante(false);
     setUser(null);
   }, []);
 
+  // 401 fora do login/cadastro = token inválido ou expirado: desloga
   useEffect(() => {
     const id = api.interceptors.response.use(
       (resposta) => resposta,
       (err) => {
         const url = err.config?.url ?? '';
-        const ehAuth = url.startsWith('login') || url.startsWith('users');
-        if (err.response?.status === 401 && !ehAuth) {
-          sair();
-        }
+        const ehAuth = /^\/?(login|users)(\/|$)/.test(url) && err.config?.method !== 'get';
+        if (err.response?.status === 401 && !ehAuth) sair();
         return Promise.reject(err);
       }
     );
     return () => api.interceptors.response.eject(id);
   }, [sair]);
 
-  // Busca o perfil do usuário caso exista token mas os dados ainda não foram carregados
+  // tem token (ex.: depois de um F5) mas ainda não temos o usuário: busca na API
   useEffect(() => {
     if (!token || user) return;
-
     let cancelado = false;
     perfil()
       .then((dados) => {
-        if (!cancelado) setUser(dados);
+        if (!cancelado && dados) setUser(dados);
       })
       .catch(() => {
-        // O interceptor de resposta já cuida do 401 deslogando o usuário
+        /* 401 já desloga pelo interceptor */
       });
-
     return () => {
       cancelado = true;
     };
   }, [token, user]);
 
   const value = useMemo(
-    () => ({
-      token,
-      user,
-      visitante,
-      autenticado: Boolean(token) || visitante,
-      entrar,
-      entrarVisitante,
-      sair,
-    }),
-    [token, user, visitante, entrar, entrarVisitante, sair]
+    () => ({ token, user, autenticado: Boolean(token), entrar, sair }),
+    [token, user, entrar, sair]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

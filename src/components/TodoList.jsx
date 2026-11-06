@@ -3,7 +3,7 @@ import { atualizar, criar, listar, remover } from '../services/todoService';
 
 export default function TodoList({ onMudou }) {
     const [todos, setTodos] = useState([]);
-    const [text, setText] = useState('');
+    const [name, setName] = useState('');
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
 
@@ -15,8 +15,15 @@ export default function TodoList({ onMudou }) {
             .then((lista) => {
                 if (!cancelado) setTodos(lista);
             })
-            .catch(() => {
-                if (!cancelado) setErro('Não foi possível carregar as tarefas.');
+            .catch((falha) => {
+                if (!cancelado) {
+                    const detalhes = falha?.details ?? falha?.response?.data?.details;
+                    setErro(
+                        detalhes
+                            ? `Não foi possível carregar as tarefas: ${detalhes}`
+                            : 'Não foi possível carregar as tarefas.'
+                    );
+                }
             })
             .finally(() => {
                 if (!cancelado) setCarregando(false);
@@ -29,17 +36,17 @@ export default function TodoList({ onMudou }) {
 
     async function addTodo(e) {
         e.preventDefault();
-        const value = text.trim();
+        const value = name.trim();
         if (!value) return;
 
         setErro('');
-        setText('');
+        setName('');
         try {
             const nova = await criar(value);
             setTodos((list) => [...list, nova]);
             onMudou?.();
         } catch {
-            setText(value);
+            setName(value);
             setErro('Não foi possível adicionar a tarefa.');
         }
     }
@@ -112,8 +119,8 @@ export default function TodoList({ onMudou }) {
                             aria-checked={todo.done}
                             aria-label={
                                 todo.done
-                                    ? `Desmarcar "${todo.text}"`
-                                    : `Marcar "${todo.text}" como concluída`
+                                    ? `Desmarcar "${todo.name}"`
+                                    : `Marcar "${todo.name}" como concluída`
                             }
                             onClick={() => update(todo.id, { done: !todo.done })}
                             className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
@@ -127,13 +134,13 @@ export default function TodoList({ onMudou }) {
                             )}
                         </button>
 
-                        <span className={`flex-1 truncate text-base font-semibold ${todo.done ? 'line-through' : ''}`}>{todo.text}</span>
+                        <span className={`flex-1 truncate text-base font-semibold ${todo.done ? 'line-through' : ''}`}>{todo.name}</span>
 
                         {todo.done ? (
                             <button
                                 type="button"
                                 onClick={() => removeTodo(todo.id)}
-                                aria-label={`Excluir "${todo.text}"`}
+                                aria-label={`Excluir "${todo.name}"`}
                                 className="grid h-8 w-14 place-items-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50"
                             >
                                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -147,8 +154,8 @@ export default function TodoList({ onMudou }) {
                                     onClick={() => update(todo.id, { starred: !todo.starred })}
                                     aria-label={
                                         todo.starred
-                                            ? `Remover "${todo.text}" dos favoritos`
-                                            : `Favoritar "${todo.text}"`
+                                            ? `Remover "${todo.name}" dos favoritos`
+                                            : `Favoritar "${todo.name}"`
                                     }
                                     aria-pressed={todo.starred}
                                     className={`transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-[#00264D]' : 'text-slate-500 hover:text-[#00264D]'}`}
@@ -167,7 +174,7 @@ export default function TodoList({ onMudou }) {
                                 <button
                                     type="button"
                                     onClick={() => removeTodo(todo.id)}
-                                    aria-label={`Excluir "${todo.text}"`}
+                                    aria-label={`Excluir "${todo.name}"`}
                                     className="grid h-7 w-7 place-items-center rounded-full border border-slate-400 text-slate-600 hover:bg-slate-100 hover:text-[#00264D]"
                                 >
                                     <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
@@ -182,8 +189,8 @@ export default function TodoList({ onMudou }) {
 
             <form onSubmit={addTodo} className="mt-6 flex gap-3">
                 <input
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     placeholder="Ex.: Resolver a lista de exercícios"
                     aria-label="Nova tarefa"
                     className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"

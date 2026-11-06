@@ -3,15 +3,12 @@
 /*
  * Perguntas do setup. Para adicionar/editar uma pergunta, mexa só neste array.
  *
- * - "api: true"  -> a resposta é enviada para a API (salvarPreferencias).
- *                   Mantenha o "valor" igual ao que o backend espera.
- * - "api: false" -> a resposta ainda NÃO tem rota na API: fica salva só neste navegador
- *                   (localStorage). Quando o backend tiver o campo, troque para "api: true".
+ * Todas as respostas vão para a API (salvarPreferencias), em um único PUT.
+ * Mantenha o "valor" igual ao que o backend espera.
  */
 export const perguntas = [
     {
         id: 'area',
-        api: true,
         titulo: 'O que você gostaria de estudar?',
         ajuda: 'Escolha a área principal. Você pode estudar outras coisas depois.',
         opcoes: [
@@ -24,7 +21,6 @@ export const perguntas = [
     },
     {
         id: 'objetivo',
-        api: false,
         titulo: 'Qual é o seu objetivo agora?',
         ajuda: 'Isso ajuda a entender o que você quer alcançar.',
         opcoes: [
@@ -36,7 +32,6 @@ export const perguntas = [
     },
     {
         id: 'estilo',
-        api: true,
         titulo: 'Como você prefere aprender?',
         ajuda: 'Pense no jeito em que você aprende mais rápido.',
         opcoes: [
@@ -48,7 +43,6 @@ export const perguntas = [
     },
     {
         id: 'tempo',
-        api: true,
         titulo: 'Quanto tempo você pode estudar por dia?',
         ajuda: 'Seja realista: é melhor pouco todo dia do que muito de vez em quando.',
         opcoes: [
@@ -60,7 +54,6 @@ export const perguntas = [
     },
     {
         id: 'periodo',
-        api: false,
         titulo: 'Em que período do dia você rende mais?',
         ajuda: 'Vamos usar isso para sugerir bons horários de estudo.',
         opcoes: [
