@@ -3,8 +3,13 @@ import FormConteudo from "./FormConteudo";
 import ListaConteudos from "./ListaConteudos";
 import { atualizarDisciplina, removerDisciplina } from "../services/disciplinaService";
 
+// botão de texto pequeno em formato de pílula (usado em Editar, Excluir, Salvar...)
 const botaoPequeno =
-    "rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60";
+    "rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60";
+
+// campo do modo de edição (fundo cinza claro, vira branco ao focar)
+const campoEdicao =
+    "block w-full rounded-xl border border-transparent bg-slate-50 px-4 py-2.5 text-slate-900 outline-none transition focus:border-[#004A8F] focus:bg-white";
 
 // onAlterada: avisa a página para recarregar a lista depois de editar ou excluir
 export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor = "#004A8F", onAlterada }) {
@@ -59,10 +64,8 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
     }
 
     return (
-        <div
-            style={{ borderLeftColor: cor }}
-            className="rounded-lg border border-l-4 border-gray-200 bg-white p-4 shadow-sm transition-shadow duration-200 hover:shadow-md"
-        >
+        // sem borda nem sombra: quem separa os itens é o filete (divide-y) da lista da página
+        <div className="py-5">
             {editando ? (
                 <form onSubmit={salvarEdicao} className="space-y-3">
                     <input
@@ -70,46 +73,48 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                         onChange={(e) => setNome(e.target.value)}
                         aria-label="Nome da disciplina"
                         required
-                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-[#004A8F]"
+                        className={campoEdicao}
                     />
                     <input
                         value={desc}
                         onChange={(e) => setDesc(e.target.value)}
                         aria-label="Descrição da disciplina"
                         placeholder="Descrição (opcional)"
-                        className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 outline-none focus:border-[#004A8F]"
+                        className={campoEdicao}
                     />
                     <div className="flex gap-2">
                         <button
                             type="submit"
                             disabled={salvando}
-                            className={`${botaoPequeno} bg-[#004A8F] text-white hover:bg-[#003B73]`}
+                            className={`${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
                         >
                             {salvando ? "Salvando..." : "Salvar"}
                         </button>
                         <button
                             type="button"
                             onClick={() => setEditando(false)}
-                            className={`${botaoPequeno} text-gray-600 hover:bg-gray-100`}
+                            className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                         >
                             Cancelar
                         </button>
                     </div>
                 </form>
             ) : (
-                <div className="flex items-start justify-between gap-3">
+                // flex-wrap = em telas pequenas os botões descem para a linha de baixo
+                <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                        <h2 className="flex items-center gap-2 text-lg font-semibold text-[#00264D]">
-                            <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: cor }} aria-hidden="true" />
+                        {/* o ✦ colorido ao lado do título é a cor da disciplina (como as estrelinhas da referência) */}
+                        <h2 className="flex items-center gap-2 text-lg font-bold text-[#00264D]">
                             {nomeDisciplina}
+                            <span style={{ color: cor }} aria-hidden="true">✦</span>
                         </h2>
-                        {descricao && <p className="text-sm text-gray-500">{descricao}</p>}
+                        {descricao && <p className="mt-0.5 text-sm text-slate-500">{descricao}</p>}
                     </div>
 
-                    <div className="flex shrink-0 items-center gap-1">
+                    <div className="flex shrink-0 flex-wrap items-center gap-1">
                         {confirmandoExclusao ? (
                             <>
-                                <span className="text-sm text-gray-600">Excluir com os conteúdos?</span>
+                                <span className="text-sm text-slate-600">Excluir com os conteúdos?</span>
                                 <button
                                     type="button"
                                     onClick={excluir}
@@ -121,7 +126,7 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                                 <button
                                     type="button"
                                     onClick={() => setConfirmandoExclusao(false)}
-                                    className={`${botaoPequeno} text-gray-600 hover:bg-gray-100`}
+                                    className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                                 >
                                     Não
                                 </button>
@@ -158,8 +163,11 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
 
             <ListaConteudos disciplinaId={id} versao={versao} cor={cor} />
 
+            {/* botão "contornado" em pílula, igual aos "Priority" e "Repeat" da referência */}
             <button
-                className="mt-3 rounded-lg bg-[#004A8F] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98]"
+                type="button"
+                aria-expanded={formConteudoAberto}
+                className="mt-3 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#00264D] transition hover:bg-slate-50 active:scale-[0.98]"
                 onClick={() => setFormConteudoAberto(!formConteudoAberto)}
             >
                 Adicionar conteúdo
