@@ -1,43 +1,31 @@
 import api from './api';
+import { gravarToken, idDoToken } from './token';
 
-import { USE_MOCK, erroApi } from './mock';
-import { USUARIO_VISITANTE, ehVisitante } from './visitante';
-
-
+// POST /login -> { token, user? }. Guarda só o token.
 export async function login(credenciais) {
-  const { data } = await api.post('login', credenciais);
-  localStorage.setItem('token', data.token);
-  if (data.user) {
-    localStorage.setItem('user', JSON.stringify(data.user));
-  }
 
-  console.log( data )
+  console.log('login', credenciais);
+
+  const { data } = await api.post('login', credenciais);
+  if (!data?.token) throw new Error('A API não devolveu o token no login.');
+
+  console.log('passou');
+  gravarToken(data.token);
   return data;
 }
 
+// POST /users -> usuário criado (pode ou não devolver token)
 export async function registrar(dados) {
   const { data } = await api.post('users', dados);
   return data;
 }
 
+// Usuário logado, sempre vindo da API (nada fica salvo no navegador).
 export async function perfil() {
-  if (ehVisitante()) return USUARIO_VISITANTE;
-
-  const usuarioSalvo = localStorage.getItem('user');
-  if (usuarioSalvo) {
-    return JSON.parse(usuarioSalvo);
-  }
-
   const id = idDoToken();
   if (id == null) return null;
-
-  console.log('Aqui')
-
   const { data } = await api.get(`users/${id}`);
-
-  console.log('ali')
-  localStorage.setItem('user', JSON.stringify(data));
-  return data;
+  return data?.user ?? data;
 }
 
 export async function listaUsuarios() {

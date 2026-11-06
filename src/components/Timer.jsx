@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { listarTimers } from '../services/presetService';
 import { TIMERS_SUGERIDOS } from '../data/presets';
 import { CircleCheck, Pause, Play } from 'lucide-react';
 import {
   atualizarSessao,
   buscarSessaoAtiva,
   criarSessao,
+  listarTimers,
   removerSessao,
 } from '../services/timerService';
 

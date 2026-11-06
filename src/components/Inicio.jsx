@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import BotaoVisitante from './BotaoVisitante';
 
 function Highlight({ children }) {
   return (
@@ -136,11 +135,6 @@ function Hero({ autenticado }) {
             >
               {autenticado ? 'Ir para o painel' : 'Começar Agora Gratuitamente'}
             </Link>
-            {!autenticado && (
-              <BotaoVisitante className="w-full rounded-full border border-[#3349D6]/20 bg-white px-7 py-3.5 text-sm font-semibold text-[#3349D6] shadow-sm transition hover:bg-[#EEF1FF] sm:w-auto">
-                Explorar sem conta
-              </BotaoVisitante>
-            )}
           </div>
         </div>
 
