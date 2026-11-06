@@ -6,7 +6,7 @@ import useAuth from '../hooks/useAuth';
 
 export default function FormLogin() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
-        email: '',
+        login: '',
         password: '',
     });
     const [erro, setErro] = useState('');
@@ -109,8 +109,8 @@ export default function FormLogin() {
                             <input
                                 className={inputClasses}
                                 id="email"
-                                name="email"
-                                value={credenciaisUsuario.email}
+                                name="login"
+                                value={credenciaisUsuario.login}
                                 type="text"
                                 autoComplete="username"
                                 onChange={handleChange}
