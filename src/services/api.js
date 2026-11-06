@@ -2,7 +2,7 @@ import axios from 'axios';
 import { lerToken } from './token';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://10.20.104.34:4001',
+  baseURL: import.meta.env.VITE_API_URL ?? 'http://10.20.120.15:4001',
   timeout: 10000,
 });
 
