@@ -3,15 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login, registrar } from '../services/authService';
 import useAuth from '../hooks/useAuth';
 
-
-function mensagemErro(err, padrao) {
-    if (!err.response) return 'Não foi possível conectar ao servidor. Verifique se o backend está rodando.';
-    const d = err.response.data;
-    const e = d?.error;
-    if (typeof e === 'string') return e;   // { error: "texto" }
-    return e?.message ?? d?.message ?? padrao;   // { error: { code, message } }
-}
-
 export default function FormCadastro() {
     const [credenciaisUsuario, setCredenciaisUsuario] = useState({
         name: '',
@@ -19,7 +10,7 @@ export default function FormCadastro() {
         password: '',
     });
     const [confirmacaoSenha, setConfirmacaoSenha] = useState('');
-    const [erro, setErro] = useState('');
+    const [erros, setErros] = useState([]);
     const [carregando, setCarregando] = useState(false);
     const navigate = useNavigate();
     const { entrar } = useAuth();
@@ -37,10 +28,26 @@ export default function FormCadastro() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErro('');
+        const errosValidacao = [];
 
+        if (!credenciaisUsuario.name.trim()) {
+            errosValidacao.push('Por favor, insira um nome de usuário.');
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(credenciaisUsuario.email)) {
+            errosValidacao.push('Por favor, insira um e-mail válido.');
+        }
+        if (credenciaisUsuario.password.length < 6) {
+            errosValidacao.push('A senha deve ter pelo menos 6 caracteres.');
+        }
         if (credenciaisUsuario.password !== confirmacaoSenha) {
-            setErro('As senhas não conferem.');
+            errosValidacao.push('As senhas não conferem.');
+        }
+        if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(credenciaisUsuario.password)) {
+            errosValidacao.push('A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número.');
+        }
+
+        setErros(errosValidacao);
+        if (errosValidacao.length > 0) {
             return;
         }
 
@@ -60,9 +67,9 @@ export default function FormCadastro() {
             navigate('/setup-usuario', { replace: true });
         } catch (err) {
             const erroApi = err.response?.data?.message ?? err.response?.data?.error;
-            setErro(
-                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível criar a conta.'
-            );
+            setErros([
+                typeof erroApi === 'string' ? erroApi : erroApi?.message ?? 'Não foi possível criar a conta.',
+            ]);
         } finally {
             setCarregando(false);
         }
@@ -142,6 +149,7 @@ export default function FormCadastro() {
                 <div className="flex flex-1 items-center py-10">
                     <form
                         onSubmit={handleSubmit}
+                        noValidate
                         className="mx-auto w-full max-w-md space-y-6"
                     >
                         <header className="space-y-2">
@@ -162,7 +170,15 @@ export default function FormCadastro() {
                             </p>
                         </header>
 
-                        {erro && <p role="alert" className="text-sm text-[#A85A00]">{erro}</p>}
+                        {erros.length > 0 && (
+                            <div className="space-y-2">
+                                {erros.map((erro, index) => (
+                                    <p key={index} role="alert" className="text-sm text-[#A85A00]">
+                                        {erro}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
 
                         <div>
                             <label className={labelClasses} htmlFor="name">
@@ -210,7 +226,7 @@ export default function FormCadastro() {
                                     autoComplete="new-password"
                                     onChange={handleChange}
                                     required
-                                    minLength={8}
+                                    minLength={6}
                                 />
                             </div>
 
