@@ -80,7 +80,7 @@ export default function TodoList({ onMudou }) {
 
     return (
         <section className="rounded-[28px] bg-white px-6 py-8 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:px-10">
-            <h2 className="text-3xl font-bold text-[#00264D]">To-Do List</h2>
+            <h2 className="text-3xl font-bold text-[#00264D]">Tarefas</h2>
             <p className="mb-5 mt-1 text-sm text-slate-500">
                 Marque o quadrado ao concluir. Use a estrela ★ para destacar o que é importante.
             </p>

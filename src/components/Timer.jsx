@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import FormTimer from './FormTimer';
 import { TIMERS_SUGERIDOS } from '../data/presets';
 import { CircleCheck, Pause, Play } from 'lucide-react';
 import {
@@ -13,23 +13,21 @@ import {
 const AVISO_SYNC =
   'Não foi possível salvar a sessão no servidor. O timer continua funcionando, mas pode não ser lembrado ao recarregar.';
 
-// 'YYYY-MM-DDTHH:mm' no horário local, para usar como "min" do input
-function agoraParaInput() {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 16);
-}
-
-// 'YYYY-MM-DDTHH:mm' de "agora + N minutos", no horário local
-function emMinutos(min) {
-  const d = new Date(Date.now() + min * 60000);
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 16);
+// 'HH:mm' no horário local, para usar no input type="time"
+ function minutosParaInput(minutos) {
+   const hh = String(Math.floor(minutos / 60)).padStart(2, '0');
+   const mm = String(minutos % 60).padStart(2, '0');
+   return `${hh}:${mm}`;
+ }
+ 
+ function inputParaMinutos(hora) {
+   if (!hora || !/^\d{2}:\d{2}$/.test(hora)) return Number.NaN;
+   const [hh, mm] = hora.split(':').map(Number);
+   return hh * 60 + mm;
 }
 
 function Contador({ ms }) {
   const unidades = [
-    { label: 'dias', valor: Math.floor(ms / 86400000) },
     { label: 'horas', valor: Math.floor((ms / 3600000) % 24) },
     { label: 'minutos', valor: Math.floor((ms / 60000) % 60) },
     { label: 'segundos', valor: Math.floor((ms / 1000) % 60) },
@@ -42,7 +40,7 @@ function Contador({ ms }) {
           key={label}
           className="rounded-2xl border border-slate-200 bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
         >
-          <div className="text-3xl font-bold tabular-nums text-[#00264D] sm:text-4xl">
+          <div className="text-3xl font-bold tabular-nums text-navy sm:text-4xl">
             {String(valor).padStart(2, '0')}
           </div>
           <div className="mt-1 text-xs font-medium uppercase tracking-wider text-slate-500">
@@ -57,7 +55,9 @@ function Contador({ ms }) {
 export default function Timer() {
   const [carregando, setCarregando] = useState(true);
   const [nome, setNome] = useState('');
+  const [objetivo, setObjetivo] = useState('');
   const [data, setData] = useState('');
+  const [duracaoPausa, setDuracaoPausa] = useState('00:05');
   const [fim, setFim] = useState(null); // momento final (ms)
   const [pausado, setPausado] = useState(false);
   const [restante, setRestante] = useState(0);
@@ -67,6 +67,12 @@ export default function Timer() {
   const [timers, setTimers] = useState([]); // timers salvos em Preferências
   const [escolhido, setEscolhido] = useState(null); // id ou chave do timer usado
   const [pausaDepois, setPausaDepois] = useState(0); // minutos de pausa depois do foco
+    const [emPausa, setEmPausa] = useState(false);
+    const transicaoRef = useRef(false);
+  const [modalTimerAberto, setModalTimerAberto] = useState(false);
+  const [novoTimerNome, setNovoTimerNome] = useState('Meu timer');
+  const [novoTimerFoco, setNovoTimerFoco] = useState(30);
+  const [novoTimerPausa, setNovoTimerPausa] = useState(5);
   const padraoAplicado = useRef(false);
 
   // promessa com o id da sessão no servidor (null se não existe ou se falhou)
@@ -84,6 +90,7 @@ export default function Timer() {
         const agora = Date.now();
         sessaoRef.current = Promise.resolve(sessao.id);
         setNome(sessao.nome);
+        setObjetivo(sessao.nome === 'Pausa' ? '' : sessao.nome);
         setFim(sessao.fim ?? agora);
         setPausado(sessao.pausado);
         setRestante(sessao.pausado ? sessao.restante : Math.max(0, sessao.fim - agora));
@@ -124,8 +131,22 @@ export default function Timer() {
   // preenche o formulário com um timer (salvo ou sugerido)
   function usarTimer(t) {
     setEscolhido(t.id ?? t.chave);
-    setData(emMinutos(t.foco));
+    setData(minutosParaInput(t.foco));
     setPausaDepois(t.pausa ?? 0);
+    setDuracaoPausa(minutosParaInput(t.pausa ?? 0));
+  }
+
+  function criarTimerPersonalizado(e) {
+    e.preventDefault();
+    const timer = {
+      chave: `personalizado-${Date.now()}`,
+      nome: novoTimerNome.trim(),
+      foco: Number(novoTimerFoco),
+      pausa: Number(novoTimerPausa),
+    };
+    setTimers((atuais) => [...atuais, timer]);
+    usarTimer(timer);
+    setModalTimerAberto(false);
   }
 
   // contagem regressiva
@@ -171,13 +192,17 @@ export default function Timer() {
 
   function iniciar(e) {
     e.preventDefault();
-    const alvo = new Date(data).getTime();
+    const foco = inputParaMinutos(data);
+    const pausa = inputParaMinutos(duracaoPausa);
 
-    if (Number.isNaN(alvo) || alvo <= Date.now()) {
-      setErro('Escolha uma data e hora no futuro.');
+    if (!Number.isFinite(foco) || foco <= 0 || !Number.isFinite(pausa)) {
+      setErro('Informe uma duração de foco e descanso válida.');
       return;
     }
-    comecar(nome.trim(), alvo);
+    setObjetivo(nome.trim());
+    setPausaDepois(pausa);
+    setEmPausa(false);
+    comecar(nome.trim(), Date.now() + foco * 60000);
   }
 
   function comecar(nomeLimpo, alvo) {
@@ -187,6 +212,7 @@ export default function Timer() {
     setRestante(alvo - Date.now());
     setPausado(false);
     setFinalizado(false);
+  transicaoRef.current = false;
 
     sessaoRef.current = criarSessao({ nome: nomeLimpo, fim: alvo })
       .then((sessao) => {
@@ -200,13 +226,22 @@ export default function Timer() {
   }
 
   // depois do foco: troca a sessão pela pausa do timer escolhido
-  function iniciarPausa() {
-    const min = pausaDepois;
+  // Ao terminar uma fase, inicia automaticamente a outra.
+  function alternarFase() {
+    const proximaPausa = !emPausa;
+    const min = proximaPausa ? pausaDepois : inputParaMinutos(data);
+    if (min <= 0) return;
     sincronizar((id) => removerSessao(id));
     sessaoRef.current = sessaoRef.current.then(() => null);
-    setPausaDepois(0);
-    comecar('Pausa', Date.now() + min * 60000);
+    setEmPausa(proximaPausa);
+    comecar(proximaPausa ? 'Pausa' : objetivo, Date.now() + min * 60000);
   }
+
+  useEffect(() => {
+    if (!finalizado || !iniciado || pausaDepois <= 0 || transicaoRef.current) return;
+    transicaoRef.current = true;
+    alternarFase();
+  }, [finalizado, iniciado, pausaDepois]);
 
   function pausar() {
     setPausado(true);
@@ -229,9 +264,16 @@ export default function Timer() {
     setFinalizado(false);
     setRestante(0);
     setNome('');
+    setObjetivo('');
     setData('');
+    setDuracaoPausa('00:05');
     setEscolhido(null);
     setPausaDepois(0);
+    setEmPausa(false);
+              {iniciado ? (emPausa ? 'Descanso' : nome) : 'Timer de estudo'}
+              <p className="mt-2 text-sm text-slate-500">
+                Informe as durações de foco e descanso. O timer alterna entre elas até encerrar.
+              </p>
   }
 
 
@@ -240,7 +282,7 @@ export default function Timer() {
     : '';
 
   return (
-    <section className="mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm sm:p-8">
+    <section className={`mx-auto w-full max-w-2xl rounded-3xl border border-slate-200 p-6 shadow-sm transition-colors duration-700 ease-in-out sm:p-8 ${emPausa ? 'bg-emera0ld-5' : 'bg-slate-50'}`}>
       <header className="mb-8 text-center">
         <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#004A8F]">
           Sessão de estudo
@@ -270,9 +312,13 @@ export default function Timer() {
           <div>
             <p className="mb-2 flex items-baseline justify-between gap-2 text-sm font-medium text-slate-700">
               {timers.length > 0 ? 'Seus timers' : 'Duração rápida'}
-              <Link to="/configuracoes#timers" className="text-xs font-semibold text-[#004A8F] hover:underline">
-                {timers.length > 0 ? 'Editar' : 'Salvar os seus'}
-              </Link>
+              <button
+                type="button"
+                onClick={() => setModalTimerAberto(true)}
+                className="text-xs font-semibold text-[#004A8F] hover:underline"
+              >
+                Criar timer
+              </button>
             </p>
             <div className="flex flex-wrap gap-2">
               {(timers.length > 0 ? timers : TIMERS_SUGERIDOS).map((t) => {
@@ -313,17 +359,35 @@ export default function Timer() {
 
           <div>
             <label htmlFor="timer-data" className="mb-2 block text-sm font-medium text-slate-700">
-              Focar até (data e hora)
+              Foco (horas:minutos)
             </label>
             <input
               id="timer-data"
-              type="datetime-local"
-              min={agoraParaInput()}
+              type="time"
+              step="60"
               value={data}
               onChange={(e) => {
                 setData(e.target.value);
                 setEscolhido(null);
-                setPausaDepois(0);
+              }}
+              required
+              className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#004A8F] focus:ring-4 focus:ring-[#004A8F]/10"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="timer-pausa" className="mb-2 block text-sm font-medium text-slate-700">
+              Descanso (horas:minutos)
+            </label>
+            <input
+              id="timer-pausa"
+              type="time"
+              step="60"
+              value={duracaoPausa}
+              onChange={(e) => {
+                setDuracaoPausa(e.target.value);
+                setPausaDepois(inputParaMinutos(e.target.value) || 0);
+                setEscolhido(null);
               }}
               required
               className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-[#004A8F] focus:ring-4 focus:ring-[#004A8F]/10"
@@ -347,9 +411,9 @@ export default function Timer() {
         <div className="space-y-7">
           {/* o estado aparece escrito; a cor não muda com ele */}
           <div className="flex justify-center">
-            <span
-              role="status"
-              className="inline-flex items-center gap-2 rounded-full bg-[#00264D] px-4 py-1.5 text-sm font-semibold text-white"
+              <span
+                role="status"
+                className="inline-flex items-center gap-2 rounded-full bg-navy px-4 py-1.5 text-sm font-semibold text-white"
             >
               {finalizado ? <CircleCheck className="h-4 w-4" /> : pausado ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
               {finalizado ? 'Concluído' : pausado ? 'Pausado' : 'Em andamento'}
@@ -364,18 +428,6 @@ export default function Timer() {
             </p>
           )}
 
-          {finalizado && pausaDepois > 0 && (
-            <div className="flex justify-center">
-              <button
-                type="button"
-                onClick={iniciarPausa}
-                className="rounded-xl border border-[#004A8F] px-5 py-2.5 text-sm font-semibold text-[#004A8F] hover:bg-[#004A8F]/5 active:scale-[0.98]"
-              >
-                Começar a pausa de {pausaDepois} min
-              </button>
-            </div>
-          )}
-
           <div className="flex flex-col justify-center gap-3 sm:flex-row">
             {!finalizado && (
               <button
@@ -383,7 +435,7 @@ export default function Timer() {
                 onClick={pausado ? retomar : pausar}
                 className={`rounded-xl px-5 py-3 font-semibold transition active:scale-[0.98] focus:outline-none focus:ring-4 ${
                   pausado
-                    ? 'bg-[#004A8F] text-white hover:bg-[#003B73] focus:ring-[#004A8F]/20'
+                    ? 'bg-[#004A8F] text-white hover:bg-brand-dark focus:ring-[#004A8F]/20'
                     : 'border border-[#004A8F] bg-white text-[#004A8F] hover:bg-[#004A8F]/5 focus:ring-[#004A8F]/20'
                 }`}
               >
@@ -393,13 +445,18 @@ export default function Timer() {
             <button
               type="button"
               onClick={encerrar}
-              className="rounded-xl bg-[#00264D] px-5 py-3 font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-[#00264D]/25"
+              className="rounded-xl bg-navy px-5 py-3 font-semibold text-white transition hover:bg-brand-dark active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-navy/25"
             >
               Encerrar sessão
             </button>
           </div>
         </div>
       )}
+
+      <FormTimer
+        aberto={modalTimerAberto}
+        onFechar={() => setModalTimerAberto(false)}
+      />
     </section>
   );
 }

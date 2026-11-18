@@ -29,7 +29,7 @@ const PASSOS = [
         <ul className="mt-4 space-y-2">
           <Ponto icone={Calendar}>Calendário para provas, entregas e revisões</Ponto>
           <Ponto icone={Clock}>Timer para focar até a hora que você escolher</Ponto>
-          <Ponto icone={SquareCheckBig}>To-do list para o que precisa ser feito</Ponto>
+          <Ponto icone={SquareCheckBig}>Tarefas para o que precisa ser feito</Ponto>
           <Ponto icone={BookOpen}>Disciplinas com os conteúdos de cada matéria</Ponto>
         </ul>
       </>

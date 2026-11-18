@@ -35,7 +35,7 @@ const AJUDA = {
         <Topico icone={Clock} titulo="Timer de estudo">
           Escreva o que vai estudar, escolha até quando quer focar e inicie. Dá para pausar e retomar. O estado aparece escrito, com um ícone: ▶ em andamento, ❚❚ pausado, ✓ concluído.
         </Topico>
-        <Topico icone={SquareCheckBig} titulo="To-do list">
+        <Topico icone={SquareCheckBig} titulo="Tarefas">
           Use o botão quadrado para concluir: a tarefa concluída ganha um ✓ e o texto riscado. Use o botão de estrela para favoritar: a estrela fica preenchida.
         </Topico>
       </>
@@ -88,7 +88,7 @@ export default function BotaoAjuda({ tela, className = '' }) {
         type="button"
         onClick={() => setAberto(true)}
         aria-haspopup="dialog"
-        className={`inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-[#004A8F] transition hover:border-[#004A8F]/50 hover:bg-[#004A8F]/5 ${className}`}
+        className={`inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-1.5 text-sm font-semibold text-[#004A8F] transition hover:border-[#004A8F]/50 hover:bg-[#004A8F]/5 ${className} cursor-pointer`}
       >
         Como funciona
       </button>
@@ -102,7 +102,7 @@ export default function BotaoAjuda({ tela, className = '' }) {
             <button
               type="button"
               onClick={() => setAberto(false)}
-              className="rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#003B73] active:scale-[0.98]"
+              className="rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#003B73] active:scale-[0.98] cursor-pointer"
             >
               Entendi
             </button>

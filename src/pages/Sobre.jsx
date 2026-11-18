@@ -74,7 +74,7 @@ const recursos = [
     texto: 'Mantenha o foco absoluto com contagem regressiva até a hora em que você quer terminar.',
   },
   {
-    titulo: 'To-do list',
+    titulo: 'Tarefas',
     texto: 'Gerencie suas tarefas, defina favoritos e marque o que já foi concluído.',
   },
   {
@@ -393,7 +393,7 @@ function Valores() {
 
 /**
  * Componente: Recursos
- * Funcionalidade: lista tudo o que o app oferece (Calendário, Timer, To-do list e Disciplinas)
+ * Funcionalidade: lista tudo o que o app oferece (Calendário, Timer, Lista de tarefas e Disciplinas)
  * em 4 cartões. Fica em 1 coluna no celular, 2 em telas médias e 4 no notebook.
  */
 function Recursos() {

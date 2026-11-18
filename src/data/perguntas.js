@@ -31,17 +31,6 @@ export const perguntas = [
         ],
     },
     {
-        id: 'estilo',
-        titulo: 'Como você prefere aprender?',
-        ajuda: 'Pense no jeito em que você aprende mais rápido.',
-        opcoes: [
-            { valor: 'Vídeos', emoji: '🎬', descricao: 'Aulas e tutoriais em vídeo' },
-            { valor: 'Textos', emoji: '📖', descricao: 'Livros, artigos e resumos' },
-            { valor: 'Exercícios práticos', emoji: '🛠️', descricao: 'Aprender fazendo' },
-            { valor: 'Um pouco de cada', emoji: '🔀', descricao: 'Misturar formatos' },
-        ],
-    },
-    {
         id: 'tempo',
         titulo: 'Quanto tempo você pode estudar por dia?',
         ajuda: 'Seja realista: é melhor pouco todo dia do que muito de vez em quando.',
