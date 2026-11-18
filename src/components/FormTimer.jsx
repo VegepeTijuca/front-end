@@ -142,7 +142,7 @@ export default function FormTimer({
 							<p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#004A8F]">Agenda</p>
 							<h2 id="form-timer-titulo" className="mt-1 text-2xl font-bold text-slate-800">Configurar timers</h2>
 						</div>
-						<button type="button" onClick={onFechar} aria-label="Fechar" className="rounded-full p-2 text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700">×</button>
+						<button type="button" onClick={onFechar} aria-label="Fechar" className="rounded-full p-2 text-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 cursor-pointer disabled:cursor-not-allowed">×</button>
 					</header>
 
 					<div className="space-y-7">
@@ -163,8 +163,8 @@ export default function FormTimer({
 												<p className="text-sm text-slate-500">{timer.foco} min de foco{timer.pausa > 0 ? `, ${timer.pausa} min de pausa` : ', sem pausa'}</p>
 											</div>
 											<div className="ml-auto flex items-center gap-2">
-												{!timer.padrao && <button type="button" onClick={() => tornarPadrao(timer.id)} className="text-sm font-semibold text-[#004A8F] transition hover:underline">Tornar padrão</button>}
-												<button type="button" onClick={() => remover(timer.id)} className="text-sm font-semibold text-slate-500 transition hover:text-slate-800">Remover</button>
+												{!timer.padrao && <button type="button" onClick={() => tornarPadrao(timer.id)} className="text-sm font-semibold text-[#004A8F] transition hover:underline cursor-pointer disabled:cursor-not-allowed">Tornar padrão</button>}
+												<button type="button" onClick={() => remover(timer.id)} className="text-sm font-semibold text-slate-500 transition hover:text-slate-800 cursor-pointer disabled:cursor-not-allowed">Remover</button>
 											</div>
 										</li>
 									))}
@@ -175,10 +175,10 @@ export default function FormTimer({
 						<form onSubmit={criar} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
 							<h3 className="text-base font-semibold text-slate-800">Criar o seu</h3>
 							<div className="mt-3 grid gap-3 sm:grid-cols-[1fr_110px_110px_auto]">
-								<input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome (ex.: Revisão)" aria-label="Nome do timer" className={campo} />
-								<input type="number" min="1" value={foco} onChange={(e) => setFoco(e.target.value)} aria-label="Minutos de foco" title="Minutos de foco" className={campo} />
-								<input type="number" min="0" value={pausa} onChange={(e) => setPausa(e.target.value)} aria-label="Minutos de pausa" title="Minutos de pausa" className={campo} />
-								<button type="submit" className={botaoPrimario}>Salvar</button>
+								<input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome (ex.: Revisão)" aria-label="Nome do timer" className={`${campo} cursor-text disabled:cursor-not-allowed`} />
+								<input type="number" min="1" value={foco} onChange={(e) => setFoco(e.target.value)} aria-label="Minutos de foco" title="Minutos de foco" className={`${campo} cursor-text disabled:cursor-not-allowed`} />
+								<input type="number" min="0" value={pausa} onChange={(e) => setPausa(e.target.value)} aria-label="Minutos de pausa" title="Minutos de pausa" className={`${campo} cursor-text disabled:cursor-not-allowed`} />
+								<button type="submit" className={`${botaoPrimario} cursor-pointer disabled:cursor-not-allowed`}>Salvar</button>
 							</div>
 							<p className="mt-2 text-xs text-slate-500">Foco e pausa em minutos. Com pausa zero, não aparece o botão de pausa no fim.</p>
 						</form>

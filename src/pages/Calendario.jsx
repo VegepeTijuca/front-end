@@ -119,7 +119,7 @@ function IconButton({ label, onClick, className = '', children }) {
             onClick={onClick}
             aria-label={label}
             title={label}
-            className={`h-9 w-9 place-items-center rounded-lg bg-slate-100 text-lg font-bold leading-none text-[#00264D] transition hover:bg-slate-200 active:scale-90 ${
+            className={`cursor-pointer disabled:cursor-not-allowed h-9 w-9 place-items-center rounded-lg bg-slate-100 text-lg font-bold leading-none text-[#00264D] transition hover:bg-slate-200 active:scale-90 ${
                 className || 'grid'
             }`}
         >
@@ -175,7 +175,7 @@ function PainelEventos({ events, onAbrir, onNovo }) {
                         <button
                             type="button"
                             onClick={onNovo}
-                            className="mt-3 text-sm font-semibold text-[#004A8F] hover:underline"
+                            className="mt-3 text-sm font-semibold text-[#004A8F] hover:underline cursor-pointer disabled:cursor-not-allowed"
                         >
                             Criar um evento
                         </button>
@@ -187,7 +187,7 @@ function PainelEventos({ events, onAbrir, onNovo }) {
                                 <button
                                     type="button"
                                     onClick={() => onAbrir(ev.id)}
-                                    className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 px-3 py-2.5 text-left transition hover:-translate-y-0.5 hover:border-[#004A8F]/40 hover:bg-[#004A8F]/5 hover:shadow-sm"
+                                    className="flex w-full items-start gap-3 rounded-2xl border border-slate-100 px-3 py-2.5 text-left transition hover:-translate-y-0.5 hover:border-[#004A8F]/40 hover:bg-[#004A8F]/5 hover:shadow-sm cursor-pointer disabled:cursor-not-allowed"
                                 >
                                     <span
                                         aria-hidden="true"
@@ -400,7 +400,7 @@ export default function Calendario({ expandido = false, onMudou }) {
                         <button
                             type="button"
                             onClick={() => controller.today()}
-                            className="h-9 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95"
+                            className="h-9 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
                         >
                             Hoje
                         </button>
@@ -419,7 +419,7 @@ export default function Calendario({ expandido = false, onMudou }) {
                         type="date"
                         aria-label="Ir para a data"
                         onChange={(e) => e.target.value && controller.gotoDate(e.target.value)}
-                        className="h-9 rounded-lg border border-slate-200 px-2 text-sm text-slate-700 outline-none transition focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                        className="h-9 rounded-lg border border-slate-200 px-2 text-sm text-slate-700 outline-none transition focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20 cursor-pointer disabled:cursor-not-allowed"
                     />
 
                     <div className="flex rounded-lg bg-slate-100 p-0.5">
@@ -429,7 +429,7 @@ export default function Calendario({ expandido = false, onMudou }) {
                                 type="button"
                                 onClick={() => controller.changeView(v.type)}
                                 aria-pressed={activeView === v.type}
-                                className={`h-8 rounded-md px-3 text-sm font-semibold transition-all duration-200 ${
+                                className={`cursor-pointer disabled:cursor-not-allowed h-8 rounded-md px-3 text-sm font-semibold transition-all duration-200 ${
                                     v.desktopOnly ? 'hidden sm:block' : ''
                                 } ${
                                     activeView === v.type
@@ -446,7 +446,7 @@ export default function Calendario({ expandido = false, onMudou }) {
                         {!expandido && (
                             <Link
                                 to="/calendario"
-                                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95"
+                                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-[#00264D] transition hover:bg-slate-200 active:scale-95 cursor-pointer"
                             >
                                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                                     <path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" strokeLinecap="round" strokeLinejoin="round" />
@@ -457,7 +457,7 @@ export default function Calendario({ expandido = false, onMudou }) {
                         <button
                             type="button"
                             onClick={() => novoEvento()}
-                            className="h-9 rounded-lg bg-[#004A8F] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#003B73] active:scale-95"
+                            className="h-9 rounded-lg bg-[#004A8F] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#003B73] active:scale-95 cursor-pointer disabled:cursor-not-allowed"
                         >
                             + Novo evento
                         </button>

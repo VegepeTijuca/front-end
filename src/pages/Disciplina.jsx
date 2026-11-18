@@ -46,7 +46,7 @@ function Folha({ onFechar, children }) {
           type="button"
           onClick={onFechar}
           aria-label="Fechar"
-          className="absolute right-4 top-4 hidden rounded-full p-2 text-slate-500 transition hover:bg-slate-200 sm:block"
+          className="absolute right-4 top-4 hidden rounded-full p-2 text-slate-500 transition hover:bg-slate-200 sm:block cursor-pointer disabled:cursor-not-allowed"
         >
           <X className="h-5 w-5" />
         </button>
@@ -154,7 +154,7 @@ export default function Disciplina() {
         onClick={() => setFormAberto(true)}
         aria-label="Nova disciplina"
         title="Nova disciplina"
-        className="fixed bottom-6 right-6 z-30 grid h-16 w-16 place-items-center rounded-full bg-[#00264D] text-white shadow-xl shadow-[#00264D]/30 transition hover:scale-105 hover:bg-[#003B73] active:scale-95 sm:bottom-8 sm:right-8"
+        className="fixed bottom-6 right-6 z-30 grid h-16 w-16 place-items-center rounded-full bg-[#00264D] text-white shadow-xl shadow-[#00264D]/30 transition hover:scale-105 hover:bg-[#003B73] active:scale-95 sm:bottom-8 sm:right-8 cursor-pointer disabled:cursor-not-allowed"
       >
         <Plus className="h-8 w-8" />
       </button>

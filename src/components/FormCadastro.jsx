@@ -163,7 +163,7 @@ export default function FormCadastro() {
                                 Já tem uma conta?{' '}
                                 <Link
                                     to="/login"
-                                    className="font-semibold text-brand underline underline-offset-2 hover:text-brand"
+                                    className="font-semibold text-brand underline underline-offset-2 hover:text-brand cursor-pointer"
                                 >
                                     Entrar
                                 </Link>
@@ -185,7 +185,7 @@ export default function FormCadastro() {
                                 Nome de usuário
                             </label>
                             <input
-                                className={inputClasses}
+                                className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                 id="name"
                                 name="name"
                                 value={credenciaisUsuario.name}
@@ -201,7 +201,7 @@ export default function FormCadastro() {
                                 E-mail
                             </label>
                             <input
-                                className={inputClasses}
+                                className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                 id="email"
                                 name="email"
                                 value={credenciaisUsuario.email}
@@ -218,7 +218,7 @@ export default function FormCadastro() {
                                     Senha
                                 </label>
                                 <input
-                                    className={inputClasses}
+                                    className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                     id="password"
                                     name="password"
                                     value={credenciaisUsuario.password}
@@ -235,7 +235,7 @@ export default function FormCadastro() {
                                     Confirme sua senha
                                 </label>
                                 <input
-                                    className={inputClasses}
+                                    className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                     id="confirmacaoSenha"
                                     name="confirmacaoSenha"
                                     value={confirmacaoSenha}

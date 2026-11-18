@@ -14,7 +14,6 @@ import EmBreve from './pages/EmBreve';
 import Configuracoes from './pages/Configuracoes';
 import Sobre from './pages/Sobre';
 import RecuperarSenha from './pages/RecuperarSenha';
-import TesteComponents from './pages/TesteComponents';
 
 export default function App() {
   return (
@@ -40,10 +39,6 @@ export default function App() {
               <Route path="/configuracoes" element={<Configuracoes />} />
               <Route path="/sobre" element={<Sobre />} />
 
-              {/* página de testes: só existe em desenvolvimento */}
-              {import.meta.env.DEV && (
-                <Route path="/testeComponents" element={<TesteComponents />} />
-              )}
             </Route>
           </Route>
 

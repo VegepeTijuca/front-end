@@ -35,7 +35,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                 aria-label={navAberto ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
                 aria-expanded={navAberto}
                 aria-controls="navegacao-lateral"
-                className="grid h-10 w-10 place-items-center rounded-lg text-[#00264D] hover:bg-slate-100"
+                className="grid h-10 w-10 place-items-center rounded-lg text-[#00264D] hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
             >
                 <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" />
@@ -50,7 +50,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                     aria-haspopup="menu"
                     aria-expanded={menuAberto}
                     title="Perfil e configurações"
-                    className="flex items-center gap-3 rounded-full py-1 pl-1 pr-3 transition hover:bg-slate-100"
+                    className="flex items-center gap-3 rounded-full py-1 pl-1 pr-3 transition hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
                 >
                     {avatar ? (
                         <img src={avatar} alt="" className="h-11 w-11 rounded-full object-cover" />
@@ -82,7 +82,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                             to="/configuracoes"
                             role="menuitem"
                             onClick={() => setMenuAberto(false)}
-                            className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                            className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer"
                         >
                             <User className="h-4 w-4 shrink-0" />
                             Perfil e configurações
@@ -94,7 +94,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                                 setMenuAberto(false);
                                 onAbrirTour?.();
                             }}
-                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
                         >
                             <CircleQuestionMark className="h-4 w-4 shrink-0" />
                             Como usar o clʌss.me
@@ -103,7 +103,7 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                             type="button"
                             role="menuitem"
                             onClick={onSair}
-                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
                         >
                             <LogOut className="h-4 w-4 shrink-0" />
                             Sair

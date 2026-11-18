@@ -80,12 +80,12 @@ export default function ListaConteudos({ disciplinaId, versao = 0, cor = '#004A8
                                     value={nomeEditado}
                                     onChange={(e) => setNomeEditado(e.target.value)}
                                     aria-label="Título do conteúdo"
-                                    className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm outline-none focus:border-[#004A8F]"
+                                    className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-2 py-1 text-sm outline-none focus:border-[#004A8F] cursor-text disabled:cursor-not-allowed"
                                 />
-                                <button type="submit" disabled={salvando} className={`${botaoPequeno} bg-[#004A8F] text-white hover:bg-[#003B73]`}>
+                                <button type="submit" disabled={salvando} className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} bg-[#004A8F] text-white hover:bg-[#003B73]`}>
                                     Salvar
                                 </button>
-                                <button type="button" onClick={() => setEditandoId(null)} className={`${botaoPequeno} text-gray-600 hover:bg-slate-200`}>
+                                <button type="button" onClick={() => setEditandoId(null)} className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-gray-600 hover:bg-slate-200`}>
                                     Cancelar
                                 </button>
                             </form>
@@ -96,10 +96,10 @@ export default function ListaConteudos({ disciplinaId, versao = 0, cor = '#004A8
                                     {c.name}
                                 </span>
                                 <span className="flex shrink-0 gap-1">
-                                    <button type="button" onClick={() => comecarEdicao(c)} className={`${botaoPequeno} text-[#004A8F] hover:bg-slate-200`}>
+                                    <button type="button" onClick={() => comecarEdicao(c)} className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-[#004A8F] hover:bg-slate-200`}>
                                         Editar
                                     </button>
-                                    <button type="button" onClick={() => excluir(c)} disabled={salvando} className={`${botaoPequeno} text-slate-600 hover:bg-slate-200`}>
+                                    <button type="button" onClick={() => excluir(c)} disabled={salvando} className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-slate-600 hover:bg-slate-200`}>
                                         Excluir
                                     </button>
                                 </span>

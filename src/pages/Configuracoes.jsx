@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import { lerPreferencias, salvarPreferencias } from '../services/usuarioService';
 import { adicionarPacote } from '../services/presetService';
 import { criarTimer, definirTimerPadrao, listarTimers, removerTimer } from '../services/timerService';
-import { perguntas } from '../data/perguntas';
 import { PACOTES_MATERIAS, TIMERS_SUGERIDOS } from '../data/presets';
-import { EVENTO_TOUR } from '../components/TourInicial';
 
 // ---------- peças da página ----------
 
@@ -28,129 +25,21 @@ function Secao({ id, numero, titulo, texto, children, atraso = 0 }) {
   );
 }
 
-function Chip({ ativo, children, onClick, disabled }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      aria-pressed={ativo}
-      className={`rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 active:scale-95 disabled:opacity-60 ${
-        ativo
-          ? 'border-[#004A8F] bg-[#004A8F] text-white'
-          : 'border-slate-300 bg-white text-slate-700 hover:border-[#004A8F]/60 hover:text-[#004A8F]'
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
-
 const botaoPrimario =
-  'rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98] disabled:opacity-60';
+  'rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#003B73] cursor-pointer active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60';
 const botaoLinha =
-  'rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-[#004A8F] transition hover:bg-[#004A8F]/5 active:scale-[0.98] disabled:opacity-60';
+  'rounded-xl border border-slate-300 px-4 py-2 text-sm font-semibold text-[#004A8F] transition hover:bg-[#004A8F]/5 cursor-pointer active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60';
 const campo =
   'h-11 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20';
 
-// ---------- 02: como você estuda ----------
-function SecaoEstudo({ prefs, aoSalvar }) {
-  const [salvo, setSalvo] = useState('');
-  const [erro, setErro] = useState('');
-  const [outro, setOutro] = useState(prefs.areaOutro ?? '');
-  const [editandoOutro, setEditandoOutro] = useState(false);
 
-  async function escolher(id, valor, extra = {}) {
-    setErro('');
-    try {
-      await aoSalvar({ [id]: valor, ...extra }, id === 'area' && valor !== 'Outro');
-      setSalvo(id);
-      setTimeout(() => setSalvo((atual) => (atual === id ? '' : atual)), 1800);
-    } catch {
-      setErro('Não foi possível salvar. Tente de novo.');
-    }
-  }
 
-  return (
-    <div className="space-y-7">
-      {perguntas.map((p) => (
-        <div key={p.id}>
-          <div className="flex items-baseline gap-3">
-            <h3 className="font-semibold text-slate-800">{p.titulo}</h3>
-            <span
-              className={`text-xs font-semibold text-tj-green transition-opacity duration-300 ${
-                salvo === p.id ? 'opacity-100' : 'opacity-0'
-              }`}
-              aria-live="polite"
-            >
-              {salvo === p.id ? 'Salvo' : ''}
-            </span>
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {p.opcoes.map((o) => (
-              <Chip
-                key={o.valor}
-                ativo={prefs[p.id] === o.valor}
-                onClick={() => {
-                  if (o.valor === 'Outro') {
-                    setEditandoOutro(true);
-                    return;
-                  }
-                  setEditandoOutro(false);
-                  escolher(p.id, o.valor);
-                }}
-              >
-                {o.valor}
-              </Chip>
-            ))}
-          </div>
-
-          {p.id === 'area' && (editandoOutro || prefs.area === 'Outro') && (
-            <form
-              className="mt-3 flex max-w-md animate-fade-in gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!outro.trim()) return;
-                setEditandoOutro(false);
-                escolher('area', 'Outro', { areaOutro: outro.trim() });
-              }}
-            >
-              <input
-                value={outro}
-                onChange={(e) => setOutro(e.target.value)}
-                placeholder="O que você quer estudar?"
-                aria-label="Outra área de estudo"
-                className={campo}
-              />
-              <button type="submit" className={botaoLinha}>
-                Salvar
-              </button>
-            </form>
-          )}
-        </div>
-      ))}
-
-      {erro && (
-        <p role="alert" className="text-sm text-[#A85A00]">
-          {erro}
-        </p>
-      )}
-    </div>
-  );
-}
-
-// ---------- 04: matérias prontas ----------
-function SecaoMaterias({ prefs }) {
+// ---------- 03: matérias prontas ----------
+function SecaoMaterias() {
   const [feitos, setFeitos] = useState({}); // chave do pacote -> quantas disciplinas criou
   const [ocupado, setOcupado] = useState('');
   const [abertos, setAbertos] = useState({});
   const [erro, setErro] = useState('');
-
-  const respostas = useMemo(() => Object.values(prefs).filter(Boolean), [prefs]);
-  const ordenados = useMemo(() => {
-    const combina = (p) => p.combina.some((c) => respostas.includes(c));
-    return [...PACOTES_MATERIAS].sort((a, b) => Number(combina(b)) - Number(combina(a)));
-  }, [respostas]);
 
   async function adicionar(pacote) {
     setOcupado(pacote.chave);
@@ -168,8 +57,7 @@ function SecaoMaterias({ prefs }) {
   return (
     <div>
       <ul className="divide-y divide-slate-200 border-y border-slate-200">
-        {ordenados.map((p) => {
-          const combina = p.combina.some((c) => respostas.includes(c));
+        {PACOTES_MATERIAS.map((p) => {
           const feito = feitos[p.chave];
           const aberto = abertos[p.chave];
           return (
@@ -178,7 +66,6 @@ function SecaoMaterias({ prefs }) {
                 <div className="min-w-0 flex-1">
                   <h3 className="font-semibold text-slate-800">
                     {p.nome}
-                    {combina && <span className="ml-2 text-xs font-bold text-tj-green">combina com suas respostas</span>}
                   </h3>
                   <p className="mt-0.5 text-sm text-slate-500">{p.descricao}</p>
                   <p className="mt-2 text-sm text-slate-700">{p.materias.map((m) => m.nome).join(', ')}.</p>
@@ -186,7 +73,7 @@ function SecaoMaterias({ prefs }) {
                     type="button"
                     onClick={() => setAbertos((a) => ({ ...a, [p.chave]: !a[p.chave] }))}
                     aria-expanded={Boolean(aberto)}
-                    className="mt-2 text-sm font-semibold text-[#004A8F] hover:underline"
+                    className="mt-2 cursor-pointer text-sm font-semibold text-[#004A8F] hover:underline"
                   >
                     {aberto ? 'Esconder conteúdos' : 'Ver conteúdos'}
                   </button>
@@ -236,62 +123,20 @@ function SecaoMaterias({ prefs }) {
 // ---------- página ----------
 const INDICE = [
   ['conta', 'Conta'],
-  ['estudo', 'Como você estuda'],
-  ['timers', 'Timers'],
   ['materias', 'Matérias prontas'],
-  ['dados', 'Dados e ajuda'],
 ];
 
 export default function Configuracoes() {
   const { user, sair } = useAuth();
   const navigate = useNavigate();
   const { hash } = useLocation();
-  const [prefs, setPrefs] = useState(null);
-  const prefsRef = useRef({}); // sempre o valor mais recente, para dois cliques seguidos não se atropelarem
 
   const nome = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
 
-  // carrega as respostas salvas na API
+  // link com #timers etc.: rola até a seção
   useEffect(() => {
-    let cancelado = false;
-    lerPreferencias().then((api) => {
-      if (cancelado) return;
-      prefsRef.current = { ...api };
-      setPrefs(prefsRef.current);
-    });
-    return () => {
-      cancelado = true;
-    };
-  }, []);
-
-  // link com #timers etc.: rola até a seção depois que ela existe
-  useEffect(() => {
-    if (!hash || !prefs) return;
-    document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' });
-  }, [hash, prefs]);
-
-  // recebe só o que mudou (ex.: { tempo: 'Mais de 1 hora' }) e junta com o resto
-  const salvar = useCallback(async (mudou, limparOutro) => {
-    const anterior = prefsRef.current;
-    const proximas = { ...anterior, ...mudou };
-    if (limparOutro) delete proximas.areaOutro;
-    prefsRef.current = proximas;
-    setPrefs(proximas); // a tela já mostra a escolha; se falhar, volta abaixo
-
-    const paraApi = {};
-    perguntas.forEach(({ id }) => {
-      if (proximas[id] !== undefined) paraApi[id] = proximas[id];
-    });
-    if (proximas.areaOutro) paraApi.areaOutro = proximas.areaOutro;
-
-    try {
-      await salvarPreferencias(paraApi);
-    } catch (err) {
-      prefsRef.current = anterior;
-      setPrefs(anterior);
-      throw err;
-    }
-  }, []);
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth' });
+  }, [hash]);
 
   function handleSair() {
     sair();
@@ -302,12 +147,10 @@ export default function Configuracoes() {
     <main className="mx-auto max-w-5xl px-6 py-8 md:px-12">
       <header className="animate-fade-up">
         <h1 className="text-4xl font-bold text-[#00264D]">Perfil e configurações</h1>
-        <p className="mt-2 max-w-2xl text-slate-500">
-          Suas respostas ajudam a sugerir timers e matérias. Tudo aqui é opcional e pode ser mudado quando quiser.
-        </p>
+        <p className="mt-2 max-w-2xl text-slate-500">Sua conta e pacotes de matérias prontas.</p>
         <nav aria-label="Seções desta página" className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
           {INDICE.map(([id, rotulo]) => (
-            <a key={id} href={`#${id}`} className="text-[#004A8F] hover:underline">
+            <a key={id} href={`#${id}`} className="cursor-pointer text-[#004A8F] hover:underline">
               {rotulo}
             </a>
           ))}
@@ -316,45 +159,15 @@ export default function Configuracoes() {
 
       <div className="mt-8">
         <Secao id="conta" numero="01" titulo="Conta" texto="Quem está usando o app agora." atraso={60}>
-          <p className="text-lg font-bold text-slate-800">{nome}</p>
+          <p class="text-lg font-bold text-slate-800">{nome}</p>
           <p className="text-sm text-slate-500">{user?.email ?? '—'}</p>
           <button type="button" onClick={handleSair} className={`${botaoLinha} mt-5`}>
             Sair da conta
           </button>
         </Secao>
 
-        {prefs === null ? (
-          <p className="border-t border-slate-200 py-10 text-sm text-slate-500">Carregando preferências...</p>
-        ) : (
-          <>
-            <Secao
-              id="estudo"
-              numero="02"
-              titulo="Como você estuda"
-              texto="Clique para mudar. Salva na hora. Essas respostas escolhem o que aparece primeiro nas seções abaixo."
-              atraso={120}
-            >
-              <SecaoEstudo prefs={prefs} aoSalvar={salvar} />
-            </Secao>
-
-
-
-            <Secao
-              id="materias"
-              numero="04"
-              titulo="Matérias prontas"
-              texto="Em vez de criar uma por uma, adicione um pacote de disciplinas com os conteúdos já listados."
-              atraso={240}
-            >
-              <SecaoMaterias prefs={prefs} />
-            </Secao>
-          </>
-        )}
-
-        <Secao id="dados" numero="05" titulo="Dados e ajuda" texto="Tour de boas-vindas." atraso={300}>
-          <button type="button" onClick={() => window.dispatchEvent(new Event(EVENTO_TOUR))} className={botaoLinha}>
-            Ver o tour de novo
-          </button>
+        <Secao id="materias" numero="03" titulo="Matérias prontas" texto="Adicione disciplinas e conteúdos organizados por edital." atraso={180}>
+          <SecaoMaterias />
         </Secao>
       </div>
     </main>

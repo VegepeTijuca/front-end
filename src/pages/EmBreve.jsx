@@ -12,7 +12,7 @@ export default function EmBreve({ titulo, tela = false }) {
         <p className="mt-2 text-slate-500">Esta página ainda está em construção.</p>
         <Link
           to="/"
-          className="mt-6 inline-block rounded-xl bg-[#004A8F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#003B73]"
+          className="mt-6 inline-block rounded-xl bg-[#004A8F] px-6 py-3 text-sm font-semibold text-white hover:bg-[#003B73] cursor-pointer"
         >
           Voltar ao início
         </Link>

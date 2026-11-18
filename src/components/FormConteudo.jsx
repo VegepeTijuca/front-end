@@ -54,7 +54,7 @@ export default function FormConteudo({ disciplinaId, onCriado }) {
                     value={dadosConteudo.name}
                     onChange={handleChange}
                     required
-                    className={campoClasses}
+                    className={`${campoClasses} cursor-text disabled:cursor-not-allowed`}
                 />
             </div>
 
@@ -68,7 +68,7 @@ export default function FormConteudo({ disciplinaId, onCriado }) {
                     name="descricao"
                     value={dadosConteudo.descricao}
                     onChange={handleChange}
-                    className={campoClasses}
+                    className={`${campoClasses} cursor-text disabled:cursor-not-allowed`}
                 />
             </div>
 

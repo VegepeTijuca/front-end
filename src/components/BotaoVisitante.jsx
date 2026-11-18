@@ -16,7 +16,7 @@ export default function BotaoVisitante({ className = '', children = 'Entrar sem 
   }
 
   return (
-    <button type="button" onClick={entrar} className={className}>
+    <button type="button" onClick={entrar} className={`${className} cursor-pointer disabled:cursor-not-allowed`}>
       {children}
     </button>
   );

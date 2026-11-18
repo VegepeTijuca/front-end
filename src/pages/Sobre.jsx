@@ -109,7 +109,7 @@ function NavBar() {
     // mx-auto + max-w-3xl = centralizada e compacta | rounded-full = pílula
     // bg-white/90 + backdrop-blur = branco levemente translúcido com efeito de vidro
     <nav className="mx-auto flex max-w-3xl items-center justify-between rounded-full border border-white bg-white/90 px-3 py-2 shadow-lg shadow-[#3349D6]/10 backdrop-blur sm:px-4">
-      <Link to="/" className="pl-2 text-xl font-extrabold tracking-tight text-[#3349D6]">
+      <Link to="/" className="pl-2 text-xl font-extrabold tracking-tight text-[#3349D6] cursor-pointer">
         cl<span className="font-bold">ʌ</span>ss.me<span></span>
       </Link>
 
@@ -117,14 +117,14 @@ function NavBar() {
       <ul className="hidden items-center gap-6 text-sm font-medium text-slate-700 md:flex">
         <li>
           {/* Link = troca de página sem recarregar (vai para a home) */}
-          <Link to="/" className="transition-colors hover:text-[#3349D6]">
+          <Link to="/" className="transition-colors hover:text-[#3349D6] cursor-pointer">
             Início
           </Link>
         </li>
         {links.map((link) => (
           <li key={link.href}>
-            {/* <a href="#id"> = rola até a seção da mesma página */}
-            <a href={link.href} className="transition-colors hover:text-[#3349D6]">
+            {/* <a className="cursor-pointer" href="#id"> = rola até a seção da mesma página */}
+            <a href={link.href} className="transition-colors hover:text-[#3349D6] cursor-pointer">
               {link.label}
             </a>
           </li>
@@ -135,13 +135,13 @@ function NavBar() {
         {/* Links de navegação do produto: login e criação de conta. */}
         <Link
           to="/login"
-          className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:text-[#3349D6] sm:inline-flex"
+          className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:text-[#3349D6] sm:inline-flex cursor-pointer"
         >
           Entrar
         </Link>
         <Link
           to="/cadastro"
-          className="rounded-full bg-linear-to-b from-[#5b78f5] to-[#3349D6] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#3349D6]/40 ring-1 ring-[#3349D6]/30 transition hover:brightness-110"
+          className="rounded-full bg-linear-to-b from-[#5b78f5] to-[#3349D6] px-5 py-2 text-sm font-semibold text-white shadow-md shadow-[#3349D6]/40 ring-1 ring-[#3349D6]/30 transition hover:brightness-110 cursor-pointer"
         >
           Criar conta
         </Link>
@@ -268,7 +268,7 @@ function Hero() {
           {/* shadow-[inset_...,0_12px_30px_...] = reflexo branco no topo + brilho azul embaixo (botão "brilhante") */}
           <a
             href="#historia"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-linear-to-b from-[#5b78f5] to-[#3349D6] px-8 py-4 text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_12px_30px_rgba(51,73,214,0.45)] ring-1 ring-[#3349D6]/40 transition hover:-translate-y-0.5 hover:brightness-110"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-linear-to-b from-[#5b78f5] to-[#3349D6] px-8 py-4 text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_12px_30px_rgba(51,73,214,0.45)] ring-1 ring-[#3349D6]/40 transition hover:-translate-y-0.5 hover:brightness-110 cursor-pointer"
           >
             Conheça nossa história
             <span aria-hidden="true">→</span>
@@ -442,7 +442,7 @@ function Footer() {
         </h2>
         <Link
           to="/cadastro"
-          className="mt-8 inline-flex rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb]"
+          className="mt-8 inline-flex rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb] cursor-pointer"
         >
           Começar Agora Gratuitamente
         </Link>
@@ -455,9 +455,9 @@ function Footer() {
           direitos reservados.
         </p>
         <nav aria-label="Rodapé" className="flex gap-6 font-medium">
-          <Link to="/" className="hover:text-[#3349D6]">Início</Link>
-          <Link to="/login" className="hover:text-[#3349D6]">Entrar</Link>
-          <Link to="/cadastro" className="hover:text-[#3349D6]">Criar conta</Link>
+          <Link to="/" className="hover:text-[#3349D6] cursor-pointer">Início</Link>
+          <Link to="/login" className="hover:text-[#3349D6] cursor-pointer">Entrar</Link>
+          <Link to="/cadastro" className="hover:text-[#3349D6] cursor-pointer">Criar conta</Link>
         </nav>
       </div>
     </footer>

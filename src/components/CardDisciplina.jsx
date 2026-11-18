@@ -73,27 +73,27 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                         onChange={(e) => setNome(e.target.value)}
                         aria-label="Nome da disciplina"
                         required
-                        className={campoEdicao}
+                        className={`${campoEdicao} cursor-text disabled:cursor-not-allowed`}
                     />
                     <input
                         value={desc}
                         onChange={(e) => setDesc(e.target.value)}
                         aria-label="Descrição da disciplina"
                         placeholder="Descrição (opcional)"
-                        className={campoEdicao}
+                        className={`${campoEdicao} cursor-text disabled:cursor-not-allowed`}
                     />
                     <div className="flex gap-2">
                         <button
                             type="submit"
                             disabled={salvando}
-                            className={`${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
+                            className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
                         >
                             {salvando ? "Salvando..." : "Salvar"}
                         </button>
                         <button
                             type="button"
                             onClick={() => setEditando(false)}
-                            className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
+                            className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                         >
                             Cancelar
                         </button>
@@ -119,14 +119,14 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                                     type="button"
                                     onClick={excluir}
                                     disabled={salvando}
-                                    className={`${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
+                                    className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} bg-[#00264D] text-white hover:bg-[#003B73]`}
                                 >
                                     Sim
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setConfirmandoExclusao(false)}
-                                    className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
+                                    className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                                 >
                                     Não
                                 </button>
@@ -137,7 +137,7 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                                     type="button"
                                     onClick={abrirEdicao}
                                     title="Mudar nome e descrição"
-                                    className={`${botaoPequeno} text-[#004A8F] hover:bg-[#004A8F]/5`}
+                                    className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-[#004A8F] hover:bg-[#004A8F]/5`}
                                 >
                                     Editar
                                 </button>
@@ -145,7 +145,7 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
                                     type="button"
                                     onClick={() => setConfirmandoExclusao(true)}
                                     title="Apaga a disciplina e os conteúdos dela"
-                                    className={`${botaoPequeno} text-slate-600 hover:bg-slate-100`}
+                                    className={`cursor-pointer disabled:cursor-not-allowed ${botaoPequeno} text-slate-600 hover:bg-slate-100`}
                                 >
                                     Excluir
                                 </button>
@@ -167,7 +167,7 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
             <button
                 type="button"
                 aria-expanded={formConteudoAberto}
-                className="mt-3 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#00264D] transition hover:bg-slate-50 active:scale-[0.98]"
+                className="mt-3 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#00264D] transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed"
                 onClick={() => setFormConteudoAberto(!formConteudoAberto)}
             >
                 Adicionar conteúdo

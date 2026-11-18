@@ -27,7 +27,7 @@ const AJUDA = {
     topicos: (
       <>
         <Topico icone={House} titulo="Resumo do dia">
-          Os quatro cartões do topo contam os eventos de hoje, as tarefas a fazer, as favoritas e as concluídas. Eles se atualizam sozinhos.
+          Os quatro cartões do topo contam os eventos de hoje, as tarefas a fazer e as concluídas. Eles se atualizam sozinhos.
         </Topico>
         <Topico icone={Calendar} titulo="Calendário">
           Clique em um dia para criar um evento. Clique em um evento para editar ou excluir. Em "Expandir" você abre a versão grande.
@@ -36,7 +36,7 @@ const AJUDA = {
           Escreva o que vai estudar, escolha até quando quer focar e inicie. Dá para pausar e retomar. O estado aparece escrito, com um ícone: ▶ em andamento, ❚❚ pausado, ✓ concluído.
         </Topico>
         <Topico icone={SquareCheckBig} titulo="Tarefas">
-          Use o botão quadrado para concluir: a tarefa concluída ganha um ✓ e o texto riscado. Use o botão de estrela para favoritar: a estrela fica preenchida.
+          Use o botão quadrado para concluir: a tarefa concluída ganha um ✓ e o texto riscado.
         </Topico>
       </>
     ),

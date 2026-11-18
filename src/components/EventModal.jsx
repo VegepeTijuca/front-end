@@ -77,7 +77,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Ex.: prova de matemática"
                         required
-                        className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                        className="h-11 w-full rounded-xl border border-slate-200 px-4 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20 cursor-text disabled:cursor-not-allowed"
                     />
                 </label>
 
@@ -89,7 +89,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             required
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20 cursor-pointer disabled:cursor-not-allowed"
                         />
                     </label>
                     <label className="block">
@@ -100,7 +100,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             type="time"
                             value={time}
                             onChange={(e) => setTime(e.target.value)}
-                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                            className="h-11 w-full rounded-xl border border-slate-200 px-3 text-sm text-slate-800 outline-none focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20 cursor-pointer disabled:cursor-not-allowed"
                         />
                     </label>
                 </div>
@@ -117,7 +117,7 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                             type="button"
                             disabled={salvando}
                             onClick={() => onDelete(initial.id)}
-                            className="h-11 rounded-xl px-4 text-sm font-semibold text-[#A85A00] hover:bg-tj-orange/10 disabled:opacity-60"
+                            className="h-11 rounded-xl px-4 text-sm font-semibold text-[#A85A00] hover:bg-tj-orange/10 disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                         >
                             Excluir
                         </button>
@@ -126,14 +126,14 @@ export default function EventModal({ initial, onSave, onDelete, onClose, erro = 
                         <button
                             type="button"
                             onClick={onClose}
-                            className="h-11 rounded-xl px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                            className="h-11 rounded-xl px-4 text-sm font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={salvando}
-                            className="h-11 rounded-xl bg-[#00264D] px-6 text-sm font-semibold text-white hover:bg-[#003B73] disabled:opacity-60"
+                            className="h-11 rounded-xl bg-[#00264D] px-6 text-sm font-semibold text-white hover:bg-[#003B73] disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                         >
                             {salvando ? 'Salvando...' : 'Salvar'}
                         </button>

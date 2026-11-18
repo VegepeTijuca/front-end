@@ -18,20 +18,20 @@ const links = [
 function NavBar({ autenticado }) {
   return (
     <nav className="mx-auto flex max-w-5xl items-center justify-between rounded-full bg-white/90 px-4 py-2.5 shadow-sm shadow-[#0A1F4D]/5 backdrop-blur sm:px-6">
-      <Link to="/" className="text-2xl font-extrabold tracking-tight text-[#3349D6]">
+      <Link to="/" className="text-2xl font-extrabold tracking-tight text-[#3349D6] cursor-pointer">
         cl<span className="font-bold">ʌ</span>ss.me
       </Link>
 
       <ul className="hidden items-center gap-8 text-sm font-medium text-slate-700 md:flex">
         {links.map((link) => (
           <li key={link.href}>
-            <a href={link.href} className="transition-colors hover:text-[#010eff]">
+            <a href={link.href} className="transition-colors hover:text-[#010eff] cursor-pointer">
               {link.label}
             </a>
           </li>
         ))}
         <li>
-          <Link to="/sobre" className="transition-colors hover:text-[#0022ff]">
+          <Link to="/sobre" className="transition-colors hover:text-[#0022ff] cursor-pointer">
             Sobre
           </Link>
         </li>
@@ -41,7 +41,7 @@ function NavBar({ autenticado }) {
         {autenticado ? (
           <Link
             to="/dashboard"
-            className="rounded-full bg-[#3349D6] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2a3dbb]"
+            className="rounded-full bg-[#3349D6] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2a3dbb] cursor-pointer"
           >
             Painel
           </Link>
@@ -49,13 +49,13 @@ function NavBar({ autenticado }) {
           <>
             <Link
               to="/login"
-              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:text-[#3349D6] sm:inline-flex"
+              className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:text-[#3349D6] sm:inline-flex cursor-pointer"
             >
               Entrar
             </Link>
             <Link
               to="/cadastro"
-              className="rounded-full bg-[#3349D6] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2a3dbb]"
+              className="rounded-full bg-[#3349D6] px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#2a3dbb] cursor-pointer"
             >
               Criar conta
             </Link>
@@ -131,7 +131,7 @@ function Hero({ autenticado }) {
           <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to={autenticado ? '/dashboard' : '/cadastro'}
-              className="w-full rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb] hover:shadow-xl sm:w-auto"
+              className="w-full rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb] hover:shadow-xl sm:w-auto cursor-pointer"
             >
               {autenticado ? 'Ir para o painel' : 'Começar Agora Gratuitamente'}
             </Link>
@@ -231,7 +231,7 @@ function About() {
           </p>
           <Link
             to="/sobre"
-            className="mt-9 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-[#0A1F4D] transition hover:bg-sky-50"
+            className="mt-9 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-[#0A1F4D] transition hover:bg-sky-50 cursor-pointer"
           >
             Conheça Nossa História
           </Link>
@@ -253,7 +253,7 @@ function Footer({ autenticado }) {
         </p>
         <Link
           to={autenticado ? '/dashboard' : '/cadastro'}
-          className="mt-8 inline-flex rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb]"
+          className="mt-8 inline-flex rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb] cursor-pointer"
         >
           {autenticado ? 'Acessar meu painel' : 'Começar Agora Gratuitamente'}
         </Link>
@@ -265,13 +265,13 @@ function Footer({ autenticado }) {
           direitos reservados.
         </p>
         <nav aria-label="Rodapé" className="flex gap-6 font-medium">
-          <Link to="/sobre" className="hover:text-[#3349D6]">Sobre</Link>
+          <Link to="/sobre" className="hover:text-[#3349D6] cursor-pointer">Sobre</Link>
           {autenticado ? (
-            <Link to="/dashboard" className="hover:text-[#3349D6]">Painel</Link>
+            <Link to="/dashboard" className="hover:text-[#3349D6] cursor-pointer">Painel</Link>
           ) : (
             <>
-              <Link to="/login" className="hover:text-[#3349D6]">Entrar</Link>
-              <Link to="/cadastro" className="hover:text-[#3349D6]">Criar conta</Link>
+              <Link to="/login" className="hover:text-[#3349D6] cursor-pointer">Entrar</Link>
+              <Link to="/cadastro" className="hover:text-[#3349D6] cursor-pointer">Criar conta</Link>
             </>
           )}
         </nav>
