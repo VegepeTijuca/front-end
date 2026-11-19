@@ -9,30 +9,6 @@ const links = [
   { label: 'Recursos', href: '#recursos' },
 ];
 
-// Cartão "ANTES": a rotina antes do class.me
-// Os objetos descrevem cada linha exibida dentro do cartão.
-const itensAntes = [
-  { texto: 'agenda', status: 'ruim', detalhe: 'perdida' },
-  { texto: 'aplicativo', status: 'ruim', detalhe: 'confuso' },
-  { texto: 'provas e trabalhos', status: 'ruim', detalhe: 'sem equilíbrio' },
-];
-
-// Cartão "DEPOIS": a rotina com o class.me
-// Mantemos a mesma estrutura de itensAntes para reutilizar o componente Cartao.
-const itensDepois = [
-  { texto: 'calendário', status: 'feita', detalhe: '✓' },
-  { texto: 'timer de estudo', status: 'feita', detalhe: '✓' },
-  { texto: 'conquistar objetivos', status: 'pendente', detalhe: 'a caminho' },
-];
-
-// Cada status tem o seu estilo (Tailwind) de linha
-// As chaves precisam combinar com o valor de item.status nos arrays acima.
-const estilosItem = {
-  ruim: 'bg-red-50 text-red-600',
-  feita: 'bg-[#3349D6] text-white',
-  pendente: 'border border-slate-200 text-slate-700',
-};
-
 // O que não funcionava (aparece riscado na seção de história)
 const tentativas = [
   'Agendas perdidas',
@@ -151,100 +127,9 @@ function NavBar() {
 }
 
 /**
- * Componente: Chip
- * Funcionalidade: etiqueta flutuante que fica "pendurada" no canto dos cartões.
- * Props: rotulo (texto pequeno), valor (texto em destaque), tipo ('bom' = verde / 'ruim' = vermelho)
- * e className (a posição, definida por quem usa o componente).
- */
-function Chip({ rotulo, valor, tipo, className = '' }) {
-  // Converte o tipo recebido em uma condição simples para escolher cores e ícone.
-  const ruim = tipo === 'ruim';
-  return (
-    // absolute = posicionado livremente em cima do cartão | bg-red-50 / bg-emerald-50 = fundo claro vermelho ou verde
-    <div>
-      <span className={`absolute rounded-xl px-3 py-2 shadow-lg ${ruim ? 'bg-red-50' : 'bg-emerald-50'} ${className}`}>
-        <span className="block text-[11px] font-semibold text-slate-400">{rotulo}</span>
-        <span className={`block text-lg font-extrabold ${ruim ? 'text-red-500' : 'text-emerald-500'}`}>
-          {ruim ? '✕' : '✓'} {valor}
-        </span>
-      </span>
-    </div>
-  );
-}
-
-/**
- * Componente: Cartao
- * Funcionalidade: mini cartão ilustrativo com título, subtítulo e uma lista de itens.
- * É usado duas vezes (Antes e Depois), mudando só os dados que recebe por props.
- */
-function Cartao({ titulo, subtitulo, itens }) {
-  return (
-    // border-[6px] border-[#cfdcff] = moldura grossa azul-clara | w-64 / sm:w-72 = largura fixa
-    <div className="w-64 rounded-[1.75rem] border-[6px] border-[#cfdcff] bg-white p-4 shadow-xl shadow-[#3349D6]/15 sm:w-72">
-      <div>
-        <p className="text-sm font-bold text-[#0A1F4D]">{titulo}</p>
-        <p className="text-xs text-slate-400">{subtitulo}</p>
-      </div>
-
-      {/* space-y-2 = 0.5rem de espaço entre as linhas */}
-      <ul className="mt-4 space-y-2 text-xs font-semibold">
-        {/* Cada linha recebe texto, detalhe e estilo conforme o seu status. */}
-        {itens.map((item) => (
-          <li
-            key={item.texto}
-            className={`flex items-center justify-between rounded-lg px-3 py-2 ${estilosItem[item.status]}`}
-          >
-            {/* line-through = riscado, só quando o item é "ruim" */}
-            <span className={item.status === 'ruim' ? 'line-through' : ''}>{item.texto}</span>
-            <span>{item.detalhe}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-/**
- * Componente: AntesDepois
- * Funcionalidade: ilustração do Hero: o cartão "Antes" (a rotina exaustiva, apagada e inclinada),
- * uma seta curva e o cartão "Depois" (a rotina com o class.me), com chips nos cantos.
- */
-function AntesDepois() {
-  return (
-    // aria-hidden = decorativo (leitores de tela ignoram)
-    // max-h-80 + overflow-hidden = corta os cartões embaixo | [mask-image:...] = a parte de baixo vai sumindo (fade)
-    <div
-      aria-hidden="true"
-      className="relative mx-auto mt-16 flex max-h-80 max-w-3xl items-end justify-center overflow-hidden px-10 pt-12 [mask-image:linear-gradient(to_bottom,black_55%,transparent)] md:gap-28"
-    >
-      {/* O contêiner é decorativo; aria-hidden evita que leitores de tela leiam a ilustração. */}
-      {/* ANTES: só aparece a partir de 768px (hidden md:block) */}
-      <div className="relative hidden -rotate-3 opacity-75 md:block">
-        <span className="absolute -top-10 left-4 -rotate-6 text-2xl font-semibold italic text-slate-400">
-          Antes
-        </span>
-        <Cartao titulo="Minha rotina exaustiva" subtitulo="Provas, trabalhos e sanidade" itens={itensAntes} />
-        <Chip rotulo="Agenda" valor="perdida" tipo="ruim" className="-left-8 top-8" />
-        <Chip rotulo="Botões" valor="confusos" tipo="ruim" className="-right-8 top-40" />
-      </div>
-
-      {/* DEPOIS: sempre aparece (é o único visível no celular) */}
-      <div className="relative">
-        <span className="absolute -top-10 right-4 rotate-6 text-2xl font-semibold italic text-slate-400">
-          Depois
-        </span>
-        <Cartao titulo="Minha rotina" subtitulo="Leve e direta ao ponto" itens={itensDepois} />
-        <Chip rotulo="Rotina" valor="leve" tipo="bom" className="-left-8 top-8" />
-        <Chip rotulo="Foco" valor="absoluto" tipo="bom" className="-right-8 top-24 rotate-6" />
-      </div>
-    </div>
-  );
-}
-
-/**
  * Componente: Hero
  * Funcionalidade: topo da página. Banner azul em degradê, navbar, título,
- * a frase de abertura do class.me, o botão para a história e o visual Antes e Depois.
+ * a frase de abertura do class.me e o botão para a história.
  */
 function Hero() {
   return (
@@ -253,7 +138,7 @@ function Hero() {
       <div className="relative overflow-hidden rounded-[2rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(91,141,255,0.55),transparent_65%),radial-gradient(circle_at_0%_35%,rgba(51,73,214,0.25),transparent_45%),radial-gradient(circle_at_100%_35%,rgba(56,189,248,0.28),transparent_45%),linear-gradient(#cfdcff_0%,#e9f0ff_38%,#ffffff_80%)] px-4 pt-5 sm:px-8">
         <NavBar />
 
-        <div className="mx-auto mt-14 max-w-3xl text-center sm:mt-20">
+        <div className="mx-auto mt-14 max-w-3xl pb-16 text-center sm:mt-20 sm:pb-20">
           {/* Chamada principal: o destaque é aplicado só ao trecho final do título. */}
           <h1 className="text-4xl font-bold leading-[1.2] tracking-tight text-[#0A1F4D] sm:text-6xl lg:text-7xl">
             O planejador de estudos pensado <Highlight>por quem vive a rotina estudantil.</Highlight>
@@ -265,17 +150,15 @@ function Hero() {
             e descomplicado.
           </p>
 
-          {/* shadow-[inset_...,0_12px_30px_...] = reflexo branco no topo + brilho azul embaixo (botão "brilhante") */}
+          {/* CTA compacto com hierarquia clara e estado visual consistente. */}
           <a
             href="#historia"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-linear-to-b from-[#5b78f5] to-[#3349D6] px-8 py-4 text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_12px_30px_rgba(51,73,214,0.45)] ring-1 ring-[#3349D6]/40 transition hover:-translate-y-0.5 hover:brightness-110"
+            className="mt-8 inline-flex h-14 items-center gap-3 rounded-full bg-[#3349D6] px-6 text-base font-bold text-white shadow-[0_12px_30px_rgba(51,73,214,0.35)] ring-1 ring-[#3349D6]/30 transition duration-200 hover:-translate-y-0.5 hover:bg-[#2A3DBB] hover:shadow-[0_16px_34px_rgba(51,73,214,0.42)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#3349D6] sm:px-7"
           >
             Conheça nossa história
-            <span aria-hidden="true">→</span>
           </a>
         </div>
 
-        <AntesDepois />
       </div>
     </section>
   );
