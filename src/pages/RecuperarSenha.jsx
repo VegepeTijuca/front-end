@@ -50,21 +50,21 @@ export default function RecuperarSenha() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
+                className="mt-2 block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
               />
             </div>
 
             <button
               type="submit"
               disabled={enviando}
-              className="w-full rounded-2xl bg-[#004A8F] px-5 py-3.5 font-semibold text-white transition hover:bg-[#003B73] disabled:opacity-60"
+              className="w-full rounded-2xl bg-[#004A8F] px-5 py-3.5 font-semibold text-white transition hover:bg-[#003B73] disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
             >
               {enviando ? 'Enviando...' : 'Enviar link'}
             </button>
           </form>
         )}
 
-        <Link to="/login" className="mt-6 inline-block text-sm font-semibold text-[#004A8F] hover:underline">
+        <Link to="/login" className="mt-6 inline-block text-sm font-semibold text-[#004A8F] hover:underline cursor-pointer">
           ← Voltar para o login
         </Link>
       </div>

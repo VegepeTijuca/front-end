@@ -138,7 +138,7 @@ export default function FormSetupUsuario() {
                     </p>
                     <Link
                         to="/dashboard"
-                        className="mt-8 inline-block rounded-2xl bg-[#004A8F] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#003B73]"
+                        className="mt-8 inline-block rounded-2xl bg-[#004A8F] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#003B73] cursor-pointer"
                     >
                         Ir para o painel
                     </Link>
@@ -153,7 +153,7 @@ export default function FormSetupUsuario() {
                 <p className="font-semibold text-[#004A8F]">
                     Pergunta {perguntaAtual + 1} de {perguntas.length}
                 </p>
-                <Link to="/dashboard" className="text-slate-500 hover:text-[#00264D]">
+                <Link to="/dashboard" className="text-slate-500 hover:text-[#00264D] cursor-pointer">
                     Pular por agora
                 </Link>
             </div>
@@ -193,7 +193,7 @@ export default function FormSetupUsuario() {
                             disabled={enviando}
                             onClick={() => escolher(opcao.valor)}
                             aria-pressed={selecionada}
-                            className={`flex w-full animate-fade-up items-center gap-4 rounded-2xl border px-4 py-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99] hover:border-[#004A8F] hover:bg-[#004A8F]/5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#004A8F]/20 disabled:opacity-60 ${
+                            className={`cursor-pointer disabled:cursor-not-allowed flex w-full animate-fade-up items-center gap-4 rounded-2xl border px-4 py-3.5 text-left transition hover:-translate-y-0.5 hover:shadow-md active:scale-[0.99] hover:border-[#004A8F] hover:bg-[#004A8F]/5 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#004A8F]/20 disabled:opacity-60 ${
                                 selecionada ? 'border-[#004A8F] bg-[#004A8F]/5' : 'border-slate-200 bg-white'
                             }`}
                         >
@@ -217,11 +217,11 @@ export default function FormSetupUsuario() {
                         onChange={(e) => setOutro(e.target.value)}
                         placeholder="O que você quer estudar?"
                         aria-label="Outra área de estudo"
-                        className="h-12 flex-1 rounded-2xl border border-transparent bg-slate-50 px-5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
+                        className="h-12 flex-1 rounded-2xl border border-transparent bg-slate-50 px-5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
                     />
                     <button
                         type="submit"
-                        className="h-12 rounded-2xl bg-[#004A8F] px-6 text-sm font-semibold text-white hover:bg-[#003B73]"
+                        className="h-12 rounded-2xl bg-[#004A8F] px-6 text-sm font-semibold text-white hover:bg-[#003B73] cursor-pointer disabled:cursor-not-allowed"
                     >
                         Continuar
                     </button>
@@ -237,7 +237,7 @@ export default function FormSetupUsuario() {
             {erro && (
                 <p role="alert" className="mt-4 rounded-xl bg-tj-orange/10 px-4 py-3 text-sm text-[#A85A00]">
                     {erro}{' '}
-                    <button type="button" onClick={() => enviar(respostas)} className="font-semibold underline">
+                    <button type="button" onClick={() => enviar(respostas)} className="font-semibold underline cursor-pointer disabled:cursor-not-allowed">
                         Tentar de novo
                     </button>
                 </p>
@@ -248,7 +248,7 @@ export default function FormSetupUsuario() {
                     type="button"
                     onClick={voltar}
                     disabled={enviando}
-                    className="mt-6 text-sm font-semibold text-slate-600 hover:text-[#00264D] disabled:opacity-60"
+                    className="mt-6 text-sm font-semibold text-slate-600 hover:text-[#00264D] disabled:opacity-60 cursor-pointer disabled:cursor-not-allowed"
                 >
                     ← Voltar
                 </button>

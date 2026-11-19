@@ -92,7 +92,7 @@ export default function FormLogin() {
                                 Não tem uma conta?{' '}
                                 <Link
                                     to="/cadastro"
-                                    className="font-semibold text-brand underline underline-offset-2 hover:text-brand"
+                                    className="font-semibold text-brand underline underline-offset-2 hover:text-brand cursor-pointer"
                                 >
                                     Crie uma agora
                                 </Link>
@@ -107,7 +107,7 @@ export default function FormLogin() {
                                 E-mail ou nome de usuário
                             </label>
                             <input
-                                className={inputClasses}
+                                className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                 id="email"
                                 name="login"
                                 value={credenciaisUsuario.login}
@@ -123,7 +123,7 @@ export default function FormLogin() {
                                 Senha
                             </label>
                             <input
-                                className={inputClasses}
+                                className={`${inputClasses} cursor-text disabled:cursor-not-allowed`}
                                 id="password"
                                 name="password"
                                 value={credenciaisUsuario.password}
@@ -135,7 +135,7 @@ export default function FormLogin() {
                         </div>
 
                         <button
-                            className="w-full rounded-xl bg-brand px-4 py-3.5 text-sm font-semibold text-white shadow-md shadow-navy/20 transition hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-brand/30 active:scale-[0.99]"
+                            className="w-full rounded-xl bg-brand px-4 py-3.5 text-sm font-semibold text-white shadow-md shadow-navy/20 transition hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-brand/30 active:scale-[0.99] cursor-pointer disabled:cursor-not-allowed"
                             name="entrar"
                             type="submit"
                             disabled={carregando}
@@ -144,7 +144,7 @@ export default function FormLogin() {
                         </button>
 
                         <button
-                            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-200"
+                            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-200 cursor-pointer disabled:cursor-not-allowed"
                             type="button"
                             disabled
                             title="Em breve"
@@ -162,7 +162,7 @@ export default function FormLogin() {
                             Esqueceu a senha?{' '}
                             <Link
                                 to="/recuperar-senha"
-                                className="font-semibold text-slate-900 underline underline-offset-2 hover:text-brand"
+                                className="font-semibold text-slate-900 underline underline-offset-2 hover:text-brand cursor-pointer"
                             >
                                 Clique aqui
                             </Link>

@@ -90,11 +90,18 @@ export async function buscarSessaoAtiva() {
     fim: s.fim ?? null,
     pausado: Boolean(s.pausado),
     restante: Number(s.restante ?? 0),
+    // contexto do ciclo foco/descanso (sessões antigas, sem esses campos, usam os padrões)
+    objetivo: s.objetivo ?? (s.nome === 'Pausa' ? '' : s.nome),
+    focoMin: Number(s.focoMin ?? 0),
+    pausaDepois: Number(s.pausaDepois ?? 0),
+    emPausa: Boolean(s.emPausa),
   };
 }
 
-export async function criarSessao({ nome, fim }) {
-  const sessao = { id: String(Date.now()), nome, fim, pausado: false, restante: 0 };
+// Cria (ou substitui) a sessão ativa. Além de nome e fim, guarda o contexto do ciclo:
+// objetivo, focoMin, pausaDepois e emPausa.
+export async function criarSessao({ nome, fim, ...contexto }) {
+  const sessao = { id: String(Date.now()), nome, fim, pausado: false, restante: 0, ...contexto };
   gravarSessao(sessao);
   return sessao;
 }

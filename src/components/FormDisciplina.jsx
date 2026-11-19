@@ -55,7 +55,7 @@ export default function FormDisciplina({ onCriada }) {
             value={disciplina.name}
             onChange={handleChange}
             required
-            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
+            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
           />
         </div>
 
@@ -70,7 +70,7 @@ export default function FormDisciplina({ onCriada }) {
             placeholder="Descrição da disciplina"
             value={disciplina.descricao}
             onChange={handleChange}
-            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15"
+            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
           />
         </div>
 

@@ -45,7 +45,7 @@ export default function Modal({ titulo, onFechar, children, rodape, largura = 'm
             type="button"
             onClick={onFechar}
             aria-label="Fechar"
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-500 hover:bg-slate-100"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-500 hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
           >
             <span aria-hidden="true">✕</span>
           </button>

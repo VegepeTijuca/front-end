@@ -123,7 +123,7 @@ export default function TodoList({ onMudou }) {
                                     : `Marcar "${todo.name}" como concluída`
                             }
                             onClick={() => update(todo.id, { done: !todo.done })}
-                            className={`grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
+                            className={`cursor-pointer disabled:cursor-not-allowed grid h-7 w-7 shrink-0 place-items-center rounded-md border ${
                                 todo.done ? 'border-[#004A8F] bg-[#004A8F] text-white' : 'border-slate-400 bg-white'
                             }`}
                         >
@@ -141,7 +141,7 @@ export default function TodoList({ onMudou }) {
                                 type="button"
                                 onClick={() => removeTodo(todo.id)}
                                 aria-label={`Excluir "${todo.name}"`}
-                                className="grid h-8 w-14 place-items-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50"
+                                className="grid h-8 w-14 place-items-center rounded-lg bg-white text-slate-700 ring-1 ring-slate-300 hover:bg-slate-50 cursor-pointer disabled:cursor-not-allowed"
                             >
                                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
                                     <path d="M4 6h12M8 6V4h4v2M6 6l1 10h6l1-10M9 9v4M11 9v4" strokeLinecap="round" strokeLinejoin="round" />
@@ -158,7 +158,7 @@ export default function TodoList({ onMudou }) {
                                             : `Favoritar "${todo.name}"`
                                     }
                                     aria-pressed={todo.starred}
-                                    className={`transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-[#00264D]' : 'text-slate-500 hover:text-[#00264D]'}`}
+                                    className={`cursor-pointer disabled:cursor-not-allowed transition-transform hover:scale-125 active:scale-90 ${todo.starred ? 'text-[#00264D]' : 'text-slate-500 hover:text-[#00264D]'}`}
                                 >
                                     <svg
                                         viewBox="0 0 24 24"
@@ -175,7 +175,7 @@ export default function TodoList({ onMudou }) {
                                     type="button"
                                     onClick={() => removeTodo(todo.id)}
                                     aria-label={`Excluir "${todo.name}"`}
-                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-400 text-slate-600 hover:bg-slate-100 hover:text-[#00264D]"
+                                    className="grid h-7 w-7 place-items-center rounded-full border border-slate-400 text-slate-600 hover:bg-slate-100 hover:text-[#00264D] cursor-pointer disabled:cursor-not-allowed"
                                 >
                                     <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
                                         <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
@@ -193,11 +193,11 @@ export default function TodoList({ onMudou }) {
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex.: Resolver a lista de exercícios"
                     aria-label="Nova tarefa"
-                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20"
+                    className="h-12 flex-1 rounded-xl border border-slate-200 bg-white px-5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20 cursor-text disabled:cursor-not-allowed"
                 />
                 <button
                     type="submit"
-                    className="h-12 rounded-xl bg-[#004A8F] px-6 text-sm font-semibold text-white transition active:scale-[0.97] hover:bg-[#003B73]"
+                    className="h-12 rounded-xl bg-[#004A8F] px-6 text-sm font-semibold text-white transition active:scale-[0.97] hover:bg-[#003B73] cursor-pointer disabled:cursor-not-allowed"
                 >
                     Adicionar
                 </button>

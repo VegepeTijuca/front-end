@@ -2,42 +2,42 @@ import { useCallback, useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import Header from './Header';
-import TourInicial, { CHAVE_TOUR, EVENTO_TOUR } from './TourInicial';
+import TourInicial, { chaveTour } from './TourInicial';
 import useAuth from '../hooks/useAuth';
+import { idDoToken } from '../services/token';
 
 const DESKTOP = '(min-width: 1024px)';
 
-function tourJaVisto() {
+// Sem localStorage não dá para lembrar: nesse caso não mostra o tour, para não repetir sempre.
+function tourJaVisto(idUsuario) {
   try {
-    return localStorage.getItem(CHAVE_TOUR) === '1';
+    return localStorage.getItem(chaveTour(idUsuario)) === '1';
   } catch {
     return true;
   }
 }
 
 export default function AppLayout() {
-  const { user, sair } = useAuth();
+  const { user, token, sair } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   // um único estado para o menu: no desktop é a barra lateral, no celular é a gaveta
   const [navAberto, setNavAberto] = useState(() => window.matchMedia(DESKTOP).matches);
-  // tour de boas-vindas: abre sozinho na primeira visita; o menu do perfil abre de novo
-  const [tourAberto, setTourAberto] = useState(() => !tourJaVisto());
+  // Tour de boas-vindas: abre sozinho no primeiro acesso de cada usuário.
+  // O id sai do token e só abre depois de o usuário carregar (antes abria com a tela ainda vazia).
+  const idUsuario = idDoToken(token);
+  const [tourFechadoPara, setTourFechadoPara] = useState(null); // id de quem fechou nesta sessão
+  const tourAberto =
+    Boolean(user) && idUsuario != null && tourFechadoPara !== idUsuario && !tourJaVisto(idUsuario);
   const fecharTour = useCallback(() => {
-    setTourAberto(false);
+    setTourFechadoPara(idUsuario);
     try {
-      localStorage.setItem(CHAVE_TOUR, '1');
+      localStorage.setItem(chaveTour(idUsuario), '1');
     } catch {
-      /* sem localStorage: o tour aparece de novo na próxima visita */
+      /* sem localStorage: só vale até recarregar a página */
     }
-  }, []);
-  const abrirTour = useCallback(() => setTourAberto(true), []);
-
-  useEffect(() => {
-    window.addEventListener(EVENTO_TOUR, abrirTour);
-    return () => window.removeEventListener(EVENTO_TOUR, abrirTour);
-  }, [abrirTour]);
+  }, [idUsuario]);
 
   const fecharNav = useCallback(() => setNavAberto(false), []);
   const alternarNav = useCallback(() => setNavAberto((aberto) => !aberto), []);
@@ -65,7 +65,6 @@ export default function AppLayout() {
           navAberto={navAberto}
           onAlternarMenu={alternarNav}
           onSair={handleSair}
-          onAbrirTour={abrirTour}
         />
         <div className="flex-1 bg-[#F4F6FA]">
           {/* key = rota: a cada página nova o conteúdo entra com uma animação suave */}

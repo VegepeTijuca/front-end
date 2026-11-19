@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import Calendario from './Calendario';
 import Timer from '../components/Timer';
-import TodoList from '../components/TodoList';
+import TodoList from '../components/Tarefas';
 import ResumoRapido from '../components/ResumoRapido';
 import CabecalhoPagina from '../components/CabecalhoPagina';
 
