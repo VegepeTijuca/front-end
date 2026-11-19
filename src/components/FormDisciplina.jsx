@@ -1,65 +1,94 @@
 import { useId, useState } from 'react';
-import { criarDisciplinas } from '../services/disciplinaService'
+import { criarDisciplinas } from '../services/disciplinaService';
+import Modal from './Modal';
 
-export default function FormDisciplina({ onCriada }) {
+const campoClasses =
+  'block w-full cursor-text rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 disabled:cursor-not-allowed';
+
+// Modal "Nova disciplina". Quem usa decide quando mostrar: {aberto && <FormDisciplina ... />}
+export default function FormDisciplina({ onFechar, onCriada }) {
   const idBase = useId();
   const [disciplina, setDisciplina] = useState({ name: '', descricao: '' });
   const [enviando, setEnviando] = useState(false);
-  const [status, setStatus] = useState(null);
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setEnviando(true);
-    setStatus(null);
-
-    try {
-      await criarDisciplinas(disciplina);
-      setDisciplina({ name: '', descricao: '' });
-      setStatus({ tipo: 'sucesso', texto: 'Disciplina cadastrada com sucesso!' });
-          onCriada?.();
-    } catch (err) {
-      setStatus({
-        tipo: 'erro',
-        texto:
-          err.response?.data?.error?.message ??
-          err.response?.data?.error ??
-          'Não foi possível cadastrar a disciplina.',
-      });
-    } finally {
-      setEnviando(false);
-    }
-  }
+  const [erro, setErro] = useState('');
 
   function handleChange(e) {
     const { name, value } = e.target;
     setDisciplina((atual) => ({ ...atual, [name]: value }));
   }
 
-  return (
-    <section className="mx-auto w-full max-w-xl rounded-[2rem] bg-white p-6 shadow-[0_10px_40px_rgba(15,23,42,0.06)] ring-1 ring-slate-100 sm:p-10">
-      <header className="mb-8 text-center">
-        <h2 className="text-3xl font-extrabold tracking-tight text-[#00264D]">Gerenciamento de Disciplinas</h2>
-        <p className="mt-2 text-sm leading-relaxed text-slate-500">Cadastre uma disciplina e, se desejar, adicione uma descrição.</p>
-      </header>
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setEnviando(true);
+    setErro('');
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2">
+    try {
+      await criarDisciplinas({
+        name: disciplina.name.trim(),
+        descricao: disciplina.descricao.trim(),
+      });
+      onCriada?.();
+      onFechar();
+    } catch (err) {
+      const msg = err.response?.data?.error;
+      setErro((typeof msg === 'string' ? msg : msg?.message) ?? 'Não foi possível cadastrar a disciplina.');
+      setEnviando(false);
+    }
+  }
+
+  // não deixa fechar enquanto está enviando
+  const fechar = () => {
+    if (!enviando) onFechar();
+  };
+
+  return (
+    <Modal
+      titulo="Nova disciplina"
+      onFechar={fechar}
+      rodape={
+        <>
+          <button
+            type="button"
+            onClick={fechar}
+            disabled={enviando}
+            className="cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form={`${idBase}-form`}
+            disabled={enviando}
+            className="cursor-pointer rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#004A8F] disabled:active:scale-100"
+          >
+            {enviando ? 'Cadastrando...' : 'Cadastrar disciplina'}
+          </button>
+        </>
+      }
+    >
+      <form id={`${idBase}-form`} onSubmit={handleSubmit} className="space-y-5">
+        <p className="-mt-2 text-sm text-slate-500">
+          Cadastre a matéria. Os conteúdos (ex.: trigonometria) você adiciona dentro dela depois.
+        </p>
+
+        <div className="space-y-1.5">
           <label htmlFor={`${idBase}-name`} className="block text-sm font-semibold text-slate-900">
-            Insira a disciplina
+            Nome da disciplina
           </label>
           <input
             type="text"
             id={`${idBase}-name`}
             name="name"
-            placeholder="Nome da disciplina"
+            data-autofocus
+            placeholder="Ex.: Matemática"
             value={disciplina.name}
             onChange={handleChange}
             required
-            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
+            className={campoClasses}
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <label htmlFor={`${idBase}-descricao`} className="block text-sm font-semibold text-slate-900">
             Descrição <span className="font-normal text-slate-400">(opcional)</span>
           </label>
@@ -70,31 +99,19 @@ export default function FormDisciplina({ onCriada }) {
             placeholder="Descrição da disciplina"
             value={disciplina.descricao}
             onChange={handleChange}
-            className="block w-full rounded-2xl border border-transparent bg-slate-50 px-5 py-3.5 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 cursor-text disabled:cursor-not-allowed"
+            className={campoClasses}
           />
         </div>
 
-        {status && (
+        {erro && (
           <p
-            role={status.tipo === 'erro' ? 'alert' : 'status'}
-            className={`rounded-2xl px-4 py-3 text-sm font-medium ring-1 ${
-              status.tipo === 'erro'
-                ? 'bg-tj-orange/10 text-[#A85A00] ring-tj-orange/25'
-                : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
-            }`}
+            role="alert"
+            className="rounded-2xl bg-tj-orange/10 px-4 py-3 text-sm font-medium text-[#A85A00] ring-1 ring-tj-orange/25"
           >
-            {status.texto}
+            {erro}
           </p>
         )}
-
-        <button
-          type="submit"
-          disabled={enviando}
-          className="w-full mx-auto block rounded-2xl bg-[#004A8F] px-7 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#003B73] focus:outline-none focus:ring-4 focus:ring-[#004A8F]/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#004A8F] disabled:active:scale-100 sm:w-auto"
-        >
-          {enviando ? 'Cadastrando...' : 'Cadastrar Disciplina'}
-        </button>
       </form>
-    </section>
+    </Modal>
   );
 }

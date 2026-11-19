@@ -58,7 +58,7 @@ export default function FormCadastro() {
             // se a API não devolveu o token no cadastro, entra com o e-mail e a senha recém-criados
             if (!sessao?.token) {
                 sessao = await login({
-                    email: credenciaisUsuario.email,
+                    login: credenciaisUsuario.email,
                     password: credenciaisUsuario.password,
                 });
             }

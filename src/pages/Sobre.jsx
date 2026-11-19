@@ -251,12 +251,11 @@ function Hero() {
     <section className="p-3 sm:p-5">
       {/* bg-[...] = 4 fundos empilhados: brilho azul no topo, brilho nas laterais e uma base que vai de azul claro a branco */}
       <div className="relative overflow-hidden rounded-[2rem] bg-[radial-gradient(ellipse_at_50%_0%,rgba(91,141,255,0.55),transparent_65%),radial-gradient(circle_at_0%_35%,rgba(51,73,214,0.25),transparent_45%),radial-gradient(circle_at_100%_35%,rgba(56,189,248,0.28),transparent_45%),linear-gradient(#cfdcff_0%,#e9f0ff_38%,#ffffff_80%)] px-4 pt-5 sm:px-8">
-        <NavBar />
 
         <div className="mx-auto mt-14 max-w-3xl text-center sm:mt-20">
           {/* Chamada principal: o destaque é aplicado só ao trecho final do título. */}
           <h1 className="text-4xl font-bold leading-[1.2] tracking-tight text-[#0A1F4D] sm:text-6xl lg:text-7xl">
-            O planejador de estudos pensado <Highlight>por quem vive a rotina estudantil.</Highlight>
+            O planejador de estudos pensado <Highlight>por quem vive a rotina de um estudante.</Highlight>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
@@ -429,42 +428,6 @@ function Recursos() {
 }
 
 /**
- * Componente: Footer
- * Funcionalidade: chamada final para criar conta, direitos autorais e links rápidos.
- */
-function Footer() {
-  return (
-    <footer className="p-3 sm:p-5">
-      {/* Encerramento da página: convite para cadastro e, abaixo, links auxiliares. */}
-      <div className="rounded-[2rem] bg-[radial-gradient(ellipse_at_50%_130%,rgba(51,73,214,0.55),transparent_65%),radial-gradient(circle_at_90%_80%,rgba(56,189,248,0.35),transparent_40%),linear-gradient(#EEF1FF,#FFFFFF)] px-6 py-16 text-center sm:py-20">
-        <h2 className="mx-auto max-w-2xl text-3xl font-bold leading-[1.4] tracking-tight text-[#0A1F4D] sm:text-5xl sm:leading-[1.35]">
-          Vamos estudar <Highlight>juntos</Highlight>?
-        </h2>
-        <Link
-          to="/cadastro"
-          className="mt-8 inline-flex rounded-full bg-[#3349D6] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#3349D6]/30 transition hover:bg-[#2a3dbb] cursor-pointer"
-        >
-          Começar Agora Gratuitamente
-        </Link>
-      </div>
-
-      {/* A disposição muda de coluna para linha em telas maiores. */}
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row">
-        <p>
-          <span className="font-extrabold text-[#3349D6]">class.me</span> · © 2026 Todos os
-          direitos reservados.
-        </p>
-        <nav aria-label="Rodapé" className="flex gap-6 font-medium">
-          <Link to="/" className="hover:text-[#3349D6] cursor-pointer">Início</Link>
-          <Link to="/login" className="hover:text-[#3349D6] cursor-pointer">Entrar</Link>
-          <Link to="/cadastro" className="hover:text-[#3349D6] cursor-pointer">Criar conta</Link>
-        </nav>
-      </div>
-    </footer>
-  );
-}
-
-/**
  * Componente Principal: Sobre (página "Sobre nós")
  * Funcionalidade: só monta a página, empilhando as seções na ordem em que aparecem.
  * Define também o fundo, a fonte (Nunito) e a cor padrão do texto.
@@ -479,7 +442,6 @@ export default function Sobre() {
       <Nome />
       <Valores />
       <Recursos />
-      <Footer />
     </div>
   );
 }

@@ -166,15 +166,24 @@ export default function CardDisciplina({ id, nomeDisciplina, descricao = "", cor
             {/* botão "contornado" em pílula, igual aos "Priority" e "Repeat" da referência */}
             <button
                 type="button"
-                aria-expanded={formConteudoAberto}
+                aria-haspopup="dialog"
                 className="mt-3 rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-[#00264D] transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed"
-                onClick={() => setFormConteudoAberto(!formConteudoAberto)}
+                onClick={() => setFormConteudoAberto(true)}
             >
                 Adicionar conteúdo
             </button>
 
+            {/* modal centralizado; a disciplina já vem deste card, então não precisa escolher */}
             {formConteudoAberto && (
-                <FormConteudo disciplinaId={id} onCriado={() => setVersao((v) => v + 1)} />
+                <FormConteudo
+                    disciplinaId={id}
+                    nomeDisciplina={nomeDisciplina}
+                    onFechar={() => setFormConteudoAberto(false)}
+                    onCriado={() => {
+                        setVersao((v) => v + 1);
+                        setFormConteudoAberto(false);
+                    }}
+                />
             )}
         </div>
     );

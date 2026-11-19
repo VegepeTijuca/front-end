@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { listar as listarEventos } from '../services/eventService';
-import { listar as listarTarefas } from '../services/todoService';
+import { listar as listarTarefas } from '../services/tarefaService';
 import { Calendar, CircleCheck, SquareCheckBig } from 'lucide-react';
 
 const pad = (n) => String(n).padStart(2, '0');

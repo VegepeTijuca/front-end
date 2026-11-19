@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { atualizar, criar, listar, remover } from '../services/todoService';
+import { atualizar, criar, listar, remover } from '../services/tarefaService';
 
-export default function TodoList({ onMudou }) {
-    const [todos, setTodos] = useState([]);
-    const [name, setName] = useState('');
+export default function ListaTarefas({ onMudou }) {
+    const [tarefas, setTarefas] = useState([]);
+    const [nome, setNome] = useState('');
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
 
@@ -13,7 +13,7 @@ export default function TodoList({ onMudou }) {
 
         listar()
             .then((lista) => {
-                if (!cancelado) setTodos(lista);
+                if (!cancelado) setTarefas(lista);
             })
             .catch((falha) => {
                 if (!cancelado) {
@@ -36,51 +36,51 @@ export default function TodoList({ onMudou }) {
 
     async function addTodo(e) {
         e.preventDefault();
-        const value = name.trim();
+        const value = nome.trim();
         if (!value) return;
 
         setErro('');
-        setName('');
+        setNome('');
         try {
             const nova = await criar(value);
-            setTodos((list) => [...list, nova]);
+            setTarefas((list) => [...list, nova]);
             onMudou?.();
         } catch {
-            setName(value);
+            setNome(value);
             setErro('Não foi possível adicionar a tarefa.');
         }
     }
 
     // atualiza na tela na hora e desfaz se o servidor recusar
     async function update(id, patch) {
-        const anterior = todos;
+        const anterior = tarefas;
         setErro('');
-        setTodos((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+        setTarefas((list) => list.map((t) => (t.id === id ? { ...t, ...patch } : t)));
         try {
             await atualizar(id, patch);
             onMudou?.();
         } catch {
-            setTodos(anterior);
+            setTarefas(anterior);
             setErro('Não foi possível atualizar a tarefa.');
         }
     }
 
     async function removeTodo(id) {
-        const anterior = todos;
+        const anterior = tarefas;
         setErro('');
-        setTodos((list) => list.filter((t) => t.id !== id));
+        setTarefas((list) => list.filter((t) => t.id !== id));
         try {
             await remover(id);
             onMudou?.();
         } catch {
-            setTodos(anterior);
+            setTarefas(anterior);
             setErro('Não foi possível excluir a tarefa.');
         }
     }
 
     return (
         <section className="rounded-[28px] bg-white px-6 py-8 shadow-[0_10px_40px_rgba(15,23,42,0.08)] sm:px-10">
-            <h2 className="text-3xl font-bold text-[#00264D]">Tarefas</h2>
+            <h2 className="text-3xl font-bold text-navy">Tarefas</h2>
             <p className="mb-5 mt-1 text-sm text-slate-500">
                 Marque o quadrado ao concluir. Use a estrela ★ para destacar o que é importante.
             </p>
@@ -95,7 +95,7 @@ export default function TodoList({ onMudou }) {
                 <p className="py-8 text-center text-sm text-slate-500">Carregando tarefas...</p>
             )}
 
-            {!carregando && todos.length === 0 && (
+            {!carregando && tarefas.length === 0 && (
                 <div className="rounded-xl border border-dashed border-slate-200 px-6 py-8 text-center">
                     <p className="font-semibold text-slate-700">Nenhuma tarefa ainda</p>
                     <p className="mt-1 text-sm text-slate-500">Escreva o que precisa fazer no campo abaixo e clique em Adicionar.</p>
@@ -103,7 +103,7 @@ export default function TodoList({ onMudou }) {
             )}
 
             <ul className="flex flex-col gap-5">
-                {todos.map((todo, i) => (
+                {tarefas.map((todo, i) => (
                     <li
                         key={todo.id}
                         style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}

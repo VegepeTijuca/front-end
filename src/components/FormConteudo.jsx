@@ -1,93 +1,118 @@
 import { useId, useState } from 'react';
 import { criarConteudos } from '../services/conteudoService';
+import Modal from './Modal';
 
 const campoClasses =
-    'block w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm outline-none transition focus:border-[#004A8F] focus:ring-2 focus:ring-[#004A8F]/20';
+  'block w-full cursor-text rounded-xl border border-transparent bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#004A8F] focus:bg-white focus:ring-4 focus:ring-[#004A8F]/15 disabled:cursor-not-allowed';
 
-export default function FormConteudo({ disciplinaId, onCriado }) {
-    const idBase = useId();
-    const [dadosConteudo, setDadosConteudo] = useState({ name: '', descricao: '' });
-    const [enviando, setEnviando] = useState(false);
-    const [status, setStatus] = useState(null);
+// Modal "Novo conteúdo". A disciplina já vem do card que abriu o modal, então não há nada para escolher.
+export default function FormConteudo({ disciplinaId, nomeDisciplina, onFechar, onCriado }) {
+  const idBase = useId();
+  const [dadosConteudo, setDadosConteudo] = useState({ name: '', descricao: '' });
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setDadosConteudo((antigos) => ({ ...antigos, [name]: value }));
-    };
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setDadosConteudo((antigos) => ({ ...antigos, [name]: value }));
+  }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setEnviando(true);
-        setStatus(null);
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setEnviando(true);
+    setErro('');
 
-        try {
-            await criarConteudos({ ...dadosConteudo, disciplinaId });
-            setDadosConteudo({ name: '', descricao: '' });   // mesmas chaves do state inicial
-            setStatus({ tipo: 'sucesso', texto: 'Conteúdo criado com sucesso!' });
-            onCriado?.();   // avisa o card para recarregar a lista
-        } catch (err) {
-            const erro = err.response?.data?.error;
-            setStatus({
-                tipo: 'erro',
-                texto: (typeof erro === 'string' ? erro : erro?.message) ?? 'Não foi possível criar o conteúdo.',
-            });
-        } finally {
-            setEnviando(false);
-        }
-    };
+    try {
+      // disciplinaId é o que liga o conteúdo à disciplina (igual ao presetService)
+      await criarConteudos({
+        name: dadosConteudo.name.trim(),
+        descricao: dadosConteudo.descricao.trim(),
+        disciplina_id: disciplinaId,
+      });
+      onCriado?.(); // o card recarrega a lista e fecha o modal
+    } catch (err) {
+      const msg = err.response?.data?.error;
+      setErro((typeof msg === 'string' ? msg : msg?.message) ?? 'Não foi possível criar o conteúdo.');
+      setEnviando(false);
+    }
+  }
 
-    return (
-        <form
-            className="mx-auto w-full max-w-xl space-y-6 rounded-xl bg-white p-6 shadow-md sm:p-8"
-            onSubmit={handleSubmit}
-        >
-            <h2 className="text-2xl font-semibold text-gray-900">Criar conteúdo</h2>
+  // não deixa fechar enquanto está enviando
+  const fechar = () => {
+    if (!enviando) onFechar();
+  };
 
-            <div className="space-y-2">
-                <label htmlFor={`${idBase}-name`} className="block text-sm font-medium text-gray-700">
-                    Insira o título do conteúdo
-                </label>
-                <input
-                    id={`${idBase}-name`}
-                    type="text"
-                    name="name"
-                    value={dadosConteudo.name}
-                    onChange={handleChange}
-                    required
-                    className={`${campoClasses} cursor-text disabled:cursor-not-allowed`}
-                />
-            </div>
+  return (
+    <Modal
+      titulo="Novo conteúdo"
+      onFechar={fechar}
+      rodape={
+        <>
+          <button
+            type="button"
+            onClick={fechar}
+            disabled={enviando}
+            className="cursor-pointer rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            form={`${idBase}-form`}
+            disabled={enviando}
+            className="cursor-pointer rounded-xl bg-[#004A8F] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#003B73] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-[#004A8F] disabled:active:scale-100"
+          >
+            {enviando ? 'Criando...' : 'Criar conteúdo'}
+          </button>
+        </>
+      }
+    >
+      <form id={`${idBase}-form`} onSubmit={handleSubmit} className="space-y-5">
+        {nomeDisciplina && (
+          <p className="-mt-2 text-sm text-slate-500">Será adicionado em {nomeDisciplina}.</p>
+        )}
 
-            <div className="space-y-2">
-                <label htmlFor={`${idBase}-descricao`} className="block text-sm font-medium text-gray-700">
-                    Insira a descrição do conteúdo
-                </label>
-                <input
-                    id={`${idBase}-descricao`}
-                    type="text"
-                    name="descricao"
-                    value={dadosConteudo.descricao}
-                    onChange={handleChange}
-                    className={`${campoClasses} cursor-text disabled:cursor-not-allowed`}
-                />
-            </div>
+        <div className="space-y-1.5">
+          <label htmlFor={`${idBase}-name`} className="block text-sm font-semibold text-slate-900">
+            Título do conteúdo
+          </label>
+          <input
+            type="text"
+            id={`${idBase}-name`}
+            name="name"
+            data-autofocus
+            placeholder="Ex.: Trigonometria"
+            value={dadosConteudo.name}
+            onChange={handleChange}
+            required
+            className={campoClasses}
+          />
+        </div>
 
-            {status && (
-                <p
-                    role={status.tipo === 'erro' ? 'alert' : 'status'}
-                    className={`text-sm ${status.tipo === 'erro' ? 'text-[#A85A00]' : 'text-green-700'}`}
-                >
-                    {status.texto}
-                </p>
-            )}
+        <div className="space-y-1.5">
+          <label htmlFor={`${idBase}-descricao`} className="block text-sm font-semibold text-slate-900">
+            Descrição <span className="font-normal text-slate-400">(opcional)</span>
+          </label>
+          <input
+            type="text"
+            id={`${idBase}-descricao`}
+            name="descricao"
+            placeholder="Descrição do conteúdo"
+            value={dadosConteudo.descricao}
+            onChange={handleChange}
+            className={campoClasses}
+          />
+        </div>
 
-            <button
-                type="submit"
-                disabled={enviando}
-                className="w-full rounded-lg bg-[#004A8F] px-4 py-2.5 font-medium text-white transition hover:bg-[#003B73] focus:outline-none focus:ring-2 focus:ring-[#004A8F] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-                {enviando ? 'Criando...' : 'Criar conteúdo'}
-            </button>
-        </form>
-    );
+        {erro && (
+          <p
+            role="alert"
+            className="rounded-2xl bg-tj-orange/10 px-4 py-3 text-sm font-medium text-[#A85A00] ring-1 ring-tj-orange/25"
+          >
+            {erro}
+          </p>
+        )}
+      </form>
+    </Modal>
+  );
 }

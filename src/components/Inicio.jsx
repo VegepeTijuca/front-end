@@ -10,7 +10,6 @@ function Highlight({ children }) {
 }
 
 const links = [
-  { label: 'Início', href: '#inicio' },
   { label: 'Recursos', href: '#recursos' },
   { label: 'Como funciona', href: '#como-funciona' },
 ];
@@ -30,11 +29,6 @@ function NavBar({ autenticado }) {
             </a>
           </li>
         ))}
-        <li>
-          <Link to="/sobre" className="transition-colors hover:text-[#0022ff] cursor-pointer">
-            Sobre
-          </Link>
-        </li>
       </ul>
 
       <div className="flex items-center gap-1 sm:gap-2">
@@ -259,22 +253,12 @@ function Footer({ autenticado }) {
         </Link>
       </div>
 
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 py-8 text-sm text-slate-500 sm:flex-row">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 px-4 py-8 text-center text-sm text-slate-500 sm:flex-row">
         <p>
           <span className="font-extrabold text-[#3349D6]">class.me</span> · © 2026 Todos os
           direitos reservados.
         </p>
-        <nav aria-label="Rodapé" className="flex gap-6 font-medium">
-          <Link to="/sobre" className="hover:text-[#3349D6] cursor-pointer">Sobre</Link>
-          {autenticado ? (
-            <Link to="/dashboard" className="hover:text-[#3349D6] cursor-pointer">Painel</Link>
-          ) : (
-            <>
-              <Link to="/login" className="hover:text-[#3349D6] cursor-pointer">Entrar</Link>
-              <Link to="/cadastro" className="hover:text-[#3349D6] cursor-pointer">Criar conta</Link>
-            </>
-          )}
-        </nav>
+        
       </div>
     </footer>
   );

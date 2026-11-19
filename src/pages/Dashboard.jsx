@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import Calendario from './Calendario';
 import Timer from '../components/Timer';
-import TodoList from '../components/Tarefas';
+import ListaTarefas from '../components/ListaTarefas';
 import ResumoRapido from '../components/ResumoRapido';
 import CabecalhoPagina from '../components/CabecalhoPagina';
 
@@ -33,7 +33,7 @@ export default function Dashboard() {
             </div>
 
             <div className="mt-6 animate-fade-up" style={atraso(220)}>
-                <TodoList onMudou={aoMudar} />
+                <ListaTarefas onMudou={aoMudar} />
             </div>
         </main>
     );

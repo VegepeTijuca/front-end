@@ -2,67 +2,18 @@ import { useCallback, useEffect, useState } from "react";
 import FormDisciplina from "../components/FormDisciplina";
 import CardDisciplina from "../components/CardDisciplina";
 import CabecalhoPagina from "../components/CabecalhoPagina";
-import { BookOpen, Plus, X } from 'lucide-react';
+import { BookOpen, Plus } from 'lucide-react';
 import { getListaDisciplinas } from "../services/disciplinaService";
 
 // cores que se repetem entre as disciplinas (paleta Tijuca)
 const PALETA = ['#004A8F', '#00A651', '#F49624', '#FFC800'];
-
-/**
- * Componente: Folha
- * Funcionalidade: painel que abre POR CIMA da página (como o "New Task" da referência).
- * No celular sobe de baixo (bottom sheet); no notebook aparece centralizado (modal).
- * Fecha ao clicar fora, no X ou apertando Esc.
- */
-function Folha({ onFechar, children }) {
-  // Esc fecha a folha
-  useEffect(() => {
-    const aoApertar = (e) => e.key === 'Escape' && onFechar();
-    window.addEventListener('keydown', aoApertar);
-    return () => window.removeEventListener('keydown', aoApertar);
-  }, [onFechar]);
-
-  return (
-    // fixed inset-0 = cobre a tela toda | items-end = no celular o painel fica embaixo
-    // sm:items-center = a partir de 640px o painel fica no meio da tela
-    <div className="fixed inset-0 z-40 flex items-end justify-center sm:items-center">
-      {/* fundo escurecido: clicar nele fecha */}
-      <div className="absolute inset-0 animate-fade-in bg-slate-900/40" onClick={onFechar} aria-hidden="true" />
-
-      {/* o painel em si
-          rounded-t-[2rem] = só os cantos de cima arredondados no celular | sm:rounded-[2rem] = todos no notebook
-          max-h-[90vh] overflow-y-auto = se for alto demais, rola dentro dele
-          sm:max-w-lg = no notebook tem largura máxima de 32rem */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label="Nova disciplina"
-        className="relative max-h-[90vh] w-full animate-fade-up overflow-y-auto rounded-t-[2rem] bg-slate-50 px-6 pb-8 pt-3 shadow-2xl sm:max-w-lg sm:rounded-[2rem] sm:p-8"
-      >
-        {/* "alça" do bottom sheet: só aparece no celular (sm:hidden) */}
-        <div className="mx-auto mb-5 h-1.5 w-16 rounded-full bg-slate-300 sm:hidden" aria-hidden="true" />
-
-        <button
-          type="button"
-          onClick={onFechar}
-          aria-label="Fechar"
-          className="absolute right-4 top-4 hidden rounded-full p-2 text-slate-500 transition hover:bg-slate-200 sm:block cursor-pointer disabled:cursor-not-allowed"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        {children}
-      </div>
-    </div>
-  );
-}
 
 // Cada card busca os próprios conteúdos (ListaConteudos), então aqui só carregamos as disciplinas.
 export default function Disciplina() {
   const [disciplinas, setDisciplinas] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
-  // controla se a folha com o formulário está aberta
+  // controla se o modal de nova disciplina está aberto
   const [formAberto, setFormAberto] = useState(false);
 
   const carregar = useCallback(async () => {
@@ -78,7 +29,7 @@ export default function Disciplina() {
 
   useEffect(() => { carregar(); }, [carregar]);
 
-  // depois de criar: recarrega a lista e fecha a folha
+  // depois de criar: recarrega a lista e fecha o modal
   function aoCriar() {
     carregar();
     setFormAberto(false);
@@ -148,7 +99,7 @@ export default function Disciplina() {
         </section>
       )}
 
-      {/* BOTÃO FLUTUANTE "+" (FAB): fica fixo no canto da tela e abre a folha */}
+      {/* BOTÃO FLUTUANTE "+" (FAB): fica fixo no canto da tela e abre o modal */}
       <button
         type="button"
         onClick={() => setFormAberto(true)}
@@ -160,9 +111,7 @@ export default function Disciplina() {
       </button>
 
       {formAberto && (
-        <Folha onFechar={() => setFormAberto(false)}>
-          <FormDisciplina onCriada={aoCriar} />
-        </Folha>
+        <FormDisciplina onFechar={() => setFormAberto(false)} onCriada={aoCriar} />
       )}
     </main>
   );

@@ -16,7 +16,11 @@ export default function Modal({ titulo, onFechar, children, rodape, largura = 'm
 
   useEffect(() => {
     const dialog = ref.current;
-    if (dialog && !dialog.open) dialog.showModal();
+    if (dialog && !dialog.open) {
+      dialog.showModal();
+      // foca o campo marcado com data-autofocus (senão o <dialog> foca o botão ✕)
+      dialog.querySelector('[data-autofocus]')?.focus();
+    }
   }, []);
 
   return (
