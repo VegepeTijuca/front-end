@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import {
-  CircleQuestionMark, Calendar, BookOpen, House, Clock, LogOut, SquareCheckBig, User,
+  Calendar, BookOpen, House, Clock, LogOut, SquareCheckBig, User,
 } from 'lucide-react';
 
 // um item da lista do tour: ícone + texto
@@ -14,12 +14,12 @@ function Ponto({ icone: Icone, children }) {
   );
 }
 
-// chave do localStorage (tour já visto) e evento que abre o tour de novo
-export const CHAVE_TOUR = 'classme:tour-visto';
-export const EVENTO_TOUR = 'classme:abrir-tour';
+// Chave do localStorage que marca o tour como visto. Uma por usuário (o id vem do token),
+// para o tour abrir no primeiro acesso de cada pessoa, e não só uma vez por navegador.
+export const chaveTour = (idUsuario) => `classme:tour-visto:${idUsuario}`;
 
-// Tour de boas-vindas em passos. Abre sozinho na primeira visita (ver AppLayout)
-// e pode ser aberto de novo pelo menu do perfil. Os textos de cada passo estão aqui mesmo.
+// Tour de boas-vindas em passos. Abre sozinho no primeiro acesso de cada usuário (ver AppLayout).
+// Os textos de cada passo estão aqui mesmo.
 const PASSOS = [
   {
     titulo: 'Bem-vindo ao clʌss.me',
@@ -64,8 +64,7 @@ const PASSOS = [
       <>
         <p className="text-slate-600">Clique no seu nome, no canto direito, para abrir o menu do perfil.</p>
         <ul className="mt-4 space-y-2">
-          <Ponto icone={User}>Perfil e configurações: suas respostas, timers salvos e matérias prontas</Ponto>
-          <Ponto icone={CircleQuestionMark}>Ver este tour de novo quando quiser</Ponto>
+          <Ponto icone={User}>Perfil e configurações: dados da sua conta e matérias prontas para adicionar</Ponto>
           <Ponto icone={LogOut}>Sair da conta</Ponto>
         </ul>
       </>

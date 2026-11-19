@@ -305,9 +305,10 @@ export default function Calendario({ expandido = false, onMudou }) {
 
     const handleEventClick = useCallback((info) => abrirEvento(info.event.id), [abrirEvento]);
 
-    // arrastar um evento para outro dia/horário: salva no servidor e desfaz se der erro
+    // Feature de arrastar evento pra outro dia ou hora
     async function handleEventDrop(info) {
-        const original = events.find((ev) => ev.id === info.event.id);
+        // FullCalendar expõe o ID como string, mesmo quando o backend usa números.
+        const original = events.find((ev) => String(ev.id) === info.event.id);
         if (!original) {
             info.revert();
             return;
@@ -316,14 +317,15 @@ export default function Calendario({ expandido = false, onMudou }) {
         const allDay = info.event.allDay;
         const start = allDay ? info.event.startStr.slice(0, 10) : info.event.startStr.slice(0, 16);
         const anteriores = events;
-
+        
         setErroLista('');
-        setEvents((list) => list.map((ev) => (ev.id === original.id ? { ...ev, start, allDay } : ev)));
+        setEvents((list) => list.map((ev) => (String(ev.id) === info.event.id ? { ...ev, start, allDay } : ev)));
 
         try {
             const atualizado = await atualizar(original.id, { title: original.title, start, allDay });
-            setEvents((list) => list.map((ev) => (ev.id === original.id ? atualizado : ev)));
+            setEvents((list) => list.map((ev) => (String(ev.id) === info.event.id ? atualizado : ev)));
             onMudou?.();
+            
         } catch {
             info.revert();
             setEvents(anteriores);

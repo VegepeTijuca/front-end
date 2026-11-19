@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CircleQuestionMark, LogOut, User } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 
-export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbrirTour }) {
+export default function Header({ user, navAberto, onAlternarMenu, onSair }) {
     const name = (user?.name ?? user?.username ?? '').trim() || 'Usuário';
     const role = user?.role;
     const avatar = user?.avatar;
@@ -87,18 +87,6 @@ export default function Header({ user, navAberto, onAlternarMenu, onSair, onAbri
                             <User className="h-4 w-4 shrink-0" />
                             Perfil e configurações
                         </Link>
-                        <button
-                            type="button"
-                            role="menuitem"
-                            onClick={() => {
-                                setMenuAberto(false);
-                                onAbrirTour?.();
-                            }}
-                            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer disabled:cursor-not-allowed"
-                        >
-                            <CircleQuestionMark className="h-4 w-4 shrink-0" />
-                            Como usar o clʌss.me
-                        </button>
                         <button
                             type="button"
                             role="menuitem"
